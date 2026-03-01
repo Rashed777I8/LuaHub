@@ -61,7 +61,8 @@ body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;
 .ban-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);font-family:'Inter',sans-serif}
 
 /* PROFILE PANEL */
-.pp{display:none;position:absolute;top:calc(100% + 10px);right:0;width:240px;background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:16px;padding:18px 16px;z-index:500;box-shadow:var(--sh);text-align:center}
+.pp{display:none;position:fixed;top:70px;right:calc(50% - 280px + 8px);width:240px;background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:16px;padding:18px 16px;z-index:2000;box-shadow:var(--sh);text-align:center}
+@media(max-width:600px){.pp{right:8px;top:68px}}
 .pp.show{display:block;animation:slideDown 0.2s var(--tr) both}
 .pp-av{width:72px;height:72px;border-radius:50%;border:3px solid var(--accent);margin-bottom:10px;box-shadow:0 0 22px rgba(91,142,240,0.3)}
 .pp-nm{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);margin-bottom:4px;cursor:pointer;padding:2px 8px;border-radius:6px;transition:background var(--tr);display:inline-block}
@@ -110,7 +111,8 @@ body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;
 /* CODE */
 pre[class*="language-"]{border-radius:var(--rsm);overflow-x:auto;max-height:360px;margin-top:10px;background:#04040e !important;border:1px solid var(--border);font-size:12px}
 code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
-.CodeMirror{border-radius:var(--rsm);font-family:'Fira Code',monospace;font-size:12px;min-height:120px;background:#04040e !important;border:1.5px solid var(--border2)}
+.CodeMirror{border-radius:var(--rsm);font-family:'Fira Code',monospace;font-size:12px;min-height:120px;background:#04040e !important;border:1.5px solid var(--border2);text-align:left !important}
+.CodeMirror pre{text-align:left !important}
 .CodeMirror-scroll{min-height:120px}
 
 /* REACTIONS */
@@ -197,6 +199,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 .sbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'Fira Code',monospace;font-weight:600;padding:3px 9px;border-radius:20px;margin-bottom:8px}
 .sbadge.srv{background:rgba(46,204,113,0.1);color:var(--server);border:1px solid rgba(46,204,113,0.22)}
 .sbadge.lcl{background:rgba(231,76,60,0.1);color:var(--local);border:1px solid rgba(231,76,60,0.22)}
+.sbadge.mod{background:rgba(241,196,15,0.1);color:var(--gold);border:1px solid rgba(241,196,15,0.22)}
 .stitle{font-family:'Fredoka One',cursive;font-size:15px;color:var(--text);margin-bottom:3px}
 .sdesc{font-family:'Inter',sans-serif;font-size:12px;color:#33336a;margin-bottom:7px}
 .sdots{position:absolute;top:10px;right:10px;background:transparent;border:none;color:#22225a;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:13px;transition:all var(--tr)}
@@ -261,16 +264,9 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
       <span class="logo-lua">Lua</span><span class="logo-hub">Hub</span><span class="logo-dot"></span>
     </div>
     <div class="hact" id="hact"></div>
-    <div class="pp" id="pp">
-      <img src="" id="pp-av" class="pp-av">
-      <div class="pp-nm" id="pp-nm" onclick="openChgName()"></div>
-      <span class="pp-own" id="pp-own" style="display:none">&#x1F451; OWNER</span>
-      <span class="pp-wrn" id="pp-wrn" style="display:none">&#x26A0; Warning Level: 0</span>
-      <div class="pp-bl-lbl">&#x1F3C6; Beloved Script</div>
-      <div class="pp-bl" id="pp-bl">No scripts yet!</div>
-      <button class="pp-out" onclick="logout()">Logout</button>
-    </div>
   </div>
+  <!-- Profile panel (outside header to avoid z-index overlap) -->
+  <div class="pp" id="pp"></div>
 
   <!-- SEARCH -->
   <div class="sw au1">
@@ -286,6 +282,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
         <div class="csel-sep" style="height:1px;background:var(--border);margin:3px 10px"></div>
         <div class="csel-opt" data-v="server" onclick="setFilter('server',this)"><i class="fas fa-server"></i>ServerScript only</div>
         <div class="csel-opt" data-v="local" onclick="setFilter('local',this)"><i class="fas fa-laptop"></i>LocalScript only</div>
+        <div class="csel-opt" data-v="module" onclick="setFilter('module',this)"><i class="fas fa-cube"></i>ModuleScript only</div>
       </div>
     </div>
   </div>
@@ -335,21 +332,17 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 
 <!-- OAUTH MODAL -->
 <div class="modal" id="oauthModal">
-  <div class="modal-box" style="max-width:340px">
+  <div class="modal-box" style="max-width:360px">
     <div style="font-size:38px;margin-bottom:10px" id="oiIcon">&#x1F510;</div>
-    <div class="mt" id="oiTitle">Connecting...</div>
-    <div class="ms" id="oiSub">Completing sign-in...</div>
-    <div id="oiSpinner" style="margin:18px auto;width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
-    <div id="oiStep2" style="display:none">
-      <input type="text" id="oiUser" placeholder="Choose a username">
-      <div class="flbl">Choose Avatar</div>
-      <div class="pfp-row" id="oiPfpRow">
-        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=10" class="pfp-opt sel" onclick="selPfp(this,'seed=10')">
-        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=11" class="pfp-opt" onclick="selPfp(this,'seed=11')">
-        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=12" class="pfp-opt" onclick="selPfp(this,'seed=12')">
-        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=13" class="pfp-opt" onclick="selPfp(this,'seed=13')">
+    <div class="mt" id="oiTitle">Sign-In</div>
+    <div class="ms" id="oiSub" style="line-height:1.6"></div>
+    <div id="oiSpinner" style="display:none;margin:18px auto;width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+    <div id="oiStep2" style="display:none"></div>
+    <div id="oiAltBtn" style="display:none">
+      <div class="mbtns">
+        <button class="btn pr" onclick="oauthGoBack()">&#x1F4DD; Sign Up with Username</button>
+        <button class="btn se" onclick="closeM('oauthModal')">Cancel</button>
       </div>
-      <div class="mbtns"><button class="btn pr" onclick="finishOauth()">Create Account</button></div>
     </div>
   </div>
 </div>
@@ -406,6 +399,9 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
       <div class="trow">
         <button class="tbtn" onclick="smChoose('ServerScript')">&#x1F5A5;&#xFE0F; ServerScript<small>Runs on Server</small></button>
         <button class="tbtn" onclick="smChoose('LocalScript')">&#x1F4BB; LocalScript<small>Runs on Client</small></button>
+      </div>
+      <div class="trow" style="margin-top:0">
+        <button class="tbtn" onclick="smChoose('ModuleScript')" style="border-color:rgba(241,196,15,0.3);color:#bbaa55">&#x1F9E9; ModuleScript<small>Shared Module</small></button>
       </div>
     </div>
     <div id="smS2" style="display:none">
@@ -498,9 +494,9 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 <!-- SHARE -->
 <div class="modal" id="shrModal">
   <div class="modal-box">
-    <div style="font-size:32px;margin-bottom:8px">&#x1F517;</div>
-    <div class="mt">Share Script</div>
-    <div class="ms">Works across all devices.</div>
+    <div style="font-size:32px;margin-bottom:8px" id="shrIcon">&#x1F517;</div>
+    <div class="mt" id="shrTitle">Share</div>
+    <div class="ms" id="shrDesc">Works across all devices.</div>
     <div class="shr-row">
       <input type="text" id="shrLink" readonly onclick="this.select()">
       <button class="btn pr" style="white-space:nowrap;padding:10px 14px" onclick="copyShrLink()">Copy</button>
@@ -575,8 +571,8 @@ function closeM(id){document.getElementById(id).classList.remove('show');}
 // === GLOBAL CLICKS ===
 document.addEventListener('click',e=>{
   document.querySelectorAll('.drop-menu.open').forEach(m=>{if(!m.closest('.fcard,.card')?.contains(e.target)&&!m.contains(e.target))m.classList.remove('open');});
-  if(!document.getElementById('pp').contains(e.target)&&!document.getElementById('hact').contains(e.target))
-    document.getElementById('pp').classList.remove('show');
+  const pp=document.getElementById('pp');
+  if(pp.classList.contains('show')&&!pp.contains(e.target)&&!e.target.classList.contains('pfp-hdr'))pp.classList.remove('show');
   if(!document.getElementById('filterW').contains(e.target)){
     document.getElementById('cselOpts').classList.remove('open');
     document.getElementById('cselBtn').classList.remove('open');
@@ -596,19 +592,21 @@ function setFilter(v,el){
 }
 
 // === PROFILE PANEL ===
-function tglPP(e){e.stopPropagation();document.getElementById('pp').classList.toggle('show');updPP();}
+function tglPP(e){e.stopPropagation();const pp=document.getElementById('pp');pp.classList.toggle('show');if(pp.classList.contains('show'))updPP();}
 function updPP(){
   if(!curUser)return;
-  document.getElementById('pp-av').src=curUser.pfp;
-  document.getElementById('pp-nm').textContent=curUser.username;
   const isOw=curUser.username==='Tasin Redwan';
-  document.getElementById('pp-own').style.display=isOw?'block':'none';
   const lvl=D.warnings[curUser.username]||0;
-  const wEl=document.getElementById('pp-wrn');
-  if(!isOw&&lvl>0){wEl.style.display='inline-block';wEl.textContent=`\u26A0 Warning Level: ${lvl}`;}
-  else wEl.style.display='none';
   const bel=getBeloved(curUser.username);
-  document.getElementById('pp-bl').textContent=bel?bel.title:'No scripts yet!';
+  document.getElementById('pp').innerHTML=`
+    <img src="${curUser.pfp}" class="pp-av">
+    <div class="pp-nm" onclick="openChgName()">${esc(curUser.username)}</div>
+    ${isOw?`<span class="pp-own">&#x1F451; OWNER</span>`:''}
+    ${!isOw&&lvl>0?`<span class="pp-wrn">&#x26A0; Warning Level: ${lvl}</span>`:''}
+    <div class="pp-bl-lbl">&#x1F3C6; Beloved Script</div>
+    <div class="pp-bl">${bel?esc(bel.title):'No scripts yet!'}</div>
+    <button class="pp-out" onclick="logout()">Logout</button>
+  `;
 }
 function getBeloved(u){
   let best=null,bs=-1;
@@ -654,6 +652,7 @@ function renderAll(){
   else if(_fv==='creator'){if(q)show=show.filter(f=>(f.author||'').toLowerCase().includes(q));}
   else if(_fv==='server'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ServerScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
   else if(_fv==='local'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='LocalScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
+  else if(_fv==='module'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ModuleScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
   if(!show.length){
     feed.innerHTML=`<div class="empty"><i class="fas fa-folder-open"></i><p>No folders found.<br>${curUser?'Click <b>+</b> to create your first folder!':'Login to create and share folders.'}</p></div>`;
     return;
@@ -674,8 +673,8 @@ function buildFC(f){
   const myR=curUser?(f.userReactions||{})[curUser.username]:null;
   const cnt=(f.scripts||[]).length;
   let scHtml='';
-  if(_fv==='server'||_fv==='local'){
-    const tp=_fv==='server'?'ServerScript':'LocalScript';
+  if(_fv==='server'||_fv==='local'||_fv==='module'){
+    const tp=_fv==='server'?'ServerScript':_fv==='local'?'LocalScript':'ModuleScript';
     const flt=(f.scripts||[]).filter(s=>s.scriptType===tp);
     scHtml=flt.length?flt.map(fs=>buildSC(fs,f.id,mine,admin)).join(''):`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;margin:0">No ${tp}s here.</p>`;
   } else {
@@ -691,6 +690,7 @@ function buildFC(f){
         <div class="drop-menu" id="fdm-${f.id}" style="position:absolute;right:0;top:100%;min-width:170px">
           ${mine?`<button onclick="openEditFolder('${f.id}')"><i class="fas fa-edit"></i>Edit Folder</button><div class="menu-sep"></div><button class="dng" onclick="openDel('folder','${f.id}',null)"><i class="fas fa-trash"></i>Delete Folder</button>`
           :`<button class="dng" onclick="openRep('folder','${f.id}',null)"><i class="fas fa-flag"></i>Report</button>`}
+          <button onclick="openShrFolder('${f.id}')"><i class="fas fa-share-alt"></i>Share Folder</button>
           ${admin&&!mine?`<button class="dng" onclick="openBan('${esc(f.author)}',null,null,null)"><i class="fas fa-ban"></i>Ban Creator</button>`:''}
         </div>
       </div>
@@ -711,6 +711,7 @@ function buildFC(f){
       ${mine?`<div class="fadd-row">
         <button class="sadd-btn" onclick="openSM('${f.id}','ServerScript')"><i class="fas fa-plus"></i>ServerScript</button>
         <button class="sadd-btn" onclick="openSM('${f.id}','LocalScript')"><i class="fas fa-plus"></i>LocalScript</button>
+        <button class="sadd-btn" onclick="openSM('${f.id}','ModuleScript')" style="color:#bbaa55;border-color:rgba(241,196,15,0.2)"><i class="fas fa-plus"></i>ModuleScript</button>
       </div>`:''}
     </div>`;
   return el;
@@ -724,10 +725,11 @@ function tglF(id,btn){
 
 // === SCRIPT CARD ===
 function buildSC(fs,fid,mine,admin){
-  const bc=fs.scriptType==='ServerScript'?'srv':'lcl';
+  const bc=fs.scriptType==='ServerScript'?'srv':fs.scriptType==='LocalScript'?'lcl':'mod';
+  const label=fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':fs.scriptType==='LocalScript'?'&#x1F4BB; LocalScript':'&#x1F9E9; ModuleScript';
   const notMine=!mine;
   return `<div class="scard" id="sc-${fs.id}">
-    <span class="sbadge ${bc}">${fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':'&#x1F4BB; LocalScript'}</span>
+    <span class="sbadge ${bc}">${label}</span>
     <div style="position:relative;float:right;display:inline-block">
       <button class="sdots" onclick="tglM(event,'sdm-${fs.id}')"><i class="fas fa-ellipsis-v"></i></button>
       <div class="drop-menu" id="sdm-${fs.id}" style="position:absolute;right:0;top:100%;min-width:155px">
@@ -771,7 +773,20 @@ function copyCode(fid,sid){
 function openShr(fid,sid){
   const f=D.folders.find(f=>f.id===fid);if(!f)return;
   const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
-  const enc=btoa(unescape(encodeURIComponent(JSON.stringify({t:fs.title,d:fs.desc,c:fs.code,a:fs.author,p:fs.authorPfp,id:fs.id,st:fs.scriptType}))));
+  const enc=btoa(unescape(encodeURIComponent(JSON.stringify({_type:'script',t:fs.title,d:fs.desc,c:fs.code,a:fs.author,p:fs.authorPfp,id:fs.id,st:fs.scriptType}))));
+  document.getElementById('shrIcon').textContent='\uD83D\uDD17';
+  document.getElementById('shrTitle').textContent='Share Script';
+  document.getElementById('shrDesc').textContent='Share this individual script.';
+  document.getElementById('shrLink').value=`${location.origin}${location.pathname}?share=${enc}`;
+  openM('shrModal');
+}
+function openShrFolder(fid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const payload={_type:'folder',id:f.id,name:f.name,desc:f.desc||'',author:f.author,authorPfp:f.authorPfp||'',createdAt:f.createdAt||Date.now(),scripts:(f.scripts||[])};
+  const enc=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  document.getElementById('shrIcon').textContent='\uD83D\uDCC1';
+  document.getElementById('shrTitle').textContent='Share Folder';
+  document.getElementById('shrDesc').textContent='Recipient will get the full folder with all scripts.';
   document.getElementById('shrLink').value=`${location.origin}${location.pathname}?share=${enc}`;
   openM('shrModal');
 }
@@ -781,10 +796,27 @@ function chkShare(){
   const s=p.get('share');if(!s)return;
   try{
     const o=JSON.parse(decodeURIComponent(escape(atob(s))));
-    let imp=D.folders.find(f=>f.id==='f_imp');
-    if(!imp){imp={id:'f_imp',name:'Imported Scripts',desc:'Shared from other users',author:'System',authorPfp:'https://api.dicebear.com/7.x/pixel-art/svg?seed=sys',scripts:[],userReactions:{},createdAt:Date.now()};D.folders.unshift(imp);}
-    if(!imp.scripts.some(x=>x.id===o.id)){imp.scripts.push({id:o.id,title:o.t,desc:o.d||'',code:o.c,scriptType:o.st||'ServerScript',author:o.a,authorPfp:o.p,userReactions:{},userRatings:{}});openF['f_imp']=true;sv('folders');toast("Script imported!",'inf');}
-  }catch(e){}
+    if(o._type==='folder'){
+      // Import whole folder — use real author/name/desc from payload
+      if(!D.folders.some(f=>f.id===o.id)){
+        D.folders.unshift({id:o.id,name:o.name,desc:o.desc,author:o.author,authorPfp:o.authorPfp,createdAt:o.createdAt,scripts:o.scripts,userReactions:{},_imported:true});
+        openF[o.id]=true;sv('folders');
+        if(!D.users[o.author]){D.users[o.author]={username:o.author,pfp:o.authorPfp,joinedAt:o.createdAt||Date.now()};sv('users');}
+        toast(`Folder "${o.name}" imported!`,'inf');
+      } else toast("Folder already imported!",'wrn');
+    } else {
+      // Single script — create a folder named after the original folder or just "Shared Scripts"
+      const folderName=`Scripts from ${o.a||'Unknown'}`;
+      let imp=D.folders.find(f=>f._imported&&f.author===o.a&&f.name===folderName);
+      if(!imp){imp={id:'fimp_'+o.a,name:folderName,desc:'',author:o.a,authorPfp:o.p||'',scripts:[],userReactions:{},createdAt:Date.now(),_imported:true};D.folders.unshift(imp);}
+      if(!imp.scripts.some(x=>x.id===o.id)){
+        imp.scripts.push({id:o.id,title:o.t,desc:o.d||'',code:o.c,scriptType:o.st||'ServerScript',author:o.a,authorPfp:o.p,userReactions:{},userRatings:{}});
+        openF[imp.id]=true;sv('folders');
+        if(!D.users[o.a]){D.users[o.a]={username:o.a,pfp:o.p,joinedAt:Date.now()};sv('users');}
+        toast("Script imported!",'inf');
+      }
+    }
+  }catch(e){console.warn('share parse error',e);}
   history.replaceState({},'',location.pathname);
 }
 
@@ -823,9 +855,10 @@ function smChoose(type){
   document.getElementById('smType').value=type;
   document.getElementById('smS1').style.display='none';document.getElementById('smS2').style.display='block';
   document.getElementById('smBack').style.display='';
-  const bc=type==='ServerScript'?'srv':'lcl';
-  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc}">${type==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':'&#x1F4BB; LocalScript'}</span>`;
-  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua'});},60);
+  const bc=type==='ServerScript'?'srv':type==='LocalScript'?'lcl':'mod';
+  const label=type==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':type==='LocalScript'?'&#x1F4BB; LocalScript':'&#x1F9E9; ModuleScript';
+  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc}">${label}</span>`;
+  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua',direction:'ltr',rtlMoveVisually:false});},60);
 }
 function smGoBack(){document.getElementById('smS1').style.display='block';document.getElementById('smS2').style.display='none';if(_sme){_sme.toTextArea();_sme=null;}}
 function openEditSM(fid,sid){
@@ -835,11 +868,12 @@ function openEditSM(fid,sid){
   document.getElementById('smTitle').textContent='Edit Script';
   document.getElementById('smS1').style.display='none';document.getElementById('smS2').style.display='block';
   document.getElementById('smBack').style.display='none';
-  const bc=fs.scriptType==='ServerScript'?'srv':'lcl';
-  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc}">${fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':'&#x1F4BB; LocalScript'}</span>`;
+  const bc2=fs.scriptType==='ServerScript'?'srv':fs.scriptType==='LocalScript'?'lcl':'mod';
+  const label2=fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':fs.scriptType==='LocalScript'?'&#x1F4BB; LocalScript':'&#x1F9E9; ModuleScript';
+  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc2}">${label2}</span>`;
   document.getElementById('smSTitle').value=fs.title;document.getElementById('smSDesc').value=fs.desc||'';document.getElementById('smSCode').value=fs.code;
   openM('scriptModal');
-  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua'});_sme.setValue(fs.code);},60);
+  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua',direction:'ltr',rtlMoveVisually:false});_sme.setValue(fs.code);},60);
 }
 function closeScriptModal(){if(_sme){_sme.toTextArea();_sme=null;}closeM('scriptModal');}
 function doSaveScript(){
@@ -987,6 +1021,11 @@ function doChgName(){
 }
 
 // === AUTH ===
+// Seed/update Tasin Redwan admin account on every load
+if(!D.users['Tasin Redwan']||D.users['Tasin Redwan'].password!=='0I7I759i913'){
+  D.users['Tasin Redwan']=Object.assign(D.users['Tasin Redwan']||{},{username:'Tasin Redwan',password:'0I7I759i913',pfp:D.users['Tasin Redwan']?.pfp||'https://api.dicebear.com/7.x/pixel-art/svg?seed=TasinRedwan',joinedAt:D.users['Tasin Redwan']?.joinedAt||Date.now()});
+  sv('users');
+}
 function openAuthM(){authMode='login';updAuth();openM('authModal');}
 function tglAuth(){authMode=authMode==='login'?'register':'login';updAuth();}
 function updAuth(){
@@ -1017,36 +1056,25 @@ function doAuth(){
 }
 
 // === OAUTH ===
+// NOTE: Real OAuth (Google/GitHub/Apple) requires a backend server to handle
+// the OAuth token exchange securely. This is a browser-only app with no server,
+// so true OAuth cannot be implemented here. Clicking these buttons will show
+// an explanation and redirect the user to sign up with username/password instead.
 let _oauthP='';
 function oauthLogin(p){
-  _oauthP=p;selPfpSeed='seed=10';
+  _oauthP=p;
+  const names={github:'GitHub',google:'Google',apple:'Apple'};
   const icons={github:'<img src="https://api.iconify.design/mdi:github.svg?color=%23ffffff" style="width:36px">',google:'<img src="https://api.iconify.design/flat-color-icons:google.svg" style="width:36px">',apple:'<img src="https://api.iconify.design/ic:baseline-apple.svg?color=%23ffffff" style="width:36px">'};
-  document.getElementById('oiIcon').innerHTML=icons[p]||'&#x1F510;';
-  document.getElementById('oiTitle').textContent='Connecting...';
-  document.getElementById('oiSub').innerHTML=`Completing sign-in via <b>${p.charAt(0).toUpperCase()+p.slice(1)}</b>`;
-  document.getElementById('oiSpinner').style.display='block';
+  document.getElementById('oiIcon').innerHTML=icons[p]||'🔐';
+  document.getElementById('oiTitle').textContent=`${names[p]||p} Sign-In`;
+  document.getElementById('oiSub').innerHTML=`<b>Real ${names[p]||p} OAuth requires a backend server</b> to securely handle the token exchange. This app runs entirely in your browser without a server.<br><br>Please sign up with a username &amp; password below instead.`;
+  document.getElementById('oiSpinner').style.display='none';
   document.getElementById('oiStep2').style.display='none';
-  document.getElementById('oiUser').value='';
+  document.getElementById('oiAltBtn').style.display='block';
   closeM('authModal');openM('oauthModal');
-  setTimeout(()=>{
-    document.getElementById('oiSpinner').style.display='none';
-    document.getElementById('oiTitle').textContent='Almost there!';
-    document.getElementById('oiSub').textContent='Choose your LuaHub username';
-    document.getElementById('oiStep2').style.display='block';
-    // re-add pfp sel listeners
-    document.querySelectorAll('#oiPfpRow .pfp-opt').forEach((el,i)=>{
-      el.onclick=()=>selPfp(el,'seed='+(10+i));
-    });
-  },1600);
 }
-function finishOauth(){
-  const u=document.getElementById('oiUser').value.trim();
-  if(!u)return toast("Username required",'err');
-  if(D.users[u])return toast("Username taken!",'err');
-  D.users[u]={username:u,password:uid(),pfp:`https://api.dicebear.com/7.x/pixel-art/svg?${selPfpSeed}`,joinedAt:Date.now(),provider:_oauthP};
-  sv('users');curUser=D.users[u];localStorage.setItem('lh_session',JSON.stringify(curUser));
-  closeM('oauthModal');renderHdr();renderAll();toast(`Signed in with ${_oauthP.charAt(0).toUpperCase()+_oauthP.slice(1)}!`,'inf');
-}
+function oauthGoBack(){closeM('oauthModal');openM('authModal');authMode='register';updAuth();}
+function finishOauth(){} // unused but kept for safety
 function logout(){curUser=null;localStorage.removeItem('lh_session');document.getElementById('pp').classList.remove('show');renderHdr();renderAll();}
 
 // === INIT ===
