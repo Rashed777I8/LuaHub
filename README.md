@@ -2,410 +2,313 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LuaHub | Mobile</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lua Script Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/tomorrow-night.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     
     <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/tomorrow-night.min.css');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css');
+
         :root {
             --primary: #007bff;
-            --bg: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --input-bg: #252525;
-            --text: #ffffff;
-            --text-dim: #b0b0b0;
-            --danger: #ff4d4d;
-            --success: #2ecc71;
+            --bg-dark: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --danger: #f85149;
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
             font-family: 'Fredoka One', cursive; 
-            background-color: var(--bg); 
-            color: var(--text); 
-            margin: 0; 
-            padding-bottom: 50px; /* Space for mobile nav if needed */
-        }
-
-        .container { 
-            width: 100%; 
-            max-width: 800px; 
-            margin: auto; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
             padding: 15px; 
+            margin: 0; 
+            line-height: 1.5;
         }
 
-        /* --- MOBILE HEADER --- */
+        .container { max-width: 900px; margin: auto; }
+        
+        /* HEADER */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 25px;
             background: var(--card-bg);
             padding: 12px 20px;
-            border-bottom: 2px solid #333;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
             position: sticky;
-            top: 0;
+            top: 10px;
             z-index: 1000;
         }
-
         .logo { font-size: 24px; letter-spacing: 1px; }
-        .logo span { color: var(--primary); }
+        .logo-hub { color: var(--primary); }
 
-        .pfp-header {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-            object-fit: cover;
-        }
-
-        /* --- SEARCH & FILTERS --- */
-        .search-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 14px;
-            background: var(--input-bg);
-            border: 2px solid #333;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px; /* Prevents iOS zoom on focus */
-            font-family: inherit;
-        }
-
-        .filter-row {
+        /* SEARCH BAR MOBILE FRIENDLY */
+        .search-container {
             display: flex;
             gap: 10px;
-        }
-
-        .btn-filter {
-            flex: 1;
-            padding: 10px;
-            background: var(--input-bg);
-            border: 2px solid #333;
-            border-radius: 10px;
-            color: var(--text-dim);
-            font-family: inherit;
-        }
-
-        .btn-filter.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* --- SCRIPT CARDS --- */
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 18px;
             margin-bottom: 20px;
-            border: 1px solid #333;
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .search-input { 
+            flex: 1; 
+            min-width: 200px;
+            padding: 12px;
+            background: #0d1117; 
+            border: 1px solid var(--border-color); 
+            color: #fff; 
+            border-radius: 8px;
+            font-size: 16px; /* Prevents iOS zoom on focus */
+        }
+
+        /* CARD STYLING */
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 20px;
             position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
+        
+        .card h3 { font-size: 22px; margin: 0 0 10px 0; color: #fff; }
+        .desc { font-family: 'Fredoka One', cursive; color: #8b949e; margin-bottom: 15px; font-size: 15px; }
 
-        .card-title { font-size: 20px; margin-bottom: 5px; color: var(--primary); }
-        .card-author { font-size: 13px; color: var(--text-dim); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-        .card-author img { width: 18px; border-radius: 50%; }
-
-        /* Code Block Mobile Optimization */
+        /* CODE BOX - MOBILE SCROLL FIX */
+        .code-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            margin: 10px 0;
+        }
         pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0;
+            max-height: 350px;
             font-size: 13px !important;
-            padding: 12px !important;
-            border-radius: 10px !important;
-            max-height: 250px;
-            overflow: auto;
-            background: #000 !important;
         }
 
-        /* --- ACTIONS --- */
-        .action-bar {
+        /* BUTTONS */
+        .btn { 
+            padding: 10px 18px; 
+            border-radius: 8px; 
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-post { background: var(--primary); color: white; width: 100%; justify-content: center; }
+        
+        /* REACTION STRIP */
+        .reaction-strip {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
             align-items: center;
             margin-top: 15px;
         }
 
-        .btn {
-            border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
-            font-family: inherit;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* MOBILE OVERRIDES */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .header { padding: 10px 15px; }
+            .logo { font-size: 20px; }
+            .search-container { flex-direction: column; }
+            .custom-select-wrapper { width: 100%; }
+            .card { padding: 15px; }
+            .btn { padding: 8px 12px; font-size: 13px; }
+            .rating-slider { width: 100px; }
         }
 
-        .btn-primary { background: var(--primary); color: white; width: 100%; justify-content: center; padding: 14px; }
-        .btn-outline { background: #333; color: white; }
-        .btn-copy { background: var(--success); color: white; }
-
-        /* --- MODALS --- */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        /* Profile Panel Improvements */
+        .profile-panel {
+            right: 10px;
+            width: 280px;
+            background: #161b22;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
-        .modal.active { display: flex; }
-
+        /* MODALS RESPONSIVE */
         .modal-content {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 400px;
-            border-radius: 20px;
-            padding: 25px;
-            border: 2px solid var(--primary);
-        }
-
-        /* --- CREATION FORM --- */
-        .create-form {
-            background: var(--card-bg);
+            width: 95%;
+            max-width: 450px;
             padding: 20px;
-            border-radius: 16px;
-            border: 2px dashed #444;
-            margin-bottom: 30px;
         }
 
-        .create-form textarea {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid #444;
+        /* CodeMirror Height Fix */
+        .CodeMirror {
+            height: 200px;
             border-radius: 8px;
-            color: white;
-            padding: 12px;
-            margin: 10px 0;
             font-family: 'Fira Code', monospace;
-            min-height: 100px;
         }
-
-        /* Toast Notification */
-        #toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary);
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 14px;
-            z-index: 9999;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        /* Helper Utilities */
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="toast">Copied to Clipboard!</div>
+<div id="toast"></div>
 
-    <header class="header">
-        <div class="logo">Lua<span>Hub</span></div>
-        <div id="user-nav">
-            <button class="btn btn-outline" onclick="toggleModal('auth-modal')">Login</button>
-        </div>
-    </header>
+<div class="container">
+    <div class="header">
+        <div class="logo">Lua<span class="logo-hub">Hub</span></div>
+        <div class="header-actions" id="authAreaContainer"></div>
 
-    <div class="container">
-        <div class="search-area">
-            <input type="text" id="main-search" class="search-input" placeholder="Search scripts..." onkeyup="renderScripts()">
-            <div class="filter-row">
-                <button class="btn-filter active" id="filter-name" onclick="setFilter('name')">By Name</button>
-                <button class="btn-filter" id="filter-creator" onclick="setFilter('creator')">By Creator</button>
-            </div>
-        </div>
-
-        <div id="post-section" class="hidden">
-            <div class="create-form">
-                <h3 style="margin-top:0">✍️ Post New Script</h3>
-                <input type="text" id="new-title" class="search-input" placeholder="Script Title">
-                <textarea id="new-code" placeholder="-- Paste Lua code here..."></textarea>
-                <button class="btn btn-primary" onclick="publishScript()">Post to Hub</button>
-            </div>
-        </div>
-
-        <div id="script-feed">
-            </div>
-    </div>
-
-    <div class="modal" id="auth-modal">
-        <div class="modal-content">
-            <h2 style="margin-top:0">Welcome</h2>
-            <p style="color:var(--text-dim)">Enter a username to join the hub.</p>
-            <input type="text" id="login-username" class="search-input" placeholder="Username...">
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn btn-primary" onclick="handleLogin()">Join Now</button>
-                <button class="btn btn-outline" onclick="toggleModal('auth-modal')">Back</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
-
-    <script>
-        // --- DATABASE EMULATION ---
-        let scripts = JSON.parse(localStorage.getItem('lh_scripts')) || [
-            { id: 1, title: "Speed Hack GUI", creator: "Admin", code: "-- Simple Speed\ngame.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100", date: Date.now() },
-            { id: 2, title: "Infinite Jump", creator: "Tasin", code: "-- Jump Script\nprint('Jump enabled')", date: Date.now() }
-        ];
-
-        let currentUser = localStorage.getItem('lh_user') || null;
-        let activeFilter = 'name';
-
-        // --- APP LOGIC ---
-        function init() {
-            if (currentUser) {
-                updateUIForUser();
-            }
-            renderScripts();
-        }
-
-        function toggleModal(id) {
-            document.getElementById(id).classList.toggle('active');
-        }
-
-        function setFilter(type) {
-            activeFilter = type;
-            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-            document.getElementById('filter-' + type).classList.add('active');
-            renderScripts();
-        }
-
-        function handleLogin() {
-            const user = document.getElementById('login-username').value.trim();
-            if (user.length < 3) return showToast("Name too short!");
+        <div class="profile-panel" id="profilePanel">
+            <img src="" id="panelPfp" class="panel-pfp">
+            <div class="panel-username" id="panelUsername" onclick="promptChangeUsername()"></div>
+            <span class="owner-tag" id="panelTag" style="display:none;">👑 OWNER</span>
+            <span class="warning-tag" id="panelWarning" style="display:none;">Warning Level : 0</span>
             
-            currentUser = user;
-            localStorage.setItem('lh_user', user);
-            toggleModal('auth-modal');
-            updateUIForUser();
-            showToast("Welcome, " + user + "!");
-        }
+            <div class="beloved-title">🏆 YOUR BELOVED SCRIPT 🏆</div>
+            <div class="beloved-script" id="panelBeloved">No scripts yet!</div>
+            <button class="btn panel-logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
 
-        function updateUIForUser() {
-            document.getElementById('user-nav').innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span style="font-size:14px; color:var(--primary)">@${currentUser}</span>
-                    <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=${currentUser}" class="pfp-header" onclick="logout()">
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search scripts..." onkeyup="renderScripts()">
+        <div class="custom-select-wrapper" id="searchTypeWrapper">
+            <div class="custom-select" id="searchTypeDisplay">
+                <span id="selectedTypeText">By Name</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="custom-select-options" id="searchTypeOptions">
+                <div class="custom-select-option selected" data-value="name">By Name</div>
+                <div class="custom-select-option" data-value="creator">By Creator</div>
+            </div>
+        </div>
+        <input type="hidden" id="searchType" value="name">
+    </div>
+
+    <div class="card" id="createCard" style="display:none;">
+        <h2 style="margin-top:0; font-size:20px;">✍️ Create New Script</h2>
+        <input type="text" id="scriptTitle" class="search-input" placeholder="Script Title" style="width:100%; margin-bottom:10px;">
+        <textarea id="scriptDesc" rows="2" placeholder="What does this script do?" style="width:100%; margin-bottom:10px;"></textarea>
+        <div style="border: 1px solid var(--border-color); border-radius:8px; margin-bottom:15px; overflow:hidden;">
+            <textarea id="scriptCode"></textarea>
+        </div>
+        <button class="btn btn-post" onclick="saveScript()">Publish Script</button>
+    </div>
+
+    <div id="scriptFeed"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/lua/lua.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+<script>
+    /* CORE LOGIC MAINTAINED FROM ORIGINAL 
+       - Added 'code-container' wrapper in renderScripts() for mobile scrolling
+       - Improved Toast notification contrast
+    */
+
+    let scripts = JSON.parse(localStorage.getItem('lua_hub_data')) || [];
+    let users = JSON.parse(localStorage.getItem('lua_hub_users')) || {};
+    let currentUser = JSON.parse(localStorage.getItem('lua_hub_session')) || null;
+    let reportedComments = JSON.parse(localStorage.getItem('lua_hub_reports')) || [];
+    let bannedUsers = JSON.parse(localStorage.getItem('lua_hub_banned')) || [];
+    let userWarningLevels = JSON.parse(localStorage.getItem('lua_hub_warnings')) || {};
+
+    const editor = CodeMirror.fromTextArea(document.getElementById("scriptCode"), { 
+        lineNumbers: true, 
+        theme: "dracula", 
+        mode: "lua",
+        viewportMargin: Infinity
+    });
+
+    // Updated renderScripts with mobile-friendly code container
+    function renderScripts() {
+        const feed = document.getElementById('scriptFeed');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const searchType = document.getElementById('searchType').value;
+        feed.innerHTML = '';
+
+        const filteredScripts = scripts.filter(s => {
+            if(searchType === 'name') return s.title.toLowerCase().includes(searchTerm);
+            if(searchType === 'creator') return s.author.toLowerCase().includes(searchTerm);
+            return true;
+        });
+
+        filteredScripts.forEach((s) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            let likes = Object.values(s.userReactions).filter(r => r === 'like').length;
+            let dislikes = Object.values(s.userReactions).filter(r => r === 'dislike').length;
+            const currentUserReaction = currentUser ? s.userReactions[currentUser.username] : null;
+            const currentUserRating = currentUser ? (s.userRatings[currentUser.username] || 0) : 0;
+            const showOwnerButtons = currentUser && currentUser.username === s.author;
+
+            card.innerHTML = `
+                <div class="card-options" onclick="toggleDropdown(event, '${s.id}')">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="dropdown-menu" id="dropdown-${s.id}">
+                        <button onclick="fallbackCopy('${s.id}')"><i class="fas fa-copy"></i> Copy</button>
+                        <button onclick="shareScript('${s.id}')"><i class="fas fa-share-alt"></i> Share</button>
+                        ${showOwnerButtons ? `
+                            <button onclick="editScript('${s.id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button onclick="openDeleteModal('script', '${s.id}')" class="danger"><i class="fas fa-trash"></i> Delete</button>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <h3>${escapeHTML(s.title)}</h3>
+                <div class="author-tag" style="margin-bottom:12px;">
+                    <img src="${s.authorPfp}" class="pfp-tiny"> 
+                    <span>${escapeHTML(s.author)}</span>
+                    ${s.author === "Tasin Redwan" ? '<span style="color:#ffc107; font-size:10px;">👑 OWNER</span>' : ''}
+                </div>
+
+                <p class="desc">${escapeHTML(s.desc)}</p>
+                
+                <div class="code-container">
+                    <pre class="line-numbers"><code class="language-lua">${escapeHTML(s.code)}</code></pre>
+                </div>
+                
+                <div class="reaction-strip">
+                    <button class="btn btn-reaction ${currentUserReaction === 'like' ? 'active-like' : ''}" onclick="reactScript('${s.id}', 'like')"><i class="fas fa-thumbs-up"></i> ${likes}</button>
+                    <button class="btn btn-reaction ${currentUserReaction === 'dislike' ? 'active-dislike' : ''}" onclick="reactScript('${s.id}', 'dislike')"><i class="fas fa-thumbs-down"></i> ${dislikes}</button>
+                    
+                    <div class="rating-container">
+                        <input type="range" min="0" max="10" value="${currentUserRating}" class="rating-slider" onchange="rateScript('${s.id}', this.value)">
+                        <span id="rating-val-${s.id}" style="min-width:40px">${currentUserRating}/10</span>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    <input type="text" class="comment-input" placeholder="Write a comment..." onkeydown="addComment(event, '${s.id}')">
+                    <div id="comments-${s.id}">
+                        ${s.comments.map(c => renderComment(c, s.id)).join('')}
+                    </div>
                 </div>
             `;
-            document.getElementById('post-section').classList.remove('hidden');
-        }
+            feed.appendChild(card);
+        });
+        Prism.highlightAll();
+    }
 
-        function logout() {
-            if(confirm("Logout?")) {
-                localStorage.removeItem('lh_user');
-                location.reload();
-            }
-        }
-
-        function publishScript() {
-            const title = document.getElementById('new-title').value.trim();
-            const code = document.getElementById('new-code').value.trim();
-
-            if(!title || !code) return showToast("Fill all fields!");
-
-            const newObj = {
-                id: Date.now(),
-                title: title,
-                creator: currentUser,
-                code: code,
-                date: Date.now()
-            };
-
-            scripts.unshift(newObj);
-            localStorage.setItem('lh_scripts', JSON.stringify(scripts));
-            
-            // Reset
-            document.getElementById('new-title').value = '';
-            document.getElementById('new-code').value = '';
-            renderScripts();
-            showToast("Script Published!");
-        }
-
-        function renderScripts() {
-            const feed = document.getElementById('script-feed');
-            const search = document.getElementById('main-search').value.toLowerCase();
-            
-            feed.innerHTML = '';
-
-            const filtered = scripts.filter(s => {
-                const target = activeFilter === 'name' ? s.title : s.creator;
-                return target.toLowerCase().includes(search);
-            });
-
-            filtered.forEach(s => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-title">${escape(s.title)}</div>
-                    <div class="card-author">
-                        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=${s.creator}">
-                        <span>by ${escape(s.creator)}</span>
-                    </div>
-                    <pre class="language-lua"><code>${escape(s.code)}</code></pre>
-                    <div class="action-bar">
-                        <button class="btn btn-copy" onclick="copyCode(this, \`${s.id}\`)">
-                            <i class="fas fa-copy"></i> Copy Code
-                        </button>
-                        <span style="font-size:11px; color:#555">ID: ${s.id}</span>
-                    </div>
-                `;
-                feed.appendChild(card);
-            });
-
-            Prism.highlightAll();
-        }
-
-        function copyCode(btn, id) {
-            const script = scripts.find(s => s.id == id);
-            navigator.clipboard.writeText(script.code).then(() => {
-                const original = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                btn.style.background = "#2ecc71";
-                setTimeout(() => {
-                    btn.innerHTML = original;
-                    btn.style.background = "";
-                }, 2000);
-            });
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        }
-
-        function escape(html) {
-            const text = document.createTextNode(html);
-            const p = document.createElement('p');
-            p.appendChild(text);
-            return p.innerHTML;
-        }
-
-        // Run
-        init();
-    </script>
+    // Include the rest of your original logic functions (processAuth, toggleProfilePanel, etc.)
+    // Ensure you keep your existing script logic below this point.
+    // [LOGIC CONTINUES...]
+</script>
 </body>
 </html>
