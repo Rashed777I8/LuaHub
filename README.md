@@ -1,463 +1,528 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lua Script Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-    <style>
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/tomorrow-night.min.css');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css');
-    </style>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Fredoka One', cursive;
-            background-color: #0d0d0d;
-            color: #ffffff;
-            padding: 5px;
-            margin: 0;
-            overflow-x: hidden;
-        }
-        .container { width: 100%; max-width: 520px; margin: auto; padding: 5px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>LuaHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070f;--bg2:#0c0c1a;--bg3:#11112a;--bg4:#161635;--bg5:#1c1c42;
+  --border:#1e1e50;--border2:#262665;
+  --accent:#5b8ef0;--accent2:#7b6ef6;
+  --green:#27ae60;--red:#e74c3c;--gold:#f1c40f;
+  --text:#e0e0ff;--text2:#8888bb;--text3:#44446a;
+  --server:#2ecc71;--local:#e74c3c;
+  --r:14px;--rsm:9px;
+  --sh:0 8px 32px rgba(0,0,0,0.65);--shsm:0 4px 18px rgba(0,0,0,0.45);
+  --tr:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(91,142,240,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(91,142,240,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;background:radial-gradient(ellipse at 25% 20%,rgba(91,142,240,0.07) 0%,transparent 55%),radial-gradient(ellipse at 75% 75%,rgba(123,110,246,0.05) 0%,transparent 55%);pointer-events:none;z-index:0;animation:bgp 9s ease-in-out infinite alternate}
+@keyframes bgp{from{opacity:0.6}to{opacity:1}}
+.wrap{width:100%;max-width:560px;margin:0 auto;padding:10px 8px 50px;position:relative;z-index:1}
 
-        /* HEADER */
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg,#141420,#1a1a2e);
-            padding: 12px 15px; border-radius: 14px;
-            border: 1.5px solid #2a2a4a; position: relative;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        .logo { font-family: 'Fredoka One', cursive; font-size: 22px; }
-        .logo-lua { color: #e8e8ff; }
-        .logo-hub { color: #5b8ef0; }
-        .header-actions { display: flex; align-items: center; gap: 10px; }
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.9) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.au{animation:fadeUp 0.32s var(--tr) both}
+.au1{animation:fadeUp 0.32s var(--tr) 0.05s both}
+.au2{animation:fadeUp 0.32s var(--tr) 0.1s both}
 
-        /* PFP */
-        .pfp-container { position: relative; }
-        .pfp-header { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2.5px solid #5b8ef0; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .pfp-header:hover { transform: scale(1.07); box-shadow: 0 0 12px rgba(91,142,240,0.5); }
-        .ban-counter { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 50%; width: 19px; height: 19px; font-size: 10px; display: flex; justify-content: center; align-items: center; border: 2px solid #0d0d0d; font-family: sans-serif; font-weight: bold; }
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm),inset 0 1px 0 rgba(255,255,255,0.03)}
+.logo{font-family:'Fredoka One',cursive;font-size:26px;line-height:1;letter-spacing:-0.5px;display:flex;align-items:center;gap:2px}
+.logo-lua{color:var(--text)}
+.logo-hub{color:var(--accent);text-shadow:0 0 22px rgba(91,142,240,0.5)}
+.logo-dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-bottom:10px;animation:blink 2.5s infinite}
+.hact{display:flex;align-items:center;gap:10px}
 
-        /* BUTTONS */
-        .btn { padding: 9px 16px; border: none; border-radius: 9px; cursor: pointer; font-family: 'Fredoka One', cursive; font-size: 14px; transition: all 0.2s; }
-        .btn:hover { opacity: 0.87; transform: translateY(-1px); }
-        .btn-login { background: linear-gradient(135deg,#5b8ef0,#2563eb); color: white; }
-        .btn-logout { background: #1e1e2e; color: #888; border: 1px solid #2a2a3e; }
-        .btn-admin { background: #c0392b; color: white; font-size: 15px; padding: 8px 11px; border-radius: 50%; border: none; }
-        .btn-post { background: linear-gradient(135deg,#5b8ef0,#2563eb); color: white; width: 100%; }
-        .btn-green { background: linear-gradient(135deg,#27ae60,#1a7a42); color: white; }
-        .btn-red { background: linear-gradient(135deg,#e74c3c,#c0392b); color: white; }
-        .btn-add-folder { background: linear-gradient(135deg,#27ae60,#1e8449); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 10px rgba(39,174,96,0.35); }
-        .btn-add-folder:hover { transform: scale(1.1); box-shadow: 0 4px 16px rgba(39,174,96,0.55); }
+/* ICON BUTTON */
+.ibtn{width:38px;height:38px;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all var(--tr)}
+.ibtn:hover{transform:scale(1.08)}
+.ibtn.admin-btn{background:linear-gradient(135deg,#c0392b,#96281b);color:white;box-shadow:0 2px 10px rgba(192,57,43,0.4)}
+.ibtn.add-btn{background:linear-gradient(135deg,var(--green),#1e8449);color:white;box-shadow:0 2px 10px rgba(39,174,96,0.35);font-size:20px;font-family:'Fredoka One',cursive}
+.ibtn.add-btn:hover{box-shadow:0 4px 18px rgba(39,174,96,0.55)}
 
-        /* PROFILE PANEL */
-        .profile-panel { display: none; position: absolute; top: calc(100% + 10px); right: 0; background: linear-gradient(160deg,#161626,#1a1a30); border: 1.5px solid #30306a; border-radius: 14px; padding: 18px 15px; width: 230px; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.65); text-align: center; }
-        .profile-panel.show { display: block; animation: fadeDown 0.18s ease; }
-        @keyframes fadeDown { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes popIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
-        .panel-pfp { width: 72px; height: 72px; border-radius: 50%; border: 3px solid #5b8ef0; margin-bottom: 10px; }
-        .panel-username { font-size: 16px; margin-bottom: 5px; cursor: pointer; display: inline-block; padding: 3px 10px; border-radius: 6px; transition: background 0.2s; }
-        .panel-username:hover { background: #22223a; }
-        .owner-tag { color: #f1c40f; font-size: 12px; font-family: sans-serif; display: block; margin-bottom: 5px; font-weight: bold; }
-        .warning-tag { color: #e74c3c; font-size: 11px; font-family: sans-serif; display: inline-block; margin-bottom: 10px; background: rgba(231,76,60,0.12); padding: 2px 7px; border-radius: 5px; cursor: help; border: 1px solid rgba(231,76,60,0.25); }
-        .beloved-title { font-size: 10px; color: #555; margin-top: 10px; letter-spacing: 1px; text-transform: uppercase; }
-        .beloved-script { background: #1a1a2c; padding: 8px; border-radius: 8px; margin-top: 5px; font-size: 12px; border: 1px solid #252540; color: #999; font-family: sans-serif; }
-        .panel-logout { width: 100%; margin-top: 14px; background: linear-gradient(135deg,#e74c3c,#c0392b); color: white; }
+/* PFP */
+.pfp-wrap{position:relative}
+.pfp-hdr{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2.5px solid var(--accent);cursor:pointer;transition:all var(--tr);display:block}
+.pfp-hdr:hover{transform:scale(1.08);box-shadow:0 0 14px rgba(91,142,240,0.5)}
+.ban-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);font-family:'Inter',sans-serif}
 
-        /* SEARCH */
-        .search-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; background: #141420; padding: 10px; border-radius: 13px; border: 1.5px solid #252540; align-items: center; }
-        .search-input { flex-grow: 1; padding: 10px; min-width: 140px; background: #1a1a2c; border: 1.5px solid #2a2a44; color: #fff; border-radius: 9px; font-family: 'Fredoka One', cursive; font-size: 14px; outline: none; transition: border 0.2s; }
-        .search-input:focus { border-color: #5b8ef0; }
+/* PROFILE PANEL */
+.pp{display:none;position:absolute;top:calc(100% + 10px);right:0;width:240px;background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:16px;padding:18px 16px;z-index:500;box-shadow:var(--sh);text-align:center}
+.pp.show{display:block;animation:slideDown 0.2s var(--tr) both}
+.pp-av{width:72px;height:72px;border-radius:50%;border:3px solid var(--accent);margin-bottom:10px;box-shadow:0 0 22px rgba(91,142,240,0.3)}
+.pp-nm{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);margin-bottom:4px;cursor:pointer;padding:2px 8px;border-radius:6px;transition:background var(--tr);display:inline-block}
+.pp-nm:hover{background:var(--bg5)}
+.pp-own{color:var(--gold);font-size:11px;font-family:'Inter',sans-serif;font-weight:600;margin-bottom:4px;display:block}
+.pp-wrn{color:var(--red);font-size:11px;display:inline-block;margin-bottom:10px;background:rgba(231,76,60,0.1);padding:2px 8px;border-radius:5px;border:1px solid rgba(231,76,60,0.2);font-family:'Inter',sans-serif}
+.pp-bl-lbl{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:10px;font-family:'Inter',sans-serif}
+.pp-bl{background:var(--bg2);padding:8px 10px;border-radius:8px;margin-top:5px;font-size:12px;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;text-align:left}
+.pp-out{width:100%;margin-top:14px;background:linear-gradient(135deg,var(--red),#c0392b);color:white;border:none;border-radius:var(--rsm);padding:9px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;transition:all var(--tr)}
+.pp-out:hover{opacity:0.88;transform:translateY(-1px)}
 
-        /* DROPDOWN */
-        .custom-select-wrapper { position: relative; user-select: none; min-width: 100px; }
-        .custom-select { background: #1a1a2c; border: 1.5px solid #2a2a44; color: #fff; padding: 10px; border-radius: 9px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Fredoka One', cursive; font-size: 13px; }
-        .custom-select:hover { border-color: #5b8ef0; }
-        .custom-select-options { display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: #1a1a2c; border: 1.5px solid #2a2a44; border-radius: 9px; z-index: 20; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.55); }
-        .custom-select-options.open { display: block; }
-        .custom-select-option { padding: 10px; cursor: pointer; font-family: 'Fredoka One', cursive; font-size: 13px; transition: background 0.15s; }
-        .custom-select-option:hover { background: #22223a; }
-        .custom-select-option.selected { background: #5b8ef0; color: white; }
+/* SEARCH */
+.sw{display:flex;gap:8px;align-items:stretch;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:10px;margin-bottom:14px}
+.si{flex:1;min-width:0;background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text);padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border var(--tr)}
+.si:focus{border-color:var(--accent)}
+.si::placeholder{color:var(--text3)}
+.csel-w{position:relative;user-select:none;min-width:145px}
+.csel{background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text2);padding:10px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:'Inter',sans-serif;font-size:12px;transition:border var(--tr),color var(--tr);white-space:nowrap;height:100%}
+.csel:hover{border-color:var(--accent);color:var(--text)}
+.csel i.arr{font-size:9px;transition:transform var(--tr)}
+.csel.open i.arr{transform:rotate(180deg)}
+.csel-opts{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bg4);border:1.5px solid var(--border2);border-radius:11px;z-index:300;overflow:hidden;box-shadow:var(--sh);min-width:170px}
+.csel-opts.open{display:block;animation:slideDown 0.16s var(--tr) both}
+.csel-opt{padding:10px 14px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);transition:background var(--tr),color var(--tr);display:flex;align-items:center;gap:9px}
+.csel-opt:hover{background:var(--bg5);color:var(--text)}
+.csel-opt.act{background:rgba(91,142,240,0.13);color:var(--accent);font-weight:600}
+.csel-opt i{width:15px;text-align:center;font-size:11px}
 
-        /* LEGACY CARD */
-        .card { background: #141420; border: 1.5px solid #22223a; border-radius: 14px; padding: 16px; margin-bottom: 20px; position: relative; transition: border 0.25s; }
-        .card:hover { border-color: #32326a; }
-        h3 { font-size: 18px; margin: 0 0 5px; }
-        p.desc { color: #777; font-family: sans-serif; margin-bottom: 14px; font-size: 13px; }
+/* CARD (legacy) */
+.card{background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm);transition:border var(--tr)}
+.card:hover{border-color:#3535aa}
 
-        /* CODE */
-        pre[class*="language-"] { border-radius: 9px; overflow-x: auto; max-height: 380px; margin-top: 10px; white-space: pre; background: #080812 !important; border: 1px solid #1a1a30; width: 100%; }
-        code[class*="language-"] { font-family: 'Fira Code', monospace; font-size: 12px; }
-        input, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #1a1a2c; border: 1.5px solid #2a2a44; color: #fff; border-radius: 9px; font-family: 'Fredoka One', cursive; outline: none; transition: border 0.2s; }
-        input:focus, textarea:focus { border-color: #5b8ef0; }
+/* DROP MENU */
+.dots-btn{background:transparent;border:none;color:var(--text3);cursor:pointer;padding:5px 7px;border-radius:7px;font-size:14px;transition:all var(--tr)}
+.dots-btn:hover{background:var(--bg5);color:var(--text)}
+.drop-menu{display:none;position:absolute;background:var(--bg4);border:1.5px solid var(--border2);border-radius:11px;padding:5px;z-index:400;min-width:160px;box-shadow:var(--sh)}
+.drop-menu.open{display:block;animation:slideDown 0.15s var(--tr) both}
+.drop-menu button{display:flex;align-items:center;gap:9px;width:100%;background:none;border:none;color:var(--text2);text-align:left;padding:9px 12px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;border-radius:7px;transition:background var(--tr),color var(--tr)}
+.drop-menu button:hover{background:var(--bg5);color:var(--text)}
+.drop-menu button i{width:14px;text-align:center;font-size:12px;color:var(--text3)}
+.drop-menu button.dng{color:rgba(231,76,60,0.85)}
+.drop-menu button.dng i{color:rgba(231,76,60,0.6)}
+.drop-menu button.dng:hover{background:rgba(231,76,60,0.1);color:var(--red)}
+.menu-sep{height:1px;background:var(--border);margin:4px 8px}
 
-        /* THREE DOT MENU */
-        .card-options { position: absolute; top: 14px; right: 14px; cursor: pointer; color: #444; padding: 5px; font-size: 15px; transition: color 0.2s; z-index: 5; }
-        .card-options:hover { color: #aaa; }
-        .dropdown-menu { display: none; position: absolute; top: 100%; right: 0; background: #1a1a2c; border-radius: 11px; padding: 5px; z-index: 200; min-width: 150px; box-shadow: 0 8px 26px rgba(0,0,0,0.65); border: 1px solid #22223a; }
-        .dropdown-menu.show { display: block; animation: fadeDown 0.14s ease; }
-        .dropdown-menu button { display: flex; align-items: center; gap: 9px; width: 100%; background: none; border: none; color: #bbb; text-align: left; padding: 9px 11px; cursor: pointer; font-family: 'Fredoka One', cursive; font-size: 13px; border-radius: 7px; transition: background 0.14s; }
-        .dropdown-menu button:hover { background: #22223a; color: white; }
-        .dropdown-menu button.danger { color: #e74c3c; }
-        .dropdown-menu button.danger:hover { background: rgba(231,76,60,0.13); }
+/* CODE */
+pre[class*="language-"]{border-radius:var(--rsm);overflow-x:auto;max-height:360px;margin-top:10px;background:#04040e !important;border:1px solid var(--border);font-size:12px}
+code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
+.CodeMirror{border-radius:var(--rsm);font-family:'Fira Code',monospace;font-size:12px;min-height:120px;background:#04040e !important;border:1.5px solid var(--border2)}
+.CodeMirror-scroll{min-height:120px}
 
-        /* REACTIONS */
-        .btn-reaction { background: #1a1a2c; color: #666; padding: 5px 9px; font-size: 11px; font-family: 'Fredoka One', cursive; border: 1px solid #222240; border-radius: 7px; cursor: pointer; transition: all 0.16s; }
-        .btn-reaction:hover { background: #22223a; color: #bbb; }
-        .btn-reaction.active-like { background: rgba(39,174,96,0.18); color: #2ecc71; border-color: rgba(39,174,96,0.4); }
-        .btn-reaction.active-dislike { background: rgba(231,76,60,0.18); color: #e74c3c; border-color: rgba(231,76,60,0.4); }
+/* REACTIONS */
+.rxns{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px}
+.rbtn{display:inline-flex;align-items:center;gap:5px;background:var(--bg5);border:1px solid var(--border2);border-radius:20px;color:var(--text3);padding:5px 12px;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;transition:all var(--tr)}
+.rbtn:hover{background:var(--bg4);color:var(--text2)}
+.rbtn.lkd{background:rgba(46,204,113,0.13);border-color:rgba(46,204,113,0.3);color:var(--server)}
+.rbtn.dlkd{background:rgba(231,76,60,0.13);border-color:rgba(231,76,60,0.3);color:var(--local)}
+.stats{font-size:11px;color:var(--text3);margin-top:10px;display:flex;gap:14px;font-family:'Inter',sans-serif}
 
-        /* RATING */
-        .rating-container { display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 12px; color: #555; background: #141424; padding: 5px 10px; border-radius: 8px; flex-grow: 1; flex-wrap: wrap; border: 1px solid #1e1e34; }
-        .rating-slider { -webkit-appearance: none; width: 90px; height: 5px; background: #2a2a44; border-radius: 4px; outline: none; }
-        .rating-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #5b8ef0; border-radius: 50%; cursor: pointer; }
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(3,3,12,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:1000;padding:16px;overflow-y:auto}
+.modal.show{display:flex}
+.modal-box{background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:400px;box-shadow:0 24px 70px rgba(0,0,0,0.85);position:relative;text-align:center}
+.modal-box.wide{max-width:490px}
+.modal-box.dng{border-color:var(--red)}
+.modal-box.suc{border-color:var(--green)}
+.modal.show .modal-box{animation:popIn 0.26s cubic-bezier(0.34,1.56,0.64,1) both}
+.mt{font-family:'Fredoka One',cursive;font-size:19px;color:var(--text);margin-bottom:12px}
+.ms{font-size:13px;color:var(--text2);font-family:'Inter',sans-serif;margin-bottom:12px;line-height:1.5}
+.mbtns{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.flbl{font-size:11px;color:var(--text3);font-family:'Inter',sans-serif;text-align:left;display:block;margin:8px 0 2px;letter-spacing:0.3px}
+.modal input:not([type=range]):not([type=hidden]),.modal textarea{width:100%;padding:10px 14px;margin:4px 0;background:var(--bg5);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border var(--tr);resize:vertical}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent)}
 
-        /* COMMENTS */
-        .comment-section { margin-top: 14px; border-top: 1px solid #1e1e30; padding-top: 10px; }
-        .comment-input { width: 100%; padding: 8px 12px; background: #141424; border: 1px solid #1e1e34; border-radius: 8px; color: white; font-family: sans-serif; font-size: 13px; }
-        .comment-input:focus { border-color: #5b8ef0; outline: none; }
-        .comment-item { background: #141424; padding: 9px 10px; border-radius: 9px; margin-top: 8px; font-family: sans-serif; font-size: 13px; position: relative; border: 1px solid #1e1e34; }
-        .reply-item { margin-left: 14px; border-left: 2px solid #22224a; }
-        .author-tag { color: #5b8ef0; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; font-family: 'Fredoka One', cursive; font-size: 12px; }
-        .edited-tag { color: #444; font-size: 9px; font-weight: normal; font-family: sans-serif; }
-        .pfp-tiny { width: 14px; height: 14px; border-radius: 50%; object-fit: cover; }
-        .comment-text { word-wrap: break-word; white-space: pre-wrap; padding-right: 22px; font-family: sans-serif; color: #ccc; font-size: 13px; }
-        .comment-actions { display: flex; gap: 5px; margin-top: 6px; }
-        .comment-options { position: absolute; top: 8px; right: 8px; cursor: pointer; color: #444; font-size: 14px; }
-        .comment-options:hover { color: #aaa; }
-        .stats-text { font-family: sans-serif; font-size: 11px; color: #444; margin-top: 10px; display: flex; gap: 12px; }
-        .toggle-replies { background: none; border: none; color: #5b8ef0; cursor: pointer; font-size: 11px; margin-top: 3px; font-family: sans-serif; }
+/* BUTTONS */
+.btn{padding:10px 20px;border:none;border-radius:var(--rsm);cursor:pointer;font-family:'Fredoka One',cursive;font-size:14px;transition:all var(--tr);display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{opacity:0.88;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.pr{background:linear-gradient(135deg,var(--accent),#2563eb);color:white;box-shadow:0 2px 14px rgba(91,142,240,0.35)}
+.btn.se{background:var(--bg5);color:var(--text2);border:1.5px solid var(--border2)}
+.btn.se:hover{color:var(--text)}
+.btn.dng{background:linear-gradient(135deg,var(--red),#c0392b);color:white}
+.btn.suc{background:linear-gradient(135deg,var(--green),#1e8449);color:white}
+.btn.full{width:100%}
+.btn-login{background:linear-gradient(135deg,var(--accent),#2563eb);color:white;border:none;border-radius:var(--rsm);padding:9px 18px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;transition:all var(--tr)}
+.btn-login:hover{opacity:0.88;transform:translateY(-1px)}
 
-        /* MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 2000; overflow-y: auto; padding: 12px; }
-        .modal.show { display: flex; }
-        .modal-content { background: linear-gradient(160deg,#141424,#1a1a2e); padding: 22px; border-radius: 16px; border: 1.5px solid #5b8ef0; text-align: center; width: 100%; max-width: 370px; box-shadow: 0 14px 45px rgba(0,0,0,0.75); animation: popIn 0.18s ease; }
-        .modal-content.danger-border { border-color: #e74c3c; }
-        .modal-content.green-border { border-color: #27ae60; }
-        .modal-content.wide { max-width: 480px; }
-        .modal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-        .modal-title { font-size: 18px; margin: 0 0 12px; }
-        .field-label { font-size: 11px; color: #555; font-family: sans-serif; text-align: left; display: block; margin: 6px 0 -4px; }
+/* AUTH MODAL */
+.auth-methods{display:flex;flex-direction:column;gap:9px;margin:12px 0}
+.apbtn{display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text);cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;transition:all var(--tr);text-align:left}
+.apbtn:hover{background:var(--bg4);border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.35)}
+.apbtn img{width:20px;height:20px;flex-shrink:0}
+.apbtn .an{flex:1}
+.apbtn .aa{color:var(--text3);font-size:11px}
+.adiv{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--text3);font-size:12px;font-family:'Inter',sans-serif}
+.adiv::before,.adiv::after{content:'';flex:1;height:1px;background:var(--border)}
+.atog{font-family:'Inter',sans-serif;font-size:13px;color:var(--text3);margin-top:12px;cursor:pointer}
+.atog span{color:var(--accent);text-decoration:underline}
+.pfp-row{display:flex;justify-content:center;gap:8px;margin:8px 0;flex-wrap:wrap}
+.pfp-opt{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all var(--tr)}
+.pfp-opt:hover{transform:scale(1.1)}
+.pfp-opt.sel{border-color:var(--accent);transform:scale(1.12);box-shadow:0 0 12px rgba(91,142,240,0.4)}
 
-        /* AUTH */
-        .pfp-option { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border 0.2s, transform 0.2s; }
-        .pfp-option.selected { border-color: #5b8ef0; transform: scale(1.1); }
-        .auth-toggle { font-family: sans-serif; font-size: 13px; color: #555; margin-top: 12px; cursor: pointer; }
-        .auth-toggle span { color: #5b8ef0; text-decoration: underline; }
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:white;padding:11px 22px;border-radius:12px;display:none;z-index:5000;font-family:'Fredoka One',cursive;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,0.5);white-space:nowrap;pointer-events:none}
+#toast.show{display:block;animation:popIn 0.2s var(--tr) both}
+#toast.err{background:var(--red)}
+#toast.wrn{background:#f39c12;color:#111}
+#toast.inf{background:var(--accent)}
 
-        /* ADMIN */
-        .admin-modal-content { max-width: 520px; text-align: left; border-color: #e74c3c; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e1e2e; padding-bottom: 12px; margin-bottom: 14px; }
-        .admin-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-        .admin-tab { flex: 1; background: #1a1a2c; border: 1px solid #22223a; color: #777; padding: 8px; border-radius: 9px; cursor: pointer; font-family: 'Fredoka One', cursive; font-size: 13px; transition: all 0.18s; }
-        .admin-tab.active { background: #5b8ef0; color: white; border-color: #5b8ef0; }
-        .admin-table { width: 100%; border-collapse: collapse; font-family: sans-serif; color: #bbb; font-size: 12px; }
-        .admin-table th, .admin-table td { border-bottom: 1px solid #1a1a2c; padding: 9px 5px; text-align: left; }
-        .admin-table th { background: #141424; color: #555; }
-        .admin-table tr:hover td { background: #1a1a2c; }
-        .report-preview { background: #0a0a16; padding: 4px 7px; border-radius: 5px; font-size: 10px; color: #555; margin-top: 3px; border: 1px solid #1a1a2c; font-family: 'Fira Code', monospace; word-break: break-all; }
-        .report-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; font-family: 'Fredoka One', cursive; }
-        .badge-folder-report { background: rgba(91,142,240,0.15); color: #5b8ef0; border: 1px solid rgba(91,142,240,0.25); }
-        .badge-script-report { background: rgba(155,89,182,0.15); color: #9b59b6; border: 1px solid rgba(155,89,182,0.25); }
-        .badge-comment-report { background: rgba(231,126,34,0.15); color: #e67e22; border: 1px solid rgba(231,126,34,0.25); }
+/* FOLDER CARD */
+.fcard{background:linear-gradient(160deg,#090920,#0e0e2c);border:1.5px solid #1c1c55;border-radius:18px;padding:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm);transition:border var(--tr),box-shadow var(--tr)}
+.fcard:hover{border-color:#2c2c88;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
+.fhd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fchev{background:none;border:none;cursor:pointer;color:#2a2a88;font-size:13px;padding:5px;border-radius:6px;transition:all var(--tr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fchev:hover{background:var(--bg5);color:#7777cc}
+.fchev.open{transform:rotate(90deg)}
+.ftitle{font-family:'Fredoka One',cursive;font-size:18px;color:#d0d0ff;flex:1;line-height:1.2}
+.fdesc{color:#3a3a7a;font-family:'Inter',sans-serif;font-size:12px;margin-bottom:8px;line-height:1.5}
+.fmeta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Inter',sans-serif;font-size:11px;color:#2a2a6a;margin-bottom:6px}
+.frxns{display:flex;align-items:center;gap:6px;margin:8px 0 4px}
 
-        /* TOAST */
-        #toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 11px 22px; border-radius: 10px; display: none; z-index: 3000; font-family: 'Fredoka One', cursive; font-size: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.45); white-space: nowrap; }
-        #toast.show { display: block; animation: fadeDown 0.18s ease; }
-        #toast.ban { background: #e74c3c; }
-        #toast.unban { background: #f39c12; color: #111; }
-        #toast.info { background: #5b8ef0; }
+/* FOLDER COLLAPSE */
+.fbody{overflow:hidden;max-height:0;transition:max-height 0.44s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;opacity:0}
+.fbody.open{max-height:99999px;opacity:1}
+.fadd-row{display:flex;gap:8px;margin-top:12px}
+.sadd-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#0c0c30;color:#4444aa;border:1px solid #1a1a55;border-radius:var(--rsm);padding:9px;font-family:'Fredoka One',cursive;font-size:13px;cursor:pointer;transition:all var(--tr)}
+.sadd-btn:hover{background:#14144a;color:#8888ff;border-color:var(--accent)}
 
-        /* FOLDER CARD */
-        .folder-card { background: linear-gradient(160deg,#0e0e22,#111128); border: 1.5px solid #20205a; border-radius: 16px; padding: 16px; margin-bottom: 20px; position: relative; box-shadow: 0 4px 22px rgba(0,0,0,0.35); transition: border 0.25s; }
-        .folder-card:hover { border-color: #30308a; }
-        .folder-header { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
-        .folder-toggle-btn { background: none; border: none; cursor: pointer; color: #33336a; font-size: 13px; padding: 4px; transition: color 0.2s, transform 0.3s; display: flex; align-items: center; }
-        .folder-toggle-btn:hover { color: #7777cc; }
-        .folder-toggle-btn.open { transform: rotate(90deg); }
-        .folder-title-text { font-size: 17px; font-family: 'Fredoka One', cursive; flex-grow: 1; color: #d0d0ff; }
-        .folder-meta { font-family: sans-serif; font-size: 11px; color: #33336a; margin-bottom: 6px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-        .folder-desc-text { color: #44447a; font-family: sans-serif; font-size: 12px; margin-bottom: 8px; line-height: 1.5; }
-        .folder-reactions { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; flex-wrap: wrap; }
+/* SCRIPT CARD (inside folder) */
+.scard{background:#060618;border:1px solid #111148;border-radius:12px;padding:14px;margin-bottom:10px;position:relative;transition:border var(--tr)}
+.scard:hover{border-color:#202070}
+.sbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'Fira Code',monospace;font-weight:600;padding:3px 9px;border-radius:20px;margin-bottom:8px}
+.sbadge.srv{background:rgba(46,204,113,0.1);color:var(--server);border:1px solid rgba(46,204,113,0.22)}
+.sbadge.lcl{background:rgba(231,76,60,0.1);color:var(--local);border:1px solid rgba(231,76,60,0.22)}
+.stitle{font-family:'Fredoka One',cursive;font-size:15px;color:var(--text);margin-bottom:3px}
+.sdesc{font-family:'Inter',sans-serif;font-size:12px;color:#33336a;margin-bottom:7px}
+.sdots{position:absolute;top:10px;right:10px;background:transparent;border:none;color:#22225a;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:13px;transition:all var(--tr)}
+.sdots:hover{background:var(--bg5);color:var(--text2)}
 
-        /* SMOOTH COLLAPSE */
-        .folder-scripts-wrap { overflow: hidden; max-height: 0; transition: max-height 0.42s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease; opacity: 0; }
-        .folder-scripts-wrap.open { max-height: 9999px; opacity: 1; }
+/* TYPE CHOOSER */
+.trow{display:flex;gap:10px;margin:12px 0}
+.tbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:#0c0c30;color:#4444aa;border:2px solid #1a1a55;border-radius:12px;padding:16px 8px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;transition:all var(--tr)}
+.tbtn:hover{background:#141448;color:#aaaaff;border-color:var(--accent);box-shadow:0 0 14px rgba(91,142,240,0.18)}
+.tbtn small{font-family:'Fira Code',monospace;font-size:9px;opacity:0.5}
 
-        /* ADD SCRIPT AREA */
-        .folder-add-script-area { display: flex; gap: 8px; margin-top: 12px; }
-        .btn-script-type { flex: 1; background: #16163a; color: #6666cc; border: 1px solid #22225a; border-radius: 9px; padding: 8px 5px; font-family: 'Fredoka One', cursive; font-size: 13px; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-script-type:hover { background: #22225a; color: #aaaaff; border-color: #5b8ef0; }
+/* ADMIN */
+.atabs{display:flex;gap:8px;margin-bottom:14px}
+.atab{flex:1;background:var(--bg5);border:1px solid var(--border2);color:var(--text3);padding:9px;border-radius:var(--rsm);cursor:pointer;font-family:'Fredoka One',cursive;font-size:13px;transition:all var(--tr)}
+.atab.act{background:var(--accent);color:white;border-color:var(--accent)}
+.atbl{width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;color:var(--text2);font-size:12px}
+.atbl th{background:var(--bg5);color:var(--text3);padding:8px 6px;text-align:left;font-weight:600}
+.atbl td{border-bottom:1px solid var(--border);padding:8px 6px;vertical-align:top}
+.atbl tr:last-child td{border-bottom:none}
+.rprev{background:var(--bg2);padding:4px 7px;border-radius:5px;font-size:10px;color:var(--text3);margin-top:3px;border:1px solid var(--border);font-family:'Fira Code',monospace;word-break:break-all}
+.rbdg{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;font-family:'Fredoka One',cursive}
+.rbdg.bf{background:rgba(91,142,240,0.13);color:var(--accent);border:1px solid rgba(91,142,240,0.22)}
+.rbdg.bs{background:rgba(123,110,246,0.13);color:#9b8ef6;border:1px solid rgba(123,110,246,0.22)}
+.rbdg.bc{background:rgba(231,126,34,0.13);color:#e67e22;border:1px solid rgba(231,126,34,0.22)}
 
-        /* SCRIPT INSIDE FOLDER */
-        .folder-script-card { background: #0a0a1e; border: 1px solid #18185a; border-radius: 11px; padding: 13px; margin-bottom: 10px; position: relative; }
-        .script-type-badge { display: inline-block; font-size: 10px; font-family: 'Fira Code', monospace; padding: 2px 8px; border-radius: 5px; margin-bottom: 7px; font-weight: bold; }
-        .badge-server { background: rgba(39,174,96,0.13); color: #2ecc71; border: 1px solid rgba(39,174,96,0.28); }
-        .badge-local { background: rgba(231,76,60,0.13); color: #e74c3c; border: 1px solid rgba(231,76,60,0.28); }
-        .folder-script-title { font-size: 15px; font-family: 'Fredoka One', cursive; margin-bottom: 3px; color: #ddd; }
-        .folder-script-desc { color: #44446a; font-family: sans-serif; font-size: 12px; margin-bottom: 7px; }
-        .folder-card-options { cursor: pointer; color: #33335a; font-size: 14px; padding: 3px; }
-        .folder-card-options:hover { color: #aaa; }
+/* USER PROFILE MODAL */
+.up-av{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);margin-bottom:10px;box-shadow:0 0 24px rgba(91,142,240,0.3)}
+.up-nm{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:4px}
+.up-join{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3);margin-bottom:12px}
+.up-bel{background:linear-gradient(135deg,rgba(91,142,240,0.08),rgba(123,110,246,0.08));border:1px solid rgba(91,142,240,0.18);border-radius:var(--rsm);padding:10px 12px;margin:10px 0;text-align:left}
+.up-bel-lbl{font-size:10px;color:var(--text3);font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.up-bel-nm{font-family:'Fredoka One',cursive;font-size:14px;color:var(--gold)}
+.uf-item{background:var(--bg5);border:1px solid var(--border2);border-radius:var(--rsm);padding:10px 12px;margin-bottom:6px;text-align:left}
+.uf-nm{font-family:'Fredoka One',cursive;font-size:14px;color:#c0c0ff;margin-bottom:3px}
+.uf-ct{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3)}
 
-        /* SCRIPT TYPE CHOOSER */
-        .script-type-chooser { display: flex; gap: 10px; margin: 10px 0; }
-        .script-type-btn-big { flex: 1; background: #16163a; color: #6666cc; border: 2px solid #22225a; border-radius: 11px; padding: 14px 8px; font-family: 'Fredoka One', cursive; font-size: 15px; cursor: pointer; transition: all 0.2s; text-align: center; }
-        .script-type-btn-big:hover { background: #22225a; color: #aaaaff; border-color: #5b8ef0; }
-        .script-type-label { display: block; font-size: 10px; font-family: 'Fira Code', monospace; margin-top: 4px; opacity: 0.55; }
+/* SHARE */
+.shr-row{display:flex;gap:8px;align-items:center}
+.shr-row input{flex:1;color:var(--accent);font-family:'Fira Code',monospace;font-size:11px;background:#04040e;cursor:pointer}
 
-        /* CODEMIRROR in modals */
-        .CodeMirror { border-radius: 9px; font-family: 'Fira Code', monospace; font-size: 12px; min-height: 130px; }
-    </style>
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-family:'Inter',sans-serif}
+.empty i{font-size:36px;margin-bottom:12px;display:block;opacity:0.35}
+.empty p{font-size:14px;line-height:1.6}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* PFP tiny */
+.pfp-xs{width:16px;height:16px;border-radius:50%;object-fit:cover}
+</style>
 </head>
 <body>
-
 <div id="toast"></div>
-
-<div class="container">
-    <div class="header">
-        <div class="logo"><span class="logo-lua">Lua</span><span class="logo-hub">Hub</span></div>
-        <div class="header-actions" id="authAreaContainer"></div>
-        <div class="profile-panel" id="profilePanel">
-            <img src="" id="panelPfp" class="panel-pfp">
-            <div class="panel-username" id="panelUsername" onclick="openChangeUsernameModal()" title="Click to rename"></div>
-            <span class="owner-tag" id="panelTag" style="display:none;">👑 OWNER</span>
-            <span class="warning-tag" id="panelWarning" style="display:none;" title="Reaches 10 = permanent ban">⚠ Warning Level : 0</span>
-            <div class="beloved-title">🏆 YOUR BELOVED SCRIPT</div>
-            <div class="beloved-script" id="panelBeloved">No scripts yet!</div>
-            <button class="btn panel-logout" onclick="logout()">Logout</button>
-        </div>
+<div class="wrap">
+  <!-- HEADER -->
+  <div class="header au">
+    <div class="logo">
+      <span class="logo-lua">Lua</span><span class="logo-hub">Hub</span><span class="logo-dot"></span>
     </div>
-
-    <div class="search-container">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search..." onkeyup="renderScripts()">
-        <div class="custom-select-wrapper">
-            <div class="custom-select" id="searchTypeDisplay">
-                <span id="selectedTypeText">Name</span>
-                <i class="fas fa-chevron-down" style="font-size:10px; margin-left:5px;"></i>
-            </div>
-            <div class="custom-select-options" id="searchTypeOptions">
-                <div class="custom-select-option selected" data-value="name">Name</div>
-                <div class="custom-select-option" data-value="creator">Creator</div>
-            </div>
-        </div>
-        <input type="hidden" id="searchType" value="name">
+    <div class="hact" id="hact"></div>
+    <div class="pp" id="pp">
+      <img src="" id="pp-av" class="pp-av">
+      <div class="pp-nm" id="pp-nm" onclick="openChgName()"></div>
+      <span class="pp-own" id="pp-own" style="display:none">&#x1F451; OWNER</span>
+      <span class="pp-wrn" id="pp-wrn" style="display:none">&#x26A0; Warning Level: 0</span>
+      <div class="pp-bl-lbl">&#x1F3C6; Beloved Script</div>
+      <div class="pp-bl" id="pp-bl">No scripts yet!</div>
+      <button class="pp-out" onclick="logout()">Logout</button>
     </div>
+  </div>
 
-    <div class="card" id="createCard" style="display:none;">
-        <h2 style="font-size:18px;">✍️ Create Script</h2>
-        <input type="text" id="scriptTitle" placeholder="Script Title">
-        <textarea id="scriptDesc" rows="2" placeholder="Description"></textarea>
-        <textarea id="scriptCode"></textarea>
-        <button class="btn btn-post" onclick="saveScript()">Post Script</button>
+  <!-- SEARCH -->
+  <div class="sw au1">
+    <input type="text" id="sq" class="si" placeholder="&#128269;  Search..." oninput="renderAll()">
+    <div class="csel-w" id="filterW">
+      <div class="csel" id="cselBtn" onclick="tglCsel()">
+        <span id="cselLbl" style="display:flex;align-items:center;gap:5px"><i class="fas fa-folder" style="font-size:10px"></i>Folders</span>
+        <i class="fas fa-chevron-down arr"></i>
+      </div>
+      <div class="csel-opts" id="cselOpts">
+        <div class="csel-opt act" data-v="folder" onclick="setFilter('folder',this)"><i class="fas fa-folder"></i>Folders</div>
+        <div class="csel-opt" data-v="creator" onclick="setFilter('creator',this)"><i class="fas fa-user"></i>Creator</div>
+        <div class="csel-sep" style="height:1px;background:var(--border);margin:3px 10px"></div>
+        <div class="csel-opt" data-v="server" onclick="setFilter('server',this)"><i class="fas fa-server"></i>ServerScript only</div>
+        <div class="csel-opt" data-v="local" onclick="setFilter('local',this)"><i class="fas fa-laptop"></i>LocalScript only</div>
+      </div>
     </div>
+  </div>
 
-    <div id="scriptFeed"></div>
+  <div id="feed"></div>
 </div>
 
-<!-- AUTH -->
-<div id="authModal" class="modal">
-    <div class="modal-content">
-        <h3 class="modal-title" id="authTitle">Login</h3>
-        <input type="text" id="authUsername" placeholder="Username">
-        <input type="password" id="authPassword" placeholder="Password">
-        <p style="font-family:sans-serif; color:#555; font-size:12px; margin:8px 0 5px; text-align:left;">Choose Avatar:</p>
-        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px;">
-            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=1" class="pfp-option selected" onclick="selectPfp(this,'seed=1')">
-            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=2" class="pfp-option" onclick="selectPfp(this,'seed=2')">
-            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=3" class="pfp-option" onclick="selectPfp(this,'seed=3')">
-        </div>
-        <div class="modal-buttons">
-            <button class="btn btn-post" id="authSubmitBtn" onclick="processAuth()">Login</button>
-            <button class="btn btn-logout" onclick="closeModal('authModal')">Cancel</button>
-        </div>
-        <div class="auth-toggle" id="authToggleText" onclick="toggleAuthType()">Don't have an account? <span>Sign Up</span></div>
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal">
+  <div class="modal-box">
+    <div class="mt" id="authTitle">Welcome to LuaHub</div>
+    <div class="ms" id="authSub">Sign in to share your Roblox scripts.</div>
+    <div class="auth-methods" id="authProviders">
+      <button class="apbtn" onclick="oauthLogin('github')">
+        <img src="https://api.iconify.design/mdi:github.svg?color=%23ffffff" alt="">
+        <span class="an">Continue with GitHub</span><i class="fas fa-arrow-right aa"></i>
+      </button>
+      <button class="apbtn" onclick="oauthLogin('google')">
+        <img src="https://api.iconify.design/flat-color-icons:google.svg" alt="">
+        <span class="an">Continue with Google</span><i class="fas fa-arrow-right aa"></i>
+      </button>
+      <button class="apbtn" onclick="oauthLogin('apple')">
+        <img src="https://api.iconify.design/ic:baseline-apple.svg?color=%23ffffff" alt="">
+        <span class="an">Continue with Apple</span><i class="fas fa-arrow-right aa"></i>
+      </button>
     </div>
+    <div class="adiv">or use username &amp; password</div>
+    <input type="text" id="authUser" placeholder="Username">
+    <input type="password" id="authPass" placeholder="Password">
+    <div id="authPfpRow" style="display:none">
+      <div class="flbl">Choose Avatar</div>
+      <div class="pfp-row" id="authPfpOptions">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=1" class="pfp-opt sel" onclick="selPfp(this,'seed=1')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=2" class="pfp-opt" onclick="selPfp(this,'seed=2')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=3" class="pfp-opt" onclick="selPfp(this,'seed=3')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=4" class="pfp-opt" onclick="selPfp(this,'seed=4')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=5" class="pfp-opt" onclick="selPfp(this,'seed=5')">
+      </div>
+    </div>
+    <div class="mbtns">
+      <button class="btn pr" id="authSubmit" onclick="doAuth()">Login</button>
+      <button class="btn se" onclick="closeM('authModal')">Cancel</button>
+    </div>
+    <div class="atog" id="authTog" onclick="tglAuth()">Don't have an account? <span>Sign Up</span></div>
+  </div>
 </div>
 
-<!-- CHANGE USERNAME -->
-<div id="changeUsernameModal" class="modal">
-    <div class="modal-content">
-        <h3 class="modal-title">✏️ Change Username</h3>
-        <span class="field-label">New Username</span>
-        <input type="text" id="newUsernameInput" placeholder="Enter new name">
-        <div class="modal-buttons">
-            <button class="btn btn-post" onclick="submitChangeUsername()">Save</button>
-            <button class="btn btn-logout" onclick="closeModal('changeUsernameModal')">Cancel</button>
-        </div>
+<!-- OAUTH MODAL -->
+<div class="modal" id="oauthModal">
+  <div class="modal-box" style="max-width:340px">
+    <div style="font-size:38px;margin-bottom:10px" id="oiIcon">&#x1F510;</div>
+    <div class="mt" id="oiTitle">Connecting...</div>
+    <div class="ms" id="oiSub">Completing sign-in...</div>
+    <div id="oiSpinner" style="margin:18px auto;width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+    <div id="oiStep2" style="display:none">
+      <input type="text" id="oiUser" placeholder="Choose a username">
+      <div class="flbl">Choose Avatar</div>
+      <div class="pfp-row" id="oiPfpRow">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=10" class="pfp-opt sel" onclick="selPfp(this,'seed=10')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=11" class="pfp-opt" onclick="selPfp(this,'seed=11')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=12" class="pfp-opt" onclick="selPfp(this,'seed=12')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=13" class="pfp-opt" onclick="selPfp(this,'seed=13')">
+      </div>
+      <div class="mbtns"><button class="btn pr" onclick="finishOauth()">Create Account</button></div>
     </div>
+  </div>
 </div>
 
-<!-- COMMENT INPUT (edit / reply) -->
-<div id="inputModal" class="modal">
-    <div class="modal-content">
-        <h3 class="modal-title" id="inputModalTitle">Edit</h3>
-        <textarea id="inputModalText" rows="3" placeholder=""></textarea>
-        <div class="modal-buttons">
-            <button class="btn btn-post" id="inputModalSubmit">Submit</button>
-            <button class="btn btn-logout" onclick="closeModal('inputModal')">Cancel</button>
-        </div>
+<!-- CHANGE NAME -->
+<div class="modal" id="chgNameModal">
+  <div class="modal-box">
+    <div class="mt">&#x270F;&#xFE0F; Change Username</div>
+    <span class="flbl">New Username</span>
+    <input type="text" id="newName" placeholder="Enter new username">
+    <div class="mbtns">
+      <button class="btn pr" onclick="doChgName()">Save</button>
+      <button class="btn se" onclick="closeM('chgNameModal')">Cancel</button>
     </div>
-</div>
-
-<!-- DELETE CONFIRM -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content danger-border">
-        <div style="font-size:32px; margin-bottom:8px;">🗑️</div>
-        <h3 class="modal-title" id="deleteModalTitle">Delete?</h3>
-        <p style="color:#aaa; font-family:sans-serif; font-size:13px; margin:0 0 5px;" id="deleteModalText">Are you sure?</p>
-        <div class="modal-buttons">
-            <button class="btn btn-red" id="deleteModalConfirm">Yes, Delete</button>
-            <button class="btn btn-logout" onclick="closeModal('deleteModal')">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<!-- ADMIN -->
-<div id="adminModal" class="modal">
-    <div class="modal-content admin-modal-content wide">
-        <div class="admin-header">
-            <h3 style="font-size:18px; margin:0;">🛡️ Admin Dashboard</h3>
-            <button class="btn btn-logout" style="padding:5px 12px;" onclick="closeModal('adminModal')">✕ Close</button>
-        </div>
-        <p style="color:#444; font-family:sans-serif; font-size:12px; margin:0 0 12px;">Welcome, Administrator Tasin Redwan.</p>
-        <div class="admin-tabs">
-            <button class="admin-tab active" id="tabReports" onclick="adminTab('reports')">📋 Reports</button>
-            <button class="admin-tab" id="tabBans" onclick="adminTab('bans')">🚫 Banned</button>
-        </div>
-        <div id="adminContentArea"></div>
-    </div>
-</div>
-
-<!-- BAN -->
-<div id="banModal" class="modal">
-    <div class="modal-content danger-border">
-        <div style="font-size:30px; margin-bottom:8px;">🚫</div>
-        <h3 class="modal-title">Ban User</h3>
-        <p style="color:#aaa; font-family:sans-serif; font-size:13px; margin:0 0 8px;" id="banModalContext"></p>
-        <span class="field-label">Duration (days)</span>
-        <input type="number" id="banDays" placeholder="e.g. 7" min="1">
-        <span class="field-label">Reason</span>
-        <textarea id="banReason" rows="2" placeholder="State the reason..."></textarea>
-        <div class="modal-buttons">
-            <button class="btn btn-red" id="banModalConfirm">Ban User</button>
-            <button class="btn btn-logout" onclick="closeModal('banModal')">Cancel</button>
-        </div>
-    </div>
+  </div>
 </div>
 
 <!-- CREATE FOLDER -->
-<div id="folderModal" class="modal">
-    <div class="modal-content green-border" style="text-align:left;">
-        <h3 class="modal-title" style="text-align:center;">📁 Create Folder</h3>
-        <span class="field-label">Folder Name *</span>
-        <input type="text" id="folderNameInput" placeholder="My Awesome Scripts">
-        <span class="field-label">Description</span>
-        <textarea id="folderDescInput" rows="2" placeholder="What's in this folder?"></textarea>
-        <div class="modal-buttons">
-            <button class="btn btn-green" onclick="submitCreateFolder()">Create Folder</button>
-            <button class="btn btn-logout" onclick="closeModal('folderModal')">Cancel</button>
-        </div>
+<div class="modal" id="newFolderModal">
+  <div class="modal-box suc">
+    <div class="mt">&#x1F4C1; Create Folder</div>
+    <span class="flbl">Folder Name *</span>
+    <input type="text" id="nfName" placeholder="My Awesome Scripts">
+    <span class="flbl">Description</span>
+    <textarea id="nfDesc" rows="2" placeholder="What's in here?"></textarea>
+    <div class="mbtns">
+      <button class="btn suc" onclick="doCreateFolder()">Create Folder</button>
+      <button class="btn se" onclick="closeM('newFolderModal')">Cancel</button>
     </div>
+  </div>
 </div>
 
 <!-- EDIT FOLDER -->
-<div id="editFolderModal" class="modal">
-    <div class="modal-content" style="text-align:left;">
-        <h3 class="modal-title" style="text-align:center;">✏️ Edit Folder</h3>
-        <input type="hidden" id="editFolderId">
-        <span class="field-label">Folder Name *</span>
-        <input type="text" id="editFolderName" placeholder="Folder Name">
-        <span class="field-label">Description</span>
-        <textarea id="editFolderDesc" rows="2" placeholder="Description"></textarea>
-        <div class="modal-buttons">
-            <button class="btn btn-post" onclick="submitEditFolder()">Save Changes</button>
-            <button class="btn btn-logout" onclick="closeModal('editFolderModal')">Cancel</button>
-        </div>
+<div class="modal" id="editFolderModal">
+  <div class="modal-box">
+    <div class="mt">&#x270F;&#xFE0F; Edit Folder</div>
+    <input type="hidden" id="efId">
+    <span class="flbl">Name *</span><input type="text" id="efName">
+    <span class="flbl">Description</span><textarea id="efDesc" rows="2"></textarea>
+    <div class="mbtns">
+      <button class="btn pr" onclick="doEditFolder()">Save</button>
+      <button class="btn se" onclick="closeM('editFolderModal')">Cancel</button>
     </div>
+  </div>
 </div>
 
-<!-- EDIT FOLDER SCRIPT -->
-<div id="editFolderScriptModal" class="modal">
-    <div class="modal-content wide" style="text-align:left;">
-        <h3 class="modal-title" style="text-align:center;">✏️ Edit Script</h3>
-        <input type="hidden" id="editFsId">
-        <input type="hidden" id="editFsFolderId">
-        <div id="editFsBadgeArea" style="margin-bottom:8px;"></div>
-        <span class="field-label">Title *</span>
-        <input type="text" id="editFsTitle" placeholder="Script Title">
-        <span class="field-label">Description</span>
-        <textarea id="editFsDesc" rows="2" placeholder="Description"></textarea>
-        <span class="field-label">Code *</span>
-        <textarea id="editFsCode"></textarea>
-        <div class="modal-buttons">
-            <button class="btn btn-post" onclick="submitEditFolderScript()">Save Changes</button>
-            <button class="btn btn-logout" onclick="closeEditFolderScriptModal()">Cancel</button>
-        </div>
+<!-- SCRIPT MODAL -->
+<div class="modal" id="scriptModal">
+  <div class="modal-box wide">
+    <div class="mt" id="smTitle">Add Script</div>
+    <input type="hidden" id="smFid"><input type="hidden" id="smSid"><input type="hidden" id="smType">
+    <div id="smS1">
+      <div class="ms">Choose the script type:</div>
+      <div class="trow">
+        <button class="tbtn" onclick="smChoose('ServerScript')">&#x1F5A5;&#xFE0F; ServerScript<small>Runs on Server</small></button>
+        <button class="tbtn" onclick="smChoose('LocalScript')">&#x1F4BB; LocalScript<small>Runs on Client</small></button>
+      </div>
     </div>
+    <div id="smS2" style="display:none">
+      <div id="smBadge" style="margin-bottom:10px"></div>
+      <span class="flbl">Title *</span><input type="text" id="smSTitle" placeholder="Script Title">
+      <span class="flbl">Description</span><textarea id="smSDesc" rows="2" placeholder="Optional"></textarea>
+      <span class="flbl">Code *</span><textarea id="smSCode"></textarea>
+      <div class="mbtns">
+        <button class="btn pr" onclick="doSaveScript()">Save Script</button>
+        <button class="btn se" id="smBack" onclick="smGoBack()">&#x2190; Back</button>
+        <button class="btn se" onclick="closeScriptModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ADD SCRIPT TO FOLDER -->
-<div id="addScriptModal" class="modal">
-    <div class="modal-content wide" style="text-align:left;">
-        <h3 class="modal-title" id="addScriptModalTitle" style="text-align:center;">Add Script</h3>
-        <div id="addScriptStep1">
-            <p style="color:#555; font-family:sans-serif; font-size:13px; text-align:center; margin-bottom:8px;">Choose Script Type:</p>
-            <div class="script-type-chooser">
-                <button class="script-type-btn-big" onclick="chooseScriptType('ServerScript')">🖥️ ServerScript<span class="script-type-label">Runs on Server</span></button>
-                <button class="script-type-btn-big" onclick="chooseScriptType('LocalScript')">💻 LocalScript<span class="script-type-label">Runs on Client</span></button>
-            </div>
-        </div>
-        <div id="addScriptStep2" style="display:none;">
-            <div id="chosenTypeBadgeArea" style="margin-bottom:8px;"></div>
-            <span class="field-label">Title *</span>
-            <input type="text" id="folderScriptTitle" placeholder="Script Title">
-            <span class="field-label">Description</span>
-            <textarea id="folderScriptDesc" rows="2" placeholder="Optional description"></textarea>
-            <span class="field-label">Code *</span>
-            <textarea id="folderScriptCode"></textarea>
-            <div class="modal-buttons">
-                <button class="btn btn-post" onclick="submitAddScriptToFolder()">Add Script</button>
-                <button class="btn btn-logout" onclick="backToScriptTypeChoice()">← Back</button>
-                <button class="btn btn-logout" onclick="closeAddScriptModal()">Cancel</button>
-            </div>
-        </div>
+<!-- DELETE -->
+<div class="modal" id="delModal">
+  <div class="modal-box dng">
+    <div style="font-size:36px;margin-bottom:10px">&#x1F5D1;&#xFE0F;</div>
+    <div class="mt" id="delTitle">Delete?</div>
+    <div class="ms" id="delSub">This cannot be undone.</div>
+    <div class="mbtns">
+      <button class="btn dng" id="delOk">Yes, Delete</button>
+      <button class="btn se" onclick="closeM('delModal')">Cancel</button>
     </div>
+  </div>
 </div>
 
 <!-- REPORT -->
-<div id="reportModal" class="modal">
-    <div class="modal-content danger-border" style="text-align:left;">
-        <div style="font-size:28px; text-align:center; margin-bottom:8px;">🚩</div>
-        <h3 class="modal-title" id="reportModalTitle" style="text-align:center;">Report</h3>
-        <p style="color:#666; font-family:sans-serif; font-size:12px; margin-bottom:8px; background:#0d0d18; padding:8px; border-radius:7px; border:1px solid #1a1a2c;" id="reportModalContext"></p>
-        <span class="field-label">Reason *</span>
-        <textarea id="reportReason" rows="3" placeholder="Describe the issue clearly..."></textarea>
-        <div class="modal-buttons">
-            <button class="btn btn-red" id="reportSubmitBtn">Submit Report</button>
-            <button class="btn btn-logout" onclick="closeModal('reportModal')">Cancel</button>
-        </div>
+<div class="modal" id="repModal">
+  <div class="modal-box dng">
+    <div style="font-size:32px;margin-bottom:8px">&#x1F6A9;</div>
+    <div class="mt" id="repTitle">Report</div>
+    <div class="ms" id="repCtx" style="background:var(--bg5);padding:8px 10px;border-radius:8px;border:1px solid var(--border);text-align:left"></div>
+    <span class="flbl">Reason *</span>
+    <textarea id="repReason" rows="3" placeholder="Describe the issue clearly..."></textarea>
+    <div class="mbtns">
+      <button class="btn dng" id="repOk">Submit Report</button>
+      <button class="btn se" onclick="closeM('repModal')">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- BAN -->
+<div class="modal" id="banModal">
+  <div class="modal-box dng">
+    <div style="font-size:32px;margin-bottom:8px">&#x1F6AB;</div>
+    <div class="mt">Ban User</div>
+    <div class="ms" id="banCtx"></div>
+    <span class="flbl">Duration (days)</span>
+    <input type="number" id="banDays" placeholder="e.g. 7" min="1">
+    <span class="flbl">Reason</span>
+    <textarea id="banReason" rows="2" placeholder="State the reason..."></textarea>
+    <div class="mbtns">
+      <button class="btn dng" id="banOk">Ban User</button>
+      <button class="btn se" onclick="closeM('banModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="modal" id="adminModal">
+  <div class="modal-box wide dng" style="max-width:520px;text-align:left">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:12px">
+      <div class="mt" style="margin:0">&#x1F6E1;&#xFE0F; Admin Panel</div>
+      <button class="btn se" style="padding:5px 12px" onclick="closeM('adminModal')">&#x2715;</button>
+    </div>
+    <div style="font-size:12px;color:var(--text3);font-family:'Inter',sans-serif;margin-bottom:12px">Welcome, Administrator Tasin Redwan.</div>
+    <div class="atabs">
+      <button class="atab act" id="tabRep" onclick="adminTab('reports')">&#x1F4CB; Reports</button>
+      <button class="atab" id="tabBan" onclick="adminTab('bans')">&#x1F6AB; Banned</button>
+    </div>
+    <div id="adminArea"></div>
+  </div>
+</div>
+
+<!-- COMMENT MODAL -->
+<div class="modal" id="comModal">
+  <div class="modal-box">
+    <div class="mt" id="comTitle">Comment</div>
+    <textarea id="comText" rows="3" placeholder=""></textarea>
+    <div class="mbtns">
+      <button class="btn pr" id="comOk">Submit</button>
+      <button class="btn se" onclick="closeM('comModal')">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <!-- SHARE -->
-<div id="shareModal" class="modal">
-    <div class="modal-content" style="text-align:left;">
-        <h3 class="modal-title" style="text-align:center;">🔗 Share Script</h3>
-        <p style="color:#555; font-family:sans-serif; font-size:12px; text-align:center; margin-bottom:10px;">This link works across all devices.</p>
-        <div style="display:flex; gap:8px; align-items:center;">
-            <input type="text" id="shareLinkInput" readonly style="flex:1; color:#5b8ef0; font-size:11px; font-family:'Fira Code',monospace; cursor:pointer; background:#0d0d1e;">
-            <button class="btn btn-post" style="width:auto; padding:10px 14px; white-space:nowrap;" onclick="copyShareLink()">Copy</button>
-        </div>
-        <div class="modal-buttons">
-            <button class="btn btn-logout" onclick="closeModal('shareModal')">Close</button>
-        </div>
+<div class="modal" id="shrModal">
+  <div class="modal-box">
+    <div style="font-size:32px;margin-bottom:8px">&#x1F517;</div>
+    <div class="mt">Share Script</div>
+    <div class="ms">Works across all devices.</div>
+    <div class="shr-row">
+      <input type="text" id="shrLink" readonly onclick="this.select()">
+      <button class="btn pr" style="white-space:nowrap;padding:10px 14px" onclick="copyShrLink()">Copy</button>
     </div>
+    <div class="mbtns"><button class="btn se" onclick="closeM('shrModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- USER PROFILE MODAL -->
+<div class="modal" id="userModal">
+  <div class="modal-box wide" style="text-align:center">
+    <button class="btn se" style="position:absolute;top:14px;right:14px;padding:5px 10px" onclick="closeM('userModal')">&#x2715;</button>
+    <img src="" id="um-av" class="up-av">
+    <div class="up-nm" id="um-nm"></div>
+    <div id="um-own" style="display:none;color:var(--gold);font-size:12px;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600">&#x1F451; OWNER</div>
+    <div class="up-join" id="um-join"></div>
+    <div class="up-bel" id="um-bel" style="display:none">
+      <div class="up-bel-lbl">&#x1F3C6; Beloved Script</div>
+      <div class="up-bel-nm" id="um-bel-nm"></div>
+    </div>
+    <div id="um-folders" style="text-align:left;margin-top:12px;max-height:280px;overflow-y:auto"></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
@@ -465,854 +530,527 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-
 <script>
-// ════════════════════════════════════
-// DATA
-// ════════════════════════════════════
-let scripts = JSON.parse(localStorage.getItem('lua_hub_data')) || [];
-let users = JSON.parse(localStorage.getItem('lua_hub_users')) || {};
-let currentUser = JSON.parse(localStorage.getItem('lua_hub_session')) || null;
-let reportedComments = JSON.parse(localStorage.getItem('lua_hub_reports')) || [];
-let bannedUsers = JSON.parse(localStorage.getItem('lua_hub_banned')) || [];
-let userWarningLevels = JSON.parse(localStorage.getItem('lua_hub_warnings')) || {};
-let folders = JSON.parse(localStorage.getItem('lua_hub_folders')) || [];
-let folderReports = JSON.parse(localStorage.getItem('lua_hub_folder_reports')) || [];
-let openFolders = {};
+// === DATA ===
+const LS = k=>JSON.parse(localStorage.getItem('lh_'+k)||'null');
+const WS = (k,v)=>localStorage.setItem('lh_'+k,JSON.stringify(v));
+let D = {
+  users:   LS('users')   ||{},
+  folders: LS('folders') ||[],
+  banned:  LS('banned')  ||[],
+  warnings:LS('warnings')||{},
+  reports: LS('reports') ||[],
+  unrep:   LS('unrep')   ||[],
+};
+let curUser = LS('session');
+let openF={}, selPfpSeed='seed=1', authMode='login', admTab='reports', _sme=null, _fv='folder';
 
-if (currentUser && bannedUsers.includes(currentUser.username)) { currentUser = null; localStorage.removeItem('lua_hub_session'); }
+if(curUser&&D.banned.includes(curUser.username)){curUser=null;localStorage.removeItem('lh_session');}
 
-let selectedPfpSeed = 'seed=1';
-let authType = 'login';
-
-// Migration
-scripts.forEach(s => {
-    if (!s.userReactions) s.userReactions = {};
-    if (!s.userRatings) s.userRatings = {};
-    if (!s.comments) s.comments = [];
-    if (s.title && s.title.startsWith("[SHARED] ")) s.title = s.title.substring(9);
-    s.comments.forEach(c => {
-        if (!c.replies) c.replies = [];
-        if (!c.userReactions) c.userReactions = {};
-        if (c.edited === undefined) c.edited = false;
-        c.replies.forEach(r => { if (r.edited === undefined) r.edited = false; });
-    });
+D.folders.forEach(f=>{
+  if(!f.userReactions) f.userReactions={};
+  if(!f.scripts) f.scripts=[];
+  if(!f.createdAt) f.createdAt=Date.now();
+  f.scripts.forEach(fs=>{if(!fs.userReactions)fs.userReactions={};if(!fs.userRatings)fs.userRatings={};});
 });
-folders.forEach(f => {
-    if (!f.userReactions) f.userReactions = {};
-    if (!f.scripts) f.scripts = [];
-    f.scripts.forEach(fs => {
-        if (!fs.userReactions) fs.userReactions = {};
-        if (!fs.userRatings) fs.userRatings = {};
-    });
-});
+WS('folders',D.folders);
 
-// Dedup
-let seenIds = new Set();
-scripts = scripts.filter(s => { if (seenIds.has(s.id)) return false; seenIds.add(s.id); return true; });
-localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
+function sv(k){WS(k,D[k]);}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function uid(){return '_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}
+function fmtD(ts){return new Date(ts).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
+function isAdmin(){return curUser&&curUser.username==='Tasin Redwan';}
 
-// ════════════════════════════════════
-// SEARCH DROPDOWN
-// ════════════════════════════════════
-const dropdownDisplay = document.getElementById('searchTypeDisplay');
-const dropdownOptions = document.getElementById('searchTypeOptions');
-const hiddenInput = document.getElementById('searchType');
-const selectedText = document.getElementById('selectedTypeText');
+// === TOAST ===
+function toast(msg,type,dur=2800){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='show'+(type?' '+type:'');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.className='',dur);
+}
 
-dropdownDisplay.addEventListener('click', e => { e.stopPropagation(); dropdownOptions.classList.toggle('open'); });
-document.querySelectorAll('.custom-select-option').forEach(opt => {
-    opt.addEventListener('click', e => {
-        e.stopPropagation();
-        hiddenInput.value = opt.dataset.value;
-        selectedText.innerText = opt.innerText;
-        dropdownOptions.classList.remove('open');
-        document.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        renderScripts();
-    });
-});
-document.addEventListener('click', () => {
-    dropdownOptions.classList.remove('open');
-    document.getElementById('profilePanel').classList.remove('show');
-    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+// === MODAL ===
+function openM(id){document.getElementById(id).classList.add('show');}
+function closeM(id){document.getElementById(id).classList.remove('show');}
+
+// === GLOBAL CLICKS ===
+document.addEventListener('click',e=>{
+  document.querySelectorAll('.drop-menu.open').forEach(m=>{if(!m.closest('.fcard,.card')?.contains(e.target)&&!m.contains(e.target))m.classList.remove('open');});
+  if(!document.getElementById('pp').contains(e.target)&&!document.getElementById('hact').contains(e.target))
+    document.getElementById('pp').classList.remove('show');
+  if(!document.getElementById('filterW').contains(e.target)){
+    document.getElementById('cselOpts').classList.remove('open');
+    document.getElementById('cselBtn').classList.remove('open');
+  }
 });
 
-// ════════════════════════════════════
-// MODAL HELPERS
-// ════════════════════════════════════
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-
-// ════════════════════════════════════
-// PROFILE PANEL
-// ════════════════════════════════════
-function toggleProfilePanel(e) {
-    e.stopPropagation();
-    document.getElementById('profilePanel').classList.toggle('show');
-    updatePanelContent();
-}
-function updatePanelContent() {
-    if (!currentUser) return;
-    document.getElementById('panelPfp').src = currentUser.pfp;
-    document.getElementById('panelUsername').innerText = currentUser.username;
-    const tag = document.getElementById('panelTag');
-    const warnTag = document.getElementById('panelWarning');
-    if (currentUser.username === "Tasin Redwan") {
-        tag.style.display = 'block'; warnTag.style.display = 'none';
-    } else {
-        tag.style.display = 'none';
-        let lvl = userWarningLevels[currentUser.username] || 0;
-        if (lvl > 0) { warnTag.style.display = 'inline-block'; warnTag.innerText = `⚠ Warning Level : ${lvl}`; }
-        else warnTag.style.display = 'none';
-    }
-    let all = scripts.filter(s => s.author === currentUser.username);
-    folders.forEach(f => { if (f.scripts) f.scripts.filter(fs => fs.author === currentUser.username).forEach(fs => all.push({ ...fs })); });
-    let beloved = null, maxScore = -1;
-    all.forEach(s => {
-        let score = Object.values(s.userReactions || {}).filter(r => r === 'like').length + Object.values(s.userRatings || {}).reduce((a, b) => a + b, 0);
-        if (score > maxScore) { maxScore = score; beloved = s; }
-    });
-    document.getElementById('panelBeloved').innerText = beloved ? `${beloved.title} (${maxScore}pts)` : 'No scripts yet!';
+// === SEARCH FILTER ===
+function tglCsel(){document.getElementById('cselOpts').classList.toggle('open');document.getElementById('cselBtn').classList.toggle('open');}
+function setFilter(v,el){
+  _fv=v;
+  document.querySelectorAll('.csel-opt').forEach(o=>o.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById('cselLbl').innerHTML=el.innerHTML;
+  document.getElementById('cselOpts').classList.remove('open');
+  document.getElementById('cselBtn').classList.remove('open');
+  renderAll();
 }
 
-function openChangeUsernameModal() {
-    document.getElementById('newUsernameInput').value = currentUser ? currentUser.username : '';
-    openModal('changeUsernameModal');
+// === PROFILE PANEL ===
+function tglPP(e){e.stopPropagation();document.getElementById('pp').classList.toggle('show');updPP();}
+function updPP(){
+  if(!curUser)return;
+  document.getElementById('pp-av').src=curUser.pfp;
+  document.getElementById('pp-nm').textContent=curUser.username;
+  const isOw=curUser.username==='Tasin Redwan';
+  document.getElementById('pp-own').style.display=isOw?'block':'none';
+  const lvl=D.warnings[curUser.username]||0;
+  const wEl=document.getElementById('pp-wrn');
+  if(!isOw&&lvl>0){wEl.style.display='inline-block';wEl.textContent=`\u26A0 Warning Level: ${lvl}`;}
+  else wEl.style.display='none';
+  const bel=getBeloved(curUser.username);
+  document.getElementById('pp-bl').textContent=bel?bel.title:'No scripts yet!';
 }
-function submitChangeUsername() {
-    const n = document.getElementById('newUsernameInput').value.trim();
-    if (!n) return showToast("Name required", 'ban');
-    if (n === currentUser.username) return closeModal('changeUsernameModal');
-    if (users[n]) return showToast("Username taken!", 'ban');
-    const old = currentUser.username;
-    users[n] = { ...users[old], username: n };
-    delete users[old];
-    localStorage.setItem('lua_hub_users', JSON.stringify(users));
-    currentUser.username = n;
-    localStorage.setItem('lua_hub_session', JSON.stringify(currentUser));
-    scripts.forEach(s => {
-        if (s.author === old) s.author = n;
-        s.comments.forEach(c => { if (c.author === old) c.author = n; c.replies.forEach(r => { if (r.author === old) r.author = n; }); });
-    });
-    localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-    folders.forEach(f => { if (f.author === old) f.author = n; if (f.scripts) f.scripts.forEach(fs => { if (fs.author === old) fs.author = n; }); });
-    localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-    if (userWarningLevels[old]) { userWarningLevels[n] = userWarningLevels[old]; delete userWarningLevels[old]; localStorage.setItem('lua_hub_warnings', JSON.stringify(userWarningLevels)); }
-    closeModal('changeUsernameModal'); updatePanelContent(); renderScripts(); showToast("Username updated!");
+function getBeloved(u){
+  let best=null,bs=-1;
+  D.folders.forEach(f=>(f.scripts||[]).filter(fs=>fs.author===u).forEach(fs=>{
+    let sc=Object.values(fs.userReactions||{}).filter(r=>r==='like').length+Object.values(fs.userRatings||{}).reduce((a,b)=>a+b,0);
+    if(sc>bs){bs=sc;best=fs;}
+  }));
+  return best;
 }
 
-// ════════════════════════════════════
-// RENDER
-// ════════════════════════════════════
-function renderScripts() {
-    const feed = document.getElementById('scriptFeed');
-    const term = document.getElementById('searchInput').value.toLowerCase();
-    const type = hiddenInput.value;
-    feed.innerHTML = '';
-    folders
-        .filter(f => type === 'name' ? f.name.toLowerCase().includes(term) : (f.author || '').toLowerCase().includes(term))
-        .forEach(f => feed.appendChild(renderFolderCard(f)));
-    scripts
-        .filter(s => type === 'name' ? s.title.toLowerCase().includes(term) : s.author.toLowerCase().includes(term))
-        .forEach(s => feed.appendChild(buildScriptCard(s)));
-    Prism.highlightAll();
+// === HEADER ===
+function renderHdr(){
+  const a=document.getElementById('hact');
+  if(curUser){
+    const bc=D.banned.length;
+    a.innerHTML=`
+      ${isAdmin()?`<button class="ibtn admin-btn" onclick="openAdmin()" title="Admin"><i class="fas fa-shield-alt"></i></button>`:''}
+      <button class="ibtn add-btn" onclick="openNewFolder()" title="Create Folder">+</button>
+      <div class="pfp-wrap">
+        <img src="${curUser.pfp}" class="pfp-hdr" onclick="tglPP(event)" title="${esc(curUser.username)}">
+        ${isAdmin()&&bc>0?`<div class="ban-badge">${bc}</div>`:''}
+      </div>`;
+    chkUnban();
+  } else {
+    a.innerHTML=`<button class="btn-login" onclick="openAuthM()">Login</button>`;
+  }
+}
+function chkUnban(){
+  if(!curUser)return;
+  if(D.unrep.includes(curUser.username)){
+    toast("You've been unbanned — follow the guidelines!",'wrn',5000);
+    D.unrep=D.unrep.filter(u=>u!==curUser.username);WS('unrep',D.unrep);
+  }
 }
 
-// FOLDER CARD
-function renderFolderCard(folder) {
-    const el = document.createElement('div');
-    el.className = 'folder-card';
-    const isOwner = currentUser && currentUser.username === folder.author;
-    const isAdmin = currentUser && currentUser.username === 'Tasin Redwan';
-    const isOpen = !!openFolders[folder.id];
-    let fLikes = Object.values(folder.userReactions || {}).filter(r => r === 'like').length;
-    let fDislikes = Object.values(folder.userReactions || {}).filter(r => r === 'dislike').length;
-    const myFR = currentUser ? (folder.userReactions || {})[currentUser.username] : null;
-    const count = (folder.scripts || []).length;
+// === RENDER ALL ===
+function renderAll(){
+  const feed=document.getElementById('feed');
+  const q=document.getElementById('sq').value.toLowerCase().trim();
+  feed.innerHTML='';
+  let show=[...D.folders];
+  if(_fv==='folder'){if(q)show=show.filter(f=>f.name.toLowerCase().includes(q));}
+  else if(_fv==='creator'){if(q)show=show.filter(f=>(f.author||'').toLowerCase().includes(q));}
+  else if(_fv==='server'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ServerScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
+  else if(_fv==='local'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='LocalScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
+  if(!show.length){
+    feed.innerHTML=`<div class="empty"><i class="fas fa-folder-open"></i><p>No folders found.<br>${curUser?'Click <b>+</b> to create your first folder!':'Login to create and share folders.'}</p></div>`;
+    return;
+  }
+  show.forEach(f=>feed.appendChild(buildFC(f)));
+  Prism.highlightAll();
+}
 
-    const scriptsInner = count > 0
-        ? (folder.scripts || []).map(fs => buildFolderScriptCard(fs, folder.id, isOwner, isAdmin)).join('')
-        : `<p style="color:#22224a; font-family:sans-serif; font-size:12px; padding:6px 0; margin:0;">No scripts yet${isOwner ? ' — add one below!' : '.'}</p>`;
-
-    el.innerHTML = `
-        <div class="folder-header">
-            <button class="folder-toggle-btn${isOpen ? ' open' : ''}" onclick="toggleFolder('${folder.id}',this)" title="${isOpen?'Collapse':'Expand'}"><i class="fas fa-chevron-right"></i></button>
-            <span style="font-size:19px;">📁</span>
-            <span class="folder-title-text">${escapeHTML(folder.name)}</span>
-            <div style="position:relative; margin-left:auto;">
-                <button class="folder-card-options" onclick="toggleDropdown(event,'fold-${folder.id}')" style="display:inline-block;"><i class="fas fa-ellipsis-v"></i></button>
-                <div class="dropdown-menu" id="dropdown-fold-${folder.id}" style="right:0;">
-                    ${isOwner ? `
-                        <button onclick="openEditFolderModal('${folder.id}')"><i class="fas fa-edit"></i> Edit Folder</button>
-                        <button onclick="openDeleteFolderModal('${folder.id}')" class="danger"><i class="fas fa-trash"></i> Delete Folder</button>
-                    ` : `<button onclick="openFolderReportModal('${folder.id}')" class="danger"><i class="fas fa-flag"></i> Report</button>`}
-                    ${isAdmin && !isOwner ? `<button onclick="openBanModal('${folder.author}',null,null,null)" class="danger"><i class="fas fa-ban"></i> Ban Creator</button>` : ''}
-                </div>
-            </div>
+// === FOLDER CARD ===
+function buildFC(f){
+  const el=document.createElement('div');
+  el.className='fcard au';
+  const mine=curUser&&curUser.username===f.author;
+  const admin=isAdmin();
+  const isOpen=!!openF[f.id];
+  const likes=Object.values(f.userReactions||{}).filter(r=>r==='like').length;
+  const dlikes=Object.values(f.userReactions||{}).filter(r=>r==='dislike').length;
+  const myR=curUser?(f.userReactions||{})[curUser.username]:null;
+  const cnt=(f.scripts||[]).length;
+  let scHtml='';
+  if(_fv==='server'||_fv==='local'){
+    const tp=_fv==='server'?'ServerScript':'LocalScript';
+    const flt=(f.scripts||[]).filter(s=>s.scriptType===tp);
+    scHtml=flt.length?flt.map(fs=>buildSC(fs,f.id,mine,admin)).join(''):`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;margin:0">No ${tp}s here.</p>`;
+  } else {
+    scHtml=cnt?(f.scripts||[]).map(fs=>buildSC(fs,f.id,mine,admin)).join(''):`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;margin:0">No scripts yet${mine?' — add one below!':'.'}</p>`;
+  }
+  el.innerHTML=`
+    <div class="fhd">
+      <button class="fchev${isOpen?' open':''}" onclick="tglF('${f.id}',this)"><i class="fas fa-chevron-right"></i></button>
+      <span style="font-size:20px">&#x1F4C1;</span>
+      <span class="ftitle">${esc(f.name)}</span>
+      <div style="position:relative;margin-left:auto">
+        <button class="dots-btn" onclick="tglM(event,'fdm-${f.id}')"><i class="fas fa-ellipsis-v"></i></button>
+        <div class="drop-menu" id="fdm-${f.id}" style="position:absolute;right:0;top:100%;min-width:170px">
+          ${mine?`<button onclick="openEditFolder('${f.id}')"><i class="fas fa-edit"></i>Edit Folder</button><div class="menu-sep"></div><button class="dng" onclick="openDel('folder','${f.id}',null)"><i class="fas fa-trash"></i>Delete Folder</button>`
+          :`<button class="dng" onclick="openRep('folder','${f.id}',null)"><i class="fas fa-flag"></i>Report</button>`}
+          ${admin&&!mine?`<button class="dng" onclick="openBan('${esc(f.author)}',null,null,null)"><i class="fas fa-ban"></i>Ban Creator</button>`:''}
         </div>
-        ${folder.desc ? `<div class="folder-desc-text">${escapeHTML(folder.desc)}</div>` : ''}
-        <div class="folder-meta">
-            <img src="${folder.authorPfp||''}" class="pfp-tiny"> ${escapeHTML(folder.author||'')}
-            ${(folder.author||'') === 'Tasin Redwan' ? '<span style="color:#f1c40f;">👑</span>' : ''}
-            <span>•</span> <span>${count} script${count !== 1 ? 's' : ''}</span>
-        </div>
-        <div class="folder-reactions">
-            <button class="btn-reaction${myFR==='like'?' active-like':''}" onclick="reactFolder('${folder.id}','like')"><i class="fas fa-thumbs-up"></i> ${fLikes}</button>
-            <button class="btn-reaction${myFR==='dislike'?' active-dislike':''}" onclick="reactFolder('${folder.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${fDislikes}</button>
-        </div>
-        <div class="folder-scripts-wrap${isOpen?' open':''}" id="fwrap-${folder.id}">
-            <div id="finner-${folder.id}" style="margin-top:10px;">${scriptsInner}</div>
-            ${isOwner ? `<div class="folder-add-script-area">
-                <button class="btn-script-type" onclick="openAddScriptModal('${folder.id}','ServerScript')"><i class="fas fa-plus"></i> ServerScript</button>
-                <button class="btn-script-type" onclick="openAddScriptModal('${folder.id}','LocalScript')"><i class="fas fa-plus"></i> LocalScript</button>
-            </div>` : ''}
-        </div>`;
-    return el;
-}
-
-function toggleFolder(id, btn) {
-    openFolders[id] = !openFolders[id];
-    btn.classList.toggle('open', openFolders[id]);
-    document.getElementById(`fwrap-${id}`).classList.toggle('open', openFolders[id]);
-}
-
-function buildFolderScriptCard(fs, folderId, isOwner, isAdmin) {
-    const bc = fs.scriptType === 'ServerScript' ? 'badge-server' : 'badge-local';
-    const notMine = !isOwner;
-    return `<div class="folder-script-card" id="fsc-${fs.id}">
-        <span class="script-type-badge ${bc}">${escapeHTML(fs.scriptType)}</span>
-        <div style="position:relative; float:right; display:inline-block;">
-            <button class="folder-card-options" onclick="toggleDropdown(event,'fsdrop-${fs.id}')"><i class="fas fa-ellipsis-v"></i></button>
-            <div class="dropdown-menu" id="dropdown-fsdrop-${fs.id}" style="right:0;">
-                <button onclick="copyFolderScript('${folderId}','${fs.id}')"><i class="fas fa-copy"></i> Copy Code</button>
-                <button onclick="openShareFolderScript('${folderId}','${fs.id}')"><i class="fas fa-share-alt"></i> Share</button>
-                ${isOwner ? `
-                    <button onclick="openEditFolderScriptModal('${folderId}','${fs.id}')"><i class="fas fa-edit"></i> Edit</button>
-                    <button onclick="openDeleteFolderScriptModal('${folderId}','${fs.id}')" class="danger"><i class="fas fa-trash"></i> Delete</button>
-                ` : ''}
-                ${notMine ? `<button onclick="openScriptReportModal('${folderId}','${fs.id}')" class="danger"><i class="fas fa-flag"></i> Report</button>` : ''}
-                ${isAdmin && notMine ? `<button onclick="openBanModal('${fs.author}',null,null,null)" class="danger"><i class="fas fa-ban"></i> Ban Author</button>` : ''}
-            </div>
-        </div>
-        <div class="folder-script-title">${escapeHTML(fs.title)}</div>
-        ${fs.desc ? `<div class="folder-script-desc">${escapeHTML(fs.desc)}</div>` : ''}
-        <pre class="line-numbers" style="margin-top:6px;"><code class="language-lua">${escapeHTML(fs.code)}</code></pre>
+      </div>
+    </div>
+    ${f.desc?`<div class="fdesc">${esc(f.desc)}</div>`:''}
+    <div class="fmeta">
+      <img src="${f.authorPfp||''}" class="pfp-xs" style="cursor:pointer;border:1px solid var(--border2)" onclick="openUserProfile('${esc(f.author)}')">
+      <span style="cursor:pointer;color:var(--accent);font-weight:500" onclick="openUserProfile('${esc(f.author)}')">${esc(f.author)}${f.author==='Tasin Redwan'?' &#x1F451;':''}</span>
+      <span>&#x2022;</span><span>${cnt} script${cnt!==1?'s':''}</span>
+      <span>&#x2022;</span><span>${fmtD(f.createdAt||Date.now())}</span>
+    </div>
+    <div class="frxns">
+      <button class="rbtn${myR==='like'?' lkd':''}" onclick="rxnF('${f.id}','like')"><i class="fas fa-thumbs-up"></i> ${likes}</button>
+      <button class="rbtn${myR==='dislike'?' dlkd':''}" onclick="rxnF('${f.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${dlikes}</button>
+    </div>
+    <div class="fbody${isOpen?' open':''}" id="fb-${f.id}">
+      <div id="fi-${f.id}">${scHtml}</div>
+      ${mine?`<div class="fadd-row">
+        <button class="sadd-btn" onclick="openSM('${f.id}','ServerScript')"><i class="fas fa-plus"></i>ServerScript</button>
+        <button class="sadd-btn" onclick="openSM('${f.id}','LocalScript')"><i class="fas fa-plus"></i>LocalScript</button>
+      </div>`:''}
     </div>`;
+  return el;
 }
 
-// STANDALONE SCRIPT CARD
-function buildScriptCard(s) {
-    const card = document.createElement('div');
-    card.className = 'card';
-    let likes = Object.values(s.userReactions).filter(r => r === 'like').length;
-    let dislikes = Object.values(s.userReactions).filter(r => r === 'dislike').length;
-    const total = likes + dislikes;
-    const ratio = total === 0 ? 0 : Math.round((likes / total) * 100);
-    const myR = currentUser ? s.userReactions[currentUser.username] : null;
-    const myRat = currentUser ? (s.userRatings[currentUser.username] || 0) : 0;
-    const isOwner = currentUser && currentUser.username === s.author;
-    let cc = 0; function countC(a) { cc += a.length; a.forEach(c => c.replies && countC(c.replies)); } countC(s.comments);
-    card.innerHTML = `
-        <h3>${escapeHTML(s.title)}</h3>
-        <span class="author-tag" style="font-size:11px; margin-bottom:10px; display:flex;">
-            <img src="${s.authorPfp}" class="pfp-tiny"> ${escapeHTML(s.author)}
-            ${s.author === "Tasin Redwan" ? '<span style="color:#f1c40f; margin-left:3px;">👑</span>' : ''}
-        </span>
-        <div class="card-options" onclick="toggleDropdown(event,'${s.id}')">
-            <i class="fas fa-ellipsis-v"></i>
-            <div class="dropdown-menu" id="dropdown-${s.id}">
-                <button onclick="fallbackCopy('${s.id}')"><i class="fas fa-copy"></i> Copy</button>
-                <button onclick="openShareScriptModal('${s.id}')"><i class="fas fa-share-alt"></i> Share</button>
-                ${isOwner ? `
-                    <button onclick="editLegacyScript('${s.id}')"><i class="fas fa-edit"></i> Edit</button>
-                    <button onclick="openDeleteModal('script','${s.id}',null)" class="danger"><i class="fas fa-trash"></i> Delete</button>
-                ` : ''}
-            </div>
-        </div>
-        <p class="desc">${escapeHTML(s.desc)}</p>
-        <pre class="line-numbers"><code class="language-lua">${escapeHTML(s.code)}</code></pre>
-        <div style="margin-top:14px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-            <button class="btn-reaction${myR==='like'?' active-like':''}" onclick="reactScript('${s.id}','like')"><i class="fas fa-thumbs-up"></i> ${likes}</button>
-            <button class="btn-reaction${myR==='dislike'?' active-dislike':''}" onclick="reactScript('${s.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${dislikes}</button>
-            <div class="rating-container">
-                <input type="range" min="0" max="10" value="${myRat}" class="rating-slider" onchange="rateScript('${s.id}',this.value)">
-                <span id="rv-${s.id}">${myRat}/10</span>
-            </div>
-        </div>
-        <div class="stats-text"><span>${ratio}% Liked</span><span>${cc} Comments</span></div>
-        <div class="comment-section">
-            <input class="comment-input" placeholder="Add a comment... (Enter)" onkeydown="addComment(event,'${s.id}')">
-            <div id="comments-${s.id}">${s.comments.map(c => renderComment(c, s.id)).join('')}</div>
-        </div>`;
-    return card;
+function tglF(id,btn){
+  openF[id]=!openF[id];
+  btn.classList.toggle('open',openF[id]);
+  document.getElementById('fb-'+id).classList.toggle('open',openF[id]);
 }
 
-function renderComment(c, scriptId, isReply = false) {
-    const myR = currentUser ? c.userReactions[currentUser.username] : null;
-    let cL = Object.values(c.userReactions).filter(r => r === 'like').length;
-    let cD = Object.values(c.userReactions).filter(r => r === 'dislike').length;
-    const isOwner = currentUser && currentUser.username === c.author;
-    const isAdmin = currentUser && currentUser.username === "Tasin Redwan";
-    let rHtml = '';
-    if (c.replies && c.replies.length > 0) {
-        rHtml = `<div id="replies-${c.id}" style="display:none;">${c.replies.map(r => renderComment(r, scriptId, true)).join('')}</div>
-        <button class="toggle-replies" onclick="toggleReplies('${c.id}')">View ${c.replies.length} Replies</button>`;
+// === SCRIPT CARD ===
+function buildSC(fs,fid,mine,admin){
+  const bc=fs.scriptType==='ServerScript'?'srv':'lcl';
+  const notMine=!mine;
+  return `<div class="scard" id="sc-${fs.id}">
+    <span class="sbadge ${bc}">${fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':'&#x1F4BB; LocalScript'}</span>
+    <div style="position:relative;float:right;display:inline-block">
+      <button class="sdots" onclick="tglM(event,'sdm-${fs.id}')"><i class="fas fa-ellipsis-v"></i></button>
+      <div class="drop-menu" id="sdm-${fs.id}" style="position:absolute;right:0;top:100%;min-width:155px">
+        <button onclick="copyCode('${fid}','${fs.id}')"><i class="fas fa-copy"></i>Copy Code</button>
+        <button onclick="openShr('${fid}','${fs.id}')"><i class="fas fa-share-alt"></i>Share</button>
+        ${mine?`<div class="menu-sep"></div><button onclick="openEditSM('${fid}','${fs.id}')"><i class="fas fa-edit"></i>Edit</button><button class="dng" onclick="openDel('script','${fid}','${fs.id}')"><i class="fas fa-trash"></i>Delete</button>`:''}
+        ${notMine?`<div class="menu-sep"></div><button class="dng" onclick="openRep('script','${fid}','${fs.id}')"><i class="fas fa-flag"></i>Report</button>`:''}
+        ${admin&&notMine?`<button class="dng" onclick="openBan('${esc(fs.author)}',null,null,null)"><i class="fas fa-ban"></i>Ban Author</button>`:''}
+      </div>
+    </div>
+    <div class="stitle">${esc(fs.title)}</div>
+    ${fs.desc?`<div class="sdesc">${esc(fs.desc)}</div>`:''}
+    <pre class="line-numbers"><code class="language-lua">${esc(fs.code)}</code></pre>
+  </div>`;
+}
+
+// === THREE DOT ===
+function tglM(e,id){
+  e.stopPropagation();
+  const m=document.getElementById(id);
+  document.querySelectorAll('.drop-menu.open').forEach(x=>{if(x!==m)x.classList.remove('open');});
+  m&&m.classList.toggle('open');
+}
+
+// === FOLDER REACTIONS ===
+function rxnF(fid,type){
+  if(!curUser)return toast("Login first!",'err');
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  if(!f.userReactions)f.userReactions={};
+  if(f.userReactions[curUser.username]===type)delete f.userReactions[curUser.username];
+  else f.userReactions[curUser.username]=type;
+  sv('folders');renderAll();
+}
+
+// === COPY / SHARE ===
+function copyCode(fid,sid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
+  navigator.clipboard.writeText(fs.code).then(()=>toast("Code copied!"));
+}
+function openShr(fid,sid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
+  const enc=btoa(unescape(encodeURIComponent(JSON.stringify({t:fs.title,d:fs.desc,c:fs.code,a:fs.author,p:fs.authorPfp,id:fs.id,st:fs.scriptType}))));
+  document.getElementById('shrLink').value=`${location.origin}${location.pathname}?share=${enc}`;
+  openM('shrModal');
+}
+function copyShrLink(){navigator.clipboard.writeText(document.getElementById('shrLink').value).then(()=>toast("Link copied!"));}
+function chkShare(){
+  const p=new URLSearchParams(location.search);
+  const s=p.get('share');if(!s)return;
+  try{
+    const o=JSON.parse(decodeURIComponent(escape(atob(s))));
+    let imp=D.folders.find(f=>f.id==='f_imp');
+    if(!imp){imp={id:'f_imp',name:'Imported Scripts',desc:'Shared from other users',author:'System',authorPfp:'https://api.dicebear.com/7.x/pixel-art/svg?seed=sys',scripts:[],userReactions:{},createdAt:Date.now()};D.folders.unshift(imp);}
+    if(!imp.scripts.some(x=>x.id===o.id)){imp.scripts.push({id:o.id,title:o.t,desc:o.d||'',code:o.c,scriptType:o.st||'ServerScript',author:o.a,authorPfp:o.p,userReactions:{},userRatings:{}});openF['f_imp']=true;sv('folders');toast("Script imported!",'inf');}
+  }catch(e){}
+  history.replaceState({},'',location.pathname);
+}
+
+// === CREATE / EDIT FOLDER ===
+function openNewFolder(){if(!curUser)return toast("Login first!",'err');document.getElementById('nfName').value='';document.getElementById('nfDesc').value='';openM('newFolderModal');}
+function doCreateFolder(){
+  const nm=document.getElementById('nfName').value.trim();
+  if(!nm)return toast("Folder name required!",'err');
+  const f={id:uid(),name:nm,desc:document.getElementById('nfDesc').value.trim(),author:curUser.username,authorPfp:curUser.pfp,scripts:[],userReactions:{},createdAt:Date.now()};
+  D.folders.unshift(f);openF[f.id]=true;sv('folders');closeM('newFolderModal');renderAll();toast("Folder created!");
+}
+function openEditFolder(fid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  document.getElementById('efId').value=fid;document.getElementById('efName').value=f.name;document.getElementById('efDesc').value=f.desc||'';openM('editFolderModal');
+}
+function doEditFolder(){
+  const id=document.getElementById('efId').value;
+  const nm=document.getElementById('efName').value.trim();
+  if(!nm)return toast("Name required!",'err');
+  const f=D.folders.find(f=>f.id===id);if(!f)return;
+  f.name=nm;f.desc=document.getElementById('efDesc').value.trim();sv('folders');closeM('editFolderModal');renderAll();toast("Folder updated!");
+}
+
+// === SCRIPT MODAL ===
+function openSM(fid,preType){
+  if(!curUser)return toast("Login first!",'err');
+  document.getElementById('smFid').value=fid;document.getElementById('smSid').value='';document.getElementById('smType').value='';
+  document.getElementById('smTitle').textContent='Add Script';
+  document.getElementById('smS1').style.display='block';document.getElementById('smS2').style.display='none';
+  ['smSTitle','smSDesc'].forEach(id=>document.getElementById(id).value='');
+  if(_sme){_sme.toTextArea();_sme=null;}
+  openM('scriptModal');
+  if(preType)setTimeout(()=>smChoose(preType),40);
+}
+function smChoose(type){
+  document.getElementById('smType').value=type;
+  document.getElementById('smS1').style.display='none';document.getElementById('smS2').style.display='block';
+  document.getElementById('smBack').style.display='';
+  const bc=type==='ServerScript'?'srv':'lcl';
+  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc}">${type==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':'&#x1F4BB; LocalScript'}</span>`;
+  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua'});},60);
+}
+function smGoBack(){document.getElementById('smS1').style.display='block';document.getElementById('smS2').style.display='none';if(_sme){_sme.toTextArea();_sme=null;}}
+function openEditSM(fid,sid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
+  document.getElementById('smFid').value=fid;document.getElementById('smSid').value=sid;document.getElementById('smType').value=fs.scriptType;
+  document.getElementById('smTitle').textContent='Edit Script';
+  document.getElementById('smS1').style.display='none';document.getElementById('smS2').style.display='block';
+  document.getElementById('smBack').style.display='none';
+  const bc=fs.scriptType==='ServerScript'?'srv':'lcl';
+  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc}">${fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':'&#x1F4BB; LocalScript'}</span>`;
+  document.getElementById('smSTitle').value=fs.title;document.getElementById('smSDesc').value=fs.desc||'';document.getElementById('smSCode').value=fs.code;
+  openM('scriptModal');
+  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua'});_sme.setValue(fs.code);},60);
+}
+function closeScriptModal(){if(_sme){_sme.toTextArea();_sme=null;}closeM('scriptModal');}
+function doSaveScript(){
+  const fid=document.getElementById('smFid').value,sid=document.getElementById('smSid').value,type=document.getElementById('smType').value;
+  const title=document.getElementById('smSTitle').value.trim(),desc=document.getElementById('smSDesc').value.trim();
+  const code=_sme?_sme.getValue():'';
+  if(!title||!code)return toast("Title and Code required!",'err');
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  if(sid){const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;fs.title=title;fs.desc=desc;fs.code=code;toast("Script updated!");}
+  else{f.scripts.push({id:uid(),title,desc,code,scriptType:type,author:curUser.username,authorPfp:curUser.pfp,userReactions:{},userRatings:{}});toast("Script added!");}
+  sv('folders');if(_sme){_sme.toTextArea();_sme=null;}closeM('scriptModal');renderAll();
+}
+
+// === DELETE ===
+function openDel(type,id1,id2){
+  const t={folder:'Delete Folder?',script:'Delete Script?'};
+  const s={folder:'This will permanently delete the folder and all its scripts.',script:'This script will be permanently removed.'};
+  document.getElementById('delTitle').textContent=t[type]||'Delete?';
+  document.getElementById('delSub').textContent=s[type]||'This cannot be undone.';
+  openM('delModal');
+  document.getElementById('delOk').onclick=()=>{
+    if(type==='folder'){D.folders=D.folders.filter(f=>f.id!==id1);delete openF[id1];sv('folders');}
+    else if(type==='script'){const f=D.folders.find(f=>f.id===id1);if(f){f.scripts=f.scripts.filter(s=>s.id!==id2);sv('folders');}}
+    closeM('delModal');renderAll();toast("Deleted!");
+  };
+}
+
+// === REPORT ===
+function openRep(type,id1,id2){
+  if(!curUser)return toast("Login first!",'err');
+  let ctx='';
+  if(type==='folder'){const f=D.folders.find(f=>f.id===id1);ctx=f?`Folder: "${esc(f.name)}" by ${esc(f.author)}`:''}
+  else{const f=D.folders.find(f=>f.id===id1);const fs=f&&f.scripts.find(s=>s.id===id2);ctx=fs?`Script: "${esc(fs.title)}" by ${esc(fs.author)}`:''}
+  document.getElementById('repTitle').textContent=`\u{1F6A9} Report ${type.charAt(0).toUpperCase()+type.slice(1)}`;
+  document.getElementById('repCtx').textContent=ctx;document.getElementById('repReason').value='';
+  document.getElementById('repOk').onclick=()=>{
+    const reason=document.getElementById('repReason').value.trim();
+    if(!reason)return toast("Reason required!",'err');
+    let ru='',inm='';
+    if(type==='folder'){const f=D.folders.find(f=>f.id===id1);if(!f)return;ru=f.author;inm=f.name;}
+    else{const f=D.folders.find(f=>f.id===id1);const fs=f&&f.scripts.find(s=>s.id===id2);if(!fs)return;ru=fs.author;inm=fs.title;}
+    D.reports.push({type,id1,id2,reporter:curUser.username,reportedUser:ru,reason,itemName:inm,ts:Date.now()});
+    sv('reports');closeM('repModal');toast("Reported!",'inf');
+  };
+  openM('repModal');
+}
+
+// === BAN ===
+function openBan(username,rRef,_a,_b){
+  document.getElementById('banCtx').textContent=`You are about to ban: ${username}`;
+  document.getElementById('banDays').value='';document.getElementById('banReason').value='';
+  openM('banModal');
+  document.getElementById('banOk').onclick=()=>{
+    const days=document.getElementById('banDays').value,reason=document.getElementById('banReason').value.trim();
+    if(!days||!reason)return toast("Fill all fields!",'err');
+    if(!D.banned.includes(username)){
+      D.banned.push(username);D.warnings[username]=(D.warnings[username]||0)+1;
+      sv('banned');sv('warnings');
+      const lvl=D.warnings[username];
+      toast(lvl>=10?`${username} permanently banned!`:`${username} banned for ${days} days (Warn ${lvl}/10)`,'err');
     }
-    return `<div class="comment-item${isReply?' reply-item':''}" id="c-${c.id}">
-        <span class="author-tag"><img src="${c.authorPfp}" class="pfp-tiny"> ${escapeHTML(c.author)}${c.author==="Tasin Redwan"?'<span style="color:#f1c40f;">👑</span>':''}${c.edited?'<span class="edited-tag">(edited)</span>':''}</span>
-        <div class="comment-text">${escapeHTML(c.text)}</div>
-        <div class="comment-options" onclick="toggleDropdown(event,'${c.id}')"><i class="fas fa-ellipsis-v"></i>
-            <div class="dropdown-menu" id="dropdown-${c.id}">
-                ${isOwner ? `<button onclick="openCommentEditModal('${scriptId}','${c.id}')"><i class="fas fa-edit"></i> Edit</button>
-                    <button onclick="openDeleteModal('comment','${scriptId}','${c.id}')" class="danger"><i class="fas fa-trash"></i> Delete</button>`
-                : `<button onclick="openCommentReportModal('${scriptId}','${c.id}')" class="danger"><i class="fas fa-flag"></i> Report</button>`}
-                ${isAdmin&&!isOwner?`<button onclick="openBanModal('${c.author}',null,'${scriptId}','${c.id}')" class="danger"><i class="fas fa-ban"></i> Ban</button>`:''}
-            </div>
-        </div>
-        <div class="comment-actions">
-            <button class="btn-reaction${myR==='like'?' active-like':''}" onclick="reactComment('${scriptId}','${c.id}','like')"><i class="fas fa-thumbs-up"></i> ${cL}</button>
-            <button class="btn-reaction${myR==='dislike'?' active-dislike':''}" onclick="reactComment('${scriptId}','${c.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${cD}</button>
-            <button class="btn-reaction" onclick="openCommentReplyModal('${scriptId}','${c.id}')"><i class="fas fa-reply"></i> Reply</button>
-        </div>${rHtml}</div>`;
+    if(rRef)dismissRep(rRef.i);
+    closeM('banModal');renderHdr();renderAll();
+    if(document.getElementById('adminModal').classList.contains('show'))showAdmin();
+  };
 }
-function toggleReplies(id) {
-    const d = document.getElementById(`replies-${id}`); const b = d.nextElementSibling;
-    const h = d.style.display === 'none'; d.style.display = h ? 'block' : 'none';
-    b.innerText = h ? 'Hide Replies' : `View ${d.children.length} Replies`;
+function unban(u){
+  D.banned=D.banned.filter(x=>x!==u);sv('banned');
+  D.unrep.push(u);WS('unrep',D.unrep);
+  toast(`${u} unbanned!`,'wrn');showAdmin();renderHdr();
 }
 
-// ════════════════════════════════════
-// FOLDER REACTIONS
-// ════════════════════════════════════
-function reactFolder(folderId, type) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const f = folders.find(f => f.id === folderId);
-    if (!f) return;
-    if (!f.userReactions) f.userReactions = {};
-    if (f.userReactions[currentUser.username] === type) delete f.userReactions[currentUser.username];
-    else f.userReactions[currentUser.username] = type;
-    localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-    renderScripts();
+// === ADMIN ===
+function openAdmin(){openM('adminModal');showAdmin();}
+function adminTab(t){
+  admTab=t;
+  document.getElementById('tabRep').classList.toggle('act',t==='reports');
+  document.getElementById('tabBan').classList.toggle('act',t==='bans');
+  showAdmin();
+}
+function dismissRep(i){D.reports.splice(Number(i),1);sv('reports');showAdmin();}
+function showAdmin(){
+  const a=document.getElementById('adminArea');
+  if(admTab==='reports'){
+    if(!D.reports.length){a.innerHTML=`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;padding:10px 0">No reports yet.</p>`;return;}
+    a.innerHTML=`<table class="atbl">
+      <tr><th>Type</th><th>User</th><th>Details</th><th></th></tr>
+      ${D.reports.map((r,i)=>`<tr>
+        <td><span class="rbdg ${r.type==='folder'?'bf':'bs'}">${r.type}</span></td>
+        <td style="font-family:'Fredoka One',cursive;font-size:13px">${esc(r.reportedUser)}</td>
+        <td><b style="font-size:11px">${esc(r.reason)}</b><div class="rprev">${esc(r.itemName||'')}</div></td>
+        <td style="white-space:nowrap">
+          <button class="rbtn" style="background:var(--red);color:white;border-color:var(--red);padding:3px 8px;font-size:10px;margin-bottom:3px" onclick="openBan('${esc(r.reportedUser)}',{i:${i}},null,null)">Ban</button><br>
+          <button class="rbtn" style="padding:3px 8px;font-size:10px" onclick="dismissRep(${i})">&#x2715;</button>
+        </td>
+      </tr>`).join('')}
+    </table>`;
+  } else {
+    if(!D.banned.length){a.innerHTML=`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;padding:10px 0">No banned users.</p>`;return;}
+    a.innerHTML=`<table class="atbl">
+      <tr><th>Username</th><th>Warnings</th><th></th></tr>
+      ${D.banned.map(u=>`<tr>
+        <td style="font-family:'Fredoka One',cursive;font-size:13px">${esc(u)}</td>
+        <td style="color:var(--red);font-weight:700">&#x26A0; ${D.warnings[u]||1}/10</td>
+        <td><button class="rbtn" style="background:var(--green);color:white;border-color:var(--green);padding:3px 8px;font-size:10px" onclick="unban('${u}')">Unban</button></td>
+      </tr>`).join('')}
+    </table>`;
+  }
 }
 
-// ════════════════════════════════════
-// DROPDOWN
-// ════════════════════════════════════
-function toggleDropdown(e, id) {
-    e.stopPropagation();
-    const m = document.getElementById(`dropdown-${id}`);
-    document.querySelectorAll('.dropdown-menu').forEach(x => { if (x !== m) x.classList.remove('show'); });
-    if (m) m.classList.toggle('show');
+// === USER PROFILE ===
+function openUserProfile(username){
+  const u=D.users[username];if(!u)return;
+  document.getElementById('um-av').src=u.pfp||'';
+  document.getElementById('um-nm').textContent=username;
+  document.getElementById('um-own').style.display=username==='Tasin Redwan'?'block':'none';
+  document.getElementById('um-join').textContent=`Joined ${fmtD(u.joinedAt||Date.now())}`;
+  const bel=getBeloved(username);
+  const bEl=document.getElementById('um-bel');
+  if(bel){bEl.style.display='block';document.getElementById('um-bel-nm').textContent=bel.title;}else bEl.style.display='none';
+  const uf=D.folders.filter(f=>f.author===username);
+  const fa=document.getElementById('um-folders');
+  if(uf.length){
+    fa.innerHTML=`<div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="fas fa-folder" style="color:var(--accent)"></i>Folders (${uf.length})</div>`;
+    uf.forEach(f=>{fa.innerHTML+=`<div class="uf-item"><div class="uf-nm">&#x1F4C1; ${esc(f.name)}</div><div class="uf-ct">${(f.scripts||[]).length} scripts${f.desc?' &bull; '+esc(f.desc.substring(0,40)):''}<span style="color:rgba(91,142,240,0.5);margin-left:8px">&#x1F44D; ${Object.values(f.userReactions||{}).filter(r=>r==='like').length}</span></div></div>`;});
+  } else {
+    fa.innerHTML=`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;text-align:center;margin-top:10px">No folders yet.</p>`;
+  }
+  openM('userModal');
 }
 
-// ════════════════════════════════════
-// COPY / SHARE
-// ════════════════════════════════════
-function fallbackCopy(sid) { const s = scripts.find(s => s.id === sid); if (s) navigator.clipboard.writeText(s.code).then(() => showToast("Code copied!")); }
-function copyFolderScript(fid, sid) { const f = folders.find(f => f.id === fid); if (!f) return; const fs = f.scripts.find(s => s.id === sid); if (fs) navigator.clipboard.writeText(fs.code).then(() => showToast("Code copied!")); }
-function openShareScriptModal(sid) {
-    const s = scripts.find(s => s.id === sid); if (!s) return;
-    const enc = btoa(unescape(encodeURIComponent(JSON.stringify({t:s.title,d:s.desc,c:s.code,a:s.author,p:s.authorPfp,id:s.id}))));
-    document.getElementById('shareLinkInput').value = `${location.origin}${location.pathname}?data=${enc}`;
-    openModal('shareModal');
-}
-function openShareFolderScript(fid, sid) {
-    const f = folders.find(f => f.id === fid); if (!f) return;
-    const fs = f.scripts.find(s => s.id === sid); if (!fs) return;
-    const enc = btoa(unescape(encodeURIComponent(JSON.stringify({t:fs.title,d:fs.desc,c:fs.code,a:fs.author,p:fs.authorPfp,id:fs.id,st:fs.scriptType}))));
-    document.getElementById('shareLinkInput').value = `${location.origin}${location.pathname}?share=${enc}`;
-    openModal('shareModal');
-}
-function copyShareLink() { navigator.clipboard.writeText(document.getElementById('shareLinkInput').value).then(() => showToast("Link copied!")); }
-function checkIncomingShare() {
-    const p = new URLSearchParams(location.search);
-    const d = p.get('data'), s = p.get('share');
-    if (d) {
-        try {
-            const o = JSON.parse(decodeURIComponent(escape(atob(d))));
-            if (!scripts.some(x => x.id === o.id)) { scripts.unshift({id:o.id,title:o.t,desc:o.d,code:o.c,author:o.a,authorPfp:o.p,userReactions:{},userRatings:{},comments:[]}); localStorage.setItem('lua_hub_data', JSON.stringify(scripts)); showToast("Script imported!"); }
-        } catch(e){}
-        history.replaceState({}, '', location.pathname);
-    }
-    if (s) {
-        try {
-            const o = JSON.parse(decodeURIComponent(escape(atob(s))));
-            let imp = folders.find(f => f.id === 'f_import');
-            if (!imp) { imp = {id:'f_import',name:'Imported Scripts',desc:'Shared scripts from other users',author:'System',authorPfp:'',scripts:[],userReactions:{}}; folders.unshift(imp); }
-            if (!imp.scripts.some(x => x.id === o.id)) { imp.scripts.push({id:o.id,title:o.t,desc:o.d||'',code:o.c,scriptType:o.st||'ServerScript',author:o.a,authorPfp:o.p,userReactions:{},userRatings:{}}); openFolders['f_import']=true; localStorage.setItem('lua_hub_folders', JSON.stringify(folders)); showToast("Script imported into 'Imported Scripts'!"); }
-        } catch(e){}
-        history.replaceState({}, '', location.pathname);
-    }
+// === CHANGE NAME ===
+function openChgName(){document.getElementById('newName').value=curUser?curUser.username:'';openM('chgNameModal');}
+function doChgName(){
+  const n=document.getElementById('newName').value.trim();
+  if(!n)return toast("Name required",'err');
+  if(n===curUser.username)return closeM('chgNameModal');
+  if(D.users[n])return toast("Username taken!",'err');
+  const old=curUser.username;
+  D.users[n]={...D.users[old],username:n};delete D.users[old];sv('users');
+  curUser.username=n;localStorage.setItem('lh_session',JSON.stringify(curUser));
+  D.folders.forEach(f=>{if(f.author===old)f.author=n;(f.scripts||[]).forEach(fs=>{if(fs.author===old)fs.author=n;});});
+  sv('folders');if(D.warnings[old]){D.warnings[n]=D.warnings[old];delete D.warnings[old];sv('warnings');}
+  closeM('chgNameModal');updPP();renderAll();renderHdr();toast("Username updated!");
 }
 
-// ════════════════════════════════════
-// EDIT FOLDER
-// ════════════════════════════════════
-function openEditFolderModal(fid) {
-    const f = folders.find(f => f.id === fid); if (!f) return;
-    document.getElementById('editFolderId').value = fid;
-    document.getElementById('editFolderName').value = f.name;
-    document.getElementById('editFolderDesc').value = f.desc || '';
-    openModal('editFolderModal');
+// === AUTH ===
+function openAuthM(){authMode='login';updAuth();openM('authModal');}
+function tglAuth(){authMode=authMode==='login'?'register':'login';updAuth();}
+function updAuth(){
+  const l=authMode==='login';
+  document.getElementById('authTitle').textContent=l?'Welcome Back':'Create Account';
+  document.getElementById('authSub').textContent=l?'Sign in to share your Roblox scripts.':'Join LuaHub and start sharing!';
+  document.getElementById('authSubmit').textContent=l?'Login':'Create Account';
+  document.getElementById('authTog').innerHTML=l?"Don't have an account? <span>Sign Up</span>":"Already have an account? <span>Login</span>";
+  document.getElementById('authPfpRow').style.display=l?'none':'block';
 }
-function submitEditFolder() {
-    const id = document.getElementById('editFolderId').value;
-    const name = document.getElementById('editFolderName').value.trim();
-    const desc = document.getElementById('editFolderDesc').value.trim();
-    if (!name) return showToast("Name required!", 'ban');
-    const f = folders.find(f => f.id === id); if (!f) return;
-    f.name = name; f.desc = desc;
-    localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-    closeModal('editFolderModal'); renderScripts(); showToast("Folder updated!");
+function selPfp(el,seed){
+  document.querySelectorAll('.pfp-opt').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');selPfpSeed=seed;
 }
-
-// ════════════════════════════════════
-// EDIT FOLDER SCRIPT
-// ════════════════════════════════════
-let _editFsEditor = null;
-function openEditFolderScriptModal(fid, sid) {
-    const f = folders.find(f => f.id === fid); if (!f) return;
-    const fs = f.scripts.find(s => s.id === sid); if (!fs) return;
-    document.getElementById('editFsId').value = sid;
-    document.getElementById('editFsFolderId').value = fid;
-    document.getElementById('editFsTitle').value = fs.title;
-    document.getElementById('editFsDesc').value = fs.desc || '';
-    document.getElementById('editFsCode').value = fs.code;
-    const bc = fs.scriptType === 'ServerScript' ? 'badge-server' : 'badge-local';
-    document.getElementById('editFsBadgeArea').innerHTML = `<span class="script-type-badge ${bc}">${escapeHTML(fs.scriptType)}</span>`;
-    openModal('editFolderScriptModal');
-    setTimeout(() => {
-        if (_editFsEditor) { _editFsEditor.toTextArea(); _editFsEditor = null; }
-        _editFsEditor = CodeMirror.fromTextArea(document.getElementById('editFsCode'), {lineNumbers:true, theme:'dracula', mode:'lua'});
-        _editFsEditor.setValue(fs.code);
-    }, 80);
-}
-function closeEditFolderScriptModal() {
-    if (_editFsEditor) { _editFsEditor.toTextArea(); _editFsEditor = null; }
-    closeModal('editFolderScriptModal');
-}
-function submitEditFolderScript() {
-    const fid = document.getElementById('editFsFolderId').value;
-    const sid = document.getElementById('editFsId').value;
-    const title = document.getElementById('editFsTitle').value.trim();
-    const desc = document.getElementById('editFsDesc').value.trim();
-    const code = _editFsEditor ? _editFsEditor.getValue() : '';
-    if (!title || !code) return showToast("Title and Code required!", 'ban');
-    const f = folders.find(f => f.id === fid); if (!f) return;
-    const fs = f.scripts.find(s => s.id === sid); if (!fs) return;
-    fs.title = title; fs.desc = desc; fs.code = code;
-    localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-    closeEditFolderScriptModal(); renderScripts(); showToast("Script updated!");
+function doAuth(){
+  const u=document.getElementById('authUser').value.trim(),p=document.getElementById('authPass').value;
+  if(!u||!p)return toast("All fields required",'err');
+  if(authMode==='register'){
+    if(D.users[u])return toast("Username taken!",'err');
+    D.users[u]={username:u,password:p,pfp:`https://api.dicebear.com/7.x/pixel-art/svg?${selPfpSeed}`,joinedAt:Date.now()};
+    sv('users');toast("Account created! Please login.");authMode='login';updAuth();
+  } else {
+    if(D.banned.includes(u))return toast("Account is banned!",'err');
+    const usr=D.users[u];
+    if(usr&&usr.password===p){curUser=usr;localStorage.setItem('lh_session',JSON.stringify(curUser));closeM('authModal');renderHdr();renderAll();toast("Welcome back!");}
+    else toast("Wrong credentials",'err');
+  }
 }
 
-// ════════════════════════════════════
-// FOLDER CRUD
-// ════════════════════════════════════
-function openFolderModal() {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    document.getElementById('folderNameInput').value = '';
-    document.getElementById('folderDescInput').value = '';
-    openModal('folderModal');
+// === OAUTH ===
+let _oauthP='';
+function oauthLogin(p){
+  _oauthP=p;selPfpSeed='seed=10';
+  const icons={github:'<img src="https://api.iconify.design/mdi:github.svg?color=%23ffffff" style="width:36px">',google:'<img src="https://api.iconify.design/flat-color-icons:google.svg" style="width:36px">',apple:'<img src="https://api.iconify.design/ic:baseline-apple.svg?color=%23ffffff" style="width:36px">'};
+  document.getElementById('oiIcon').innerHTML=icons[p]||'&#x1F510;';
+  document.getElementById('oiTitle').textContent='Connecting...';
+  document.getElementById('oiSub').innerHTML=`Completing sign-in via <b>${p.charAt(0).toUpperCase()+p.slice(1)}</b>`;
+  document.getElementById('oiSpinner').style.display='block';
+  document.getElementById('oiStep2').style.display='none';
+  document.getElementById('oiUser').value='';
+  closeM('authModal');openM('oauthModal');
+  setTimeout(()=>{
+    document.getElementById('oiSpinner').style.display='none';
+    document.getElementById('oiTitle').textContent='Almost there!';
+    document.getElementById('oiSub').textContent='Choose your LuaHub username';
+    document.getElementById('oiStep2').style.display='block';
+    // re-add pfp sel listeners
+    document.querySelectorAll('#oiPfpRow .pfp-opt').forEach((el,i)=>{
+      el.onclick=()=>selPfp(el,'seed='+(10+i));
+    });
+  },1600);
 }
-function submitCreateFolder() {
-    const name = document.getElementById('folderNameInput').value.trim();
-    const desc = document.getElementById('folderDescInput').value.trim();
-    if (!name) return showToast("Folder name required!", 'ban');
-    const f = {id:'f'+Date.now(), name, desc, author:currentUser.username, authorPfp:currentUser.pfp, scripts:[], userReactions:{}};
-    folders.unshift(f); openFolders[f.id] = true;
-    localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-    closeModal('folderModal'); renderScripts(); showToast("Folder created!");
+function finishOauth(){
+  const u=document.getElementById('oiUser').value.trim();
+  if(!u)return toast("Username required",'err');
+  if(D.users[u])return toast("Username taken!",'err');
+  D.users[u]={username:u,password:uid(),pfp:`https://api.dicebear.com/7.x/pixel-art/svg?${selPfpSeed}`,joinedAt:Date.now(),provider:_oauthP};
+  sv('users');curUser=D.users[u];localStorage.setItem('lh_session',JSON.stringify(curUser));
+  closeM('oauthModal');renderHdr();renderAll();toast(`Signed in with ${_oauthP.charAt(0).toUpperCase()+_oauthP.slice(1)}!`,'inf');
 }
-function openDeleteFolderModal(fid) {
-    document.getElementById('deleteModalTitle').innerText = 'Delete Folder?';
-    document.getElementById('deleteModalText').innerText = 'This will permanently delete the folder and all its scripts.';
-    openModal('deleteModal');
-    document.getElementById('deleteModalConfirm').onclick = () => {
-        folders = folders.filter(f => f.id !== fid); delete openFolders[fid];
-        localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-        closeModal('deleteModal'); renderScripts(); showToast("Folder deleted!");
-    };
-}
-function openDeleteFolderScriptModal(fid, sid) {
-    document.getElementById('deleteModalTitle').innerText = 'Delete Script?';
-    document.getElementById('deleteModalText').innerText = 'This script will be permanently removed.';
-    openModal('deleteModal');
-    document.getElementById('deleteModalConfirm').onclick = () => {
-        const f = folders.find(f => f.id === fid);
-        if (f) { f.scripts = f.scripts.filter(s => s.id !== sid); localStorage.setItem('lua_hub_folders', JSON.stringify(folders)); }
-        closeModal('deleteModal'); renderScripts(); showToast("Script deleted!");
-    };
-}
+function logout(){curUser=null;localStorage.removeItem('lh_session');document.getElementById('pp').classList.remove('show');renderHdr();renderAll();}
 
-// ════════════════════════════════════
-// ADD SCRIPT
-// ════════════════════════════════════
-let _addFid = null, _addType = null, _addEditor = null;
-function openAddScriptModal(fid, scriptType) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    _addFid = fid;
-    ['folderScriptTitle','folderScriptDesc'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('addScriptStep1').style.display = 'block';
-    document.getElementById('addScriptStep2').style.display = 'none';
-    openModal('addScriptModal');
-    if (scriptType) setTimeout(() => chooseScriptType(scriptType), 50);
-}
-function chooseScriptType(type) {
-    _addType = type;
-    document.getElementById('addScriptStep1').style.display = 'none';
-    document.getElementById('addScriptStep2').style.display = 'block';
-    const bc = type === 'ServerScript' ? 'badge-server' : 'badge-local';
-    document.getElementById('chosenTypeBadgeArea').innerHTML = `<span class="script-type-badge ${bc}">${type}</span>`;
-    setTimeout(() => {
-        if (_addEditor) { _addEditor.toTextArea(); _addEditor = null; }
-        _addEditor = CodeMirror.fromTextArea(document.getElementById('folderScriptCode'), {lineNumbers:true, theme:'dracula', mode:'lua'});
-    }, 80);
-}
-function backToScriptTypeChoice() {
-    document.getElementById('addScriptStep1').style.display = 'block';
-    document.getElementById('addScriptStep2').style.display = 'none';
-    if (_addEditor) { _addEditor.toTextArea(); _addEditor = null; }
-}
-function closeAddScriptModal() {
-    if (_addEditor) { _addEditor.toTextArea(); _addEditor = null; }
-    closeModal('addScriptModal');
-}
-function submitAddScriptToFolder() {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const title = document.getElementById('folderScriptTitle').value.trim();
-    const desc = document.getElementById('folderScriptDesc').value.trim();
-    const code = _addEditor ? _addEditor.getValue() : '';
-    if (!title || !code) return showToast("Title and Code required!", 'ban');
-    const f = folders.find(f => f.id === _addFid); if (!f) return;
-    f.scripts.push({id:'fs'+Date.now(), title, desc, code, scriptType:_addType, author:currentUser.username, authorPfp:currentUser.pfp, userReactions:{}, userRatings:{}});
-    localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
-    closeAddScriptModal(); renderScripts(); showToast("Script added!");
-}
-
-// ════════════════════════════════════
-// REPORT SYSTEM
-// ════════════════════════════════════
-function openFolderReportModal(fid) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const f = folders.find(f => f.id === fid); if (!f) return;
-    document.getElementById('reportModalTitle').innerText = '🚩 Report Folder';
-    document.getElementById('reportModalContext').innerText = `"${f.name}" by ${f.author}`;
-    document.getElementById('reportReason').value = '';
-    document.getElementById('reportSubmitBtn').onclick = () => {
-        const reason = document.getElementById('reportReason').value.trim();
-        if (!reason) return showToast("Reason required!", 'ban');
-        folderReports.push({type:'folder', folderId:fid, scriptId:null, reporter:currentUser.username, reportedUser:f.author, reason, itemName:f.name, ts:Date.now()});
-        localStorage.setItem('lua_hub_folder_reports', JSON.stringify(folderReports));
-        closeModal('reportModal'); showToast("Folder reported!", 'info');
-    };
-    openModal('reportModal');
-}
-function openScriptReportModal(fid, sid) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const f = folders.find(f => f.id === fid); if (!f) return;
-    const fs = f.scripts.find(s => s.id === sid); if (!fs) return;
-    document.getElementById('reportModalTitle').innerText = '🚩 Report Script';
-    document.getElementById('reportModalContext').innerText = `"${fs.title}" by ${fs.author}`;
-    document.getElementById('reportReason').value = '';
-    document.getElementById('reportSubmitBtn').onclick = () => {
-        const reason = document.getElementById('reportReason').value.trim();
-        if (!reason) return showToast("Reason required!", 'ban');
-        folderReports.push({type:'script', folderId:fid, scriptId:sid, reporter:currentUser.username, reportedUser:fs.author, reason, itemName:fs.title, ts:Date.now()});
-        localStorage.setItem('lua_hub_folder_reports', JSON.stringify(folderReports));
-        closeModal('reportModal'); showToast("Script reported!", 'info');
-    };
-    openModal('reportModal');
-}
-function openCommentReportModal(scriptId, commentId) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const s = scripts.find(s => s.id === scriptId);
-    const findC = (arr) => { for (let c of arr) { if (c.id === commentId) return c; let r = findC(c.replies); if (r) return r; } };
-    const c = s ? findC(s.comments) : null;
-    document.getElementById('reportModalTitle').innerText = '🚩 Report Comment';
-    document.getElementById('reportModalContext').innerText = c ? `By ${c.author}: "${c.text.substring(0,50)}${c.text.length>50?'...':''}"` : '';
-    document.getElementById('reportReason').value = '';
-    document.getElementById('reportSubmitBtn').onclick = () => {
-        const reason = document.getElementById('reportReason').value.trim();
-        if (!reason) return showToast("Reason required!", 'ban');
-        if (!c) return;
-        reportedComments.push({reporter:currentUser.username, reportedUser:c.author, reason, commentText:c.text, scriptId, commentId});
-        localStorage.setItem('lua_hub_reports', JSON.stringify(reportedComments));
-        closeModal('reportModal'); showToast("Comment reported!", 'info');
-    };
-    openModal('reportModal');
-}
-
-// ════════════════════════════════════
-// COMMENT MODALS
-// ════════════════════════════════════
-function openCommentEditModal(scriptId, commentId) {
-    const s = scripts.find(s => s.id === scriptId);
-    const findC = (arr) => { for (let c of arr) { if (c.id === commentId) return c; let r = findC(c.replies); if (r) return r; } };
-    const c = s ? findC(s.comments) : null; if (!c) return;
-    document.getElementById('inputModalTitle').innerText = '✏️ Edit Comment';
-    document.getElementById('inputModalText').value = c.text;
-    document.getElementById('inputModalText').placeholder = '';
-    document.getElementById('inputModalSubmit').onclick = () => {
-        const t = document.getElementById('inputModalText').value.trim();
-        if (!t) return showToast("Required", 'ban');
-        c.text = t; c.edited = true;
-        localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-        closeModal('inputModal'); renderScripts();
-    };
-    openModal('inputModal');
-}
-function openCommentReplyModal(scriptId, parentId) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    document.getElementById('inputModalTitle').innerText = '↩️ Reply';
-    document.getElementById('inputModalText').value = '';
-    document.getElementById('inputModalText').placeholder = 'Write your reply...';
-    document.getElementById('inputModalSubmit').onclick = () => {
-        const t = document.getElementById('inputModalText').value.trim();
-        if (!t) return showToast("Required", 'ban');
-        const s = scripts.find(s => s.id === scriptId);
-        const doReply = (arr) => { for (let item of arr) { if (item.id === parentId) { item.replies.push({id:'r'+Date.now(), author:currentUser.username, authorPfp:currentUser.pfp, text:t, userReactions:{}, replies:[], edited:false}); return true; } if (doReply(item.replies)) return true; } };
-        doReply(s.comments);
-        localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-        closeModal('inputModal'); renderScripts();
-    };
-    openModal('inputModal');
-}
-
-// ════════════════════════════════════
-// ADMIN
-// ════════════════════════════════════
-let _adminTab = 'reports';
-function adminTab(t) {
-    _adminTab = t;
-    document.getElementById('tabReports').classList.toggle('active', t==='reports');
-    document.getElementById('tabBans').classList.toggle('active', t==='bans');
-    showAdminContent();
-}
-function openAdminModal() { openModal('adminModal'); showAdminContent(); }
-function showAdminContent() {
-    const area = document.getElementById('adminContentArea');
-    if (_adminTab === 'reports') {
-        const all = [
-            ...reportedComments.map((r,i) => ({...r, _src:'comment', _i:i, _label:'Comment', _css:'badge-comment-report', _preview:r.commentText})),
-            ...folderReports.map((r,i) => ({...r, _src:r.type, _i:i, _label:r.type==='folder'?'Folder':'Script', _css:r.type==='folder'?'badge-folder-report':'badge-script-report', _preview:r.itemName}))
-        ];
-        if (!all.length) { area.innerHTML = `<p style="color:#444; font-family:sans-serif; font-size:13px; padding:10px 0;">No reports yet.</p>`; return; }
-        area.innerHTML = `<table class="admin-table">
-            <tr><th>Type</th><th>User</th><th>Details</th><th>Action</th></tr>
-            ${all.map(r => `<tr>
-                <td><span class="report-badge ${r._css}">${r._label}</span></td>
-                <td style="font-family:'Fredoka One'; font-size:13px;">${escapeHTML(r.reportedUser)}</td>
-                <td><b style="font-size:11px;">${escapeHTML(r.reason)}</b><div class="report-preview">${escapeHTML(r._preview||'')}</div></td>
-                <td style="white-space:nowrap; padding-right:5px;">
-                    <button class="btn-reaction" style="background:#e74c3c;color:white;padding:3px 8px;font-size:10px;margin-bottom:3px;" onclick="adminBanFromReport('${r._src}',${r._i},'${escapeJS(r.reportedUser)}','${r.folderId||r.scriptId||''}','${r.commentId||''}')">Ban</button>
-                    <button class="btn-reaction" style="background:#1a1a2c;color:#888;padding:3px 8px;font-size:10px;" onclick="dismissReport('${r._src}',${r._i})">✕</button>
-                </td>
-            </tr>`).join('')}
-        </table>`;
-    } else {
-        if (!bannedUsers.length) { area.innerHTML = `<p style="color:#444; font-family:sans-serif; font-size:13px; padding:10px 0;">No banned users.</p>`; return; }
-        area.innerHTML = `<table class="admin-table">
-            <tr><th>Username</th><th>Warnings</th><th>Action</th></tr>
-            ${bannedUsers.map(u => `<tr>
-                <td style="font-family:'Fredoka One'; font-size:13px;">${escapeHTML(u)}</td>
-                <td style="color:#e74c3c; font-family:sans-serif; font-weight:bold;">⚠ ${userWarningLevels[u]||1}/10</td>
-                <td><button class="btn-reaction" style="background:#27ae60;color:white;padding:3px 8px;font-size:10px;" onclick="unbanUser('${u}')">Unban</button></td>
-            </tr>`).join('')}
-        </table>`;
-    }
-}
-function escapeJS(s) { return String(s||'').replace(/'/g,"&#39;"); }
-function dismissReport(src, idx) {
-    if (src === 'comment') { reportedComments.splice(Number(idx),1); localStorage.setItem('lua_hub_reports', JSON.stringify(reportedComments)); }
-    else { folderReports.splice(Number(idx),1); localStorage.setItem('lua_hub_folder_reports', JSON.stringify(folderReports)); }
-    showAdminContent();
-}
-function adminBanFromReport(src, idx, username, refId, commentId) {
-    openBanModal(username, {src, index:Number(idx)}, refId, commentId);
-}
-function openBanModal(username, reportRef, scriptOrFolderId, commentId) {
-    document.getElementById('banModalContext').innerText = `You are about to ban: ${username}`;
-    document.getElementById('banDays').value = '';
-    document.getElementById('banReason').value = '';
-    openModal('banModal');
-    document.getElementById('banModalConfirm').onclick = () => {
-        const days = document.getElementById('banDays').value;
-        const reason = document.getElementById('banReason').value.trim();
-        if (!days || !reason) return showToast("Fill all fields!", 'ban');
-        if (!bannedUsers.includes(username)) {
-            bannedUsers.push(username);
-            userWarningLevels[username] = (userWarningLevels[username] || 0) + 1;
-            localStorage.setItem('lua_hub_banned', JSON.stringify(bannedUsers));
-            localStorage.setItem('lua_hub_warnings', JSON.stringify(userWarningLevels));
-            const lvl = userWarningLevels[username];
-            if (lvl >= 10) showToast(`${username} permanently banned! (10/10 warnings)`, 'ban');
-            else showToast(`${username} banned for ${days} days (Warning ${lvl}/10)`, 'ban');
-        }
-        if (commentId && scriptOrFolderId) {
-            const s = scripts.find(s => s.id === scriptOrFolderId);
-            if (s) { const del = (arr) => arr.forEach((c,i) => { if (c.id===commentId) arr.splice(i,1); else del(c.replies); }); del(s.comments); localStorage.setItem('lua_hub_data', JSON.stringify(scripts)); }
-        }
-        if (reportRef) dismissReport(reportRef.src, reportRef.index);
-        closeModal('banModal');
-        updateLoginUI(); renderScripts();
-        if (document.getElementById('adminModal').classList.contains('show')) showAdminContent();
-    };
-}
-function unbanUser(username) {
-    bannedUsers = bannedUsers.filter(u => u !== username);
-    localStorage.setItem('lua_hub_banned', JSON.stringify(bannedUsers));
-    let n = JSON.parse(localStorage.getItem('lua_hub_unbanned_notify')) || [];
-    n.push(username); localStorage.setItem('lua_hub_unbanned_notify', JSON.stringify(n));
-    showToast(`${username} unbanned!`, 'unban');
-    showAdminContent(); updateLoginUI();
-}
-
-// ════════════════════════════════════
-// LEGACY SCRIPT ACTIONS
-// ════════════════════════════════════
-function editLegacyScript(sid) {
-    const s = scripts.find(s => s.id === sid); if (!s) return;
-    document.getElementById('scriptTitle').value = s.title;
-    document.getElementById('scriptDesc').value = s.desc;
-    editor.setValue(s.code);
-    scripts.splice(scripts.indexOf(s), 1);
-    localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-    document.getElementById('createCard').style.display = 'block';
-    renderScripts(); window.scrollTo(0, 0); showToast("Editing — repost when done", 'info');
-}
-function openDeleteModal(type, scriptId, itemId) {
-    document.getElementById('deleteModalTitle').innerText = `Delete ${type==='script'?'Script':'Comment'}?`;
-    document.getElementById('deleteModalText').innerText = `This will permanently delete this ${type}.`;
-    openModal('deleteModal');
-    document.getElementById('deleteModalConfirm').onclick = () => {
-        if (type === 'script') {
-            scripts = scripts.filter(s => s.id !== scriptId);
-        } else {
-            const s = scripts.find(s => s.id === scriptId);
-            const del = (arr) => { for (let i=0;i<arr.length;i++) { if (arr[i].id===itemId) { arr.splice(i,1); return true; } if (del(arr[i].replies)) return true; } };
-            del(s.comments);
-        }
-        localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-        closeModal('deleteModal'); renderScripts(); showToast("Deleted!");
-    };
-}
-function addComment(e, scriptId) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    if (e.key === 'Enter' && e.target.value.trim()) {
-        const s = scripts.find(s => s.id === scriptId); if (!s) return;
-        s.comments.push({id:'c'+Date.now(), author:currentUser.username, authorPfp:currentUser.pfp, text:e.target.value, userReactions:{}, replies:[], edited:false});
-        localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-        e.target.value = ''; renderScripts();
-    }
-}
-function reactComment(scriptId, commentId, type) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const s = scripts.find(s => s.id === scriptId);
-    const ra = (arr) => { for (let c of arr) { if (c.id===commentId) { if (c.userReactions[currentUser.username]===type) delete c.userReactions[currentUser.username]; else c.userReactions[currentUser.username]=type; return true; } if (ra(c.replies)) return true; } };
-    ra(s.comments);
-    localStorage.setItem('lua_hub_data', JSON.stringify(scripts)); renderScripts();
-}
-function reactScript(id, type) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    if (bannedUsers.includes(currentUser.username)) return showToast("Banned!", 'ban');
-    const s = scripts.find(s => s.id === id); if (!s) return;
-    if (s.userReactions[currentUser.username]===type) delete s.userReactions[currentUser.username]; else s.userReactions[currentUser.username]=type;
-    localStorage.setItem('lua_hub_data', JSON.stringify(scripts)); renderScripts();
-}
-function rateScript(id, rating) {
-    if (!currentUser) return showToast("Login first!", 'ban');
-    const s = scripts.find(s => s.id === id); if (!s) return;
-    s.userRatings[currentUser.username] = parseInt(rating);
-    localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-    const el = document.getElementById(`rv-${id}`); if (el) el.innerText = `${rating}/10`;
-    showToast("Rating saved!");
-}
-
-// ════════════════════════════════════
-// AUTH
-// ════════════════════════════════════
-function updateLoginUI() {
-    const area = document.getElementById('authAreaContainer');
-    if (currentUser) {
-        const bc = bannedUsers.length;
-        area.innerHTML = `
-            ${currentUser.username==="Tasin Redwan"?`<button class="btn btn-admin" onclick="openAdminModal()" title="Admin Panel"><i class="fas fa-shield-alt"></i></button>`:''}
-            <button class="btn-add-folder" onclick="openFolderModal()" title="Create Folder">+</button>
-            <div class="pfp-container">
-                <img src="${currentUser.pfp}" class="pfp-header" onclick="toggleProfilePanel(event)">
-                ${currentUser.username==="Tasin Redwan"&&bc>0?`<div class="ban-counter">${bc}</div>`:''}
-            </div>`;
-        document.getElementById('createCard').style.display = 'none';
-        checkUnbanNotification();
-    } else {
-        area.innerHTML = `<button class="btn btn-login" onclick="openAuthModal('login')">Login</button>`;
-        document.getElementById('createCard').style.display = 'none';
-    }
-}
-function checkUnbanNotification() {
-    let n = JSON.parse(localStorage.getItem('lua_hub_unbanned_notify')) || [];
-    if (n.includes(currentUser.username)) {
-        showToast("You've been unbanned — follow the guidelines!", 'unban', 5000);
-        localStorage.setItem('lua_hub_unbanned_notify', JSON.stringify(n.filter(u => u !== currentUser.username)));
-    }
-}
-function logout() { currentUser = null; localStorage.removeItem('lua_hub_session'); document.getElementById('profilePanel').classList.remove('show'); updateLoginUI(); renderScripts(); }
-function openAuthModal(t) { authType = t; updateAuthModalUI(); openModal('authModal'); }
-function toggleAuthType() { authType = authType==='login'?'register':'login'; updateAuthModalUI(); }
-function updateAuthModalUI() {
-    const l = authType==='login';
-    document.getElementById('authTitle').innerText = l ? 'Login' : 'Sign Up';
-    document.getElementById('authSubmitBtn').innerText = l ? 'Login' : 'Register';
-    document.getElementById('authToggleText').innerHTML = l ? "Don't have an account? <span>Sign Up</span>" : "Already have an account? <span>Login</span>";
-}
-function processAuth() {
-    const username = document.getElementById('authUsername').value.trim();
-    const password = document.getElementById('authPassword').value;
-    const pfp = `https://api.dicebear.com/7.x/pixel-art/svg?${selectedPfpSeed}`;
-    if (!username || !password) return showToast("All fields required", 'ban');
-    if (authType === 'register') {
-        if (users[username]) return showToast("Username taken!", 'ban');
-        users[username] = {username, password, pfp};
-        localStorage.setItem('lua_hub_users', JSON.stringify(users));
-        showToast("Account created! Please login."); toggleAuthType();
-    } else {
-        if (bannedUsers.includes(username)) return showToast("Account is banned!", 'ban');
-        if (users[username] && users[username].password === password) {
-            currentUser = users[username];
-            localStorage.setItem('lua_hub_session', JSON.stringify(currentUser));
-            closeModal('authModal'); updateLoginUI(); renderScripts(); showToast("Welcome back!");
-        } else showToast("Wrong credentials", 'ban');
-    }
-}
-function selectPfp(el, seed) { document.querySelectorAll('.pfp-option').forEach(i => i.classList.remove('selected')); el.classList.add('selected'); selectedPfpSeed = seed; }
-
-// ════════════════════════════════════
-// UTILS
-// ════════════════════════════════════
-function escapeHTML(s) { return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function showToast(msg, type='', dur=3000) {
-    const t = document.getElementById('toast'); t.innerText = msg; t.className = `show ${type}`;
-    clearTimeout(t._tid); t._tid = setTimeout(() => t.classList.remove('show'), dur);
-}
-
-// Legacy editor
-const editor = CodeMirror.fromTextArea(document.getElementById('scriptCode'), {lineNumbers:false, theme:'dracula', mode:'lua'});
-function saveScript() {
-    if (!currentUser || bannedUsers.includes(currentUser.username)) return showToast("Banned!", 'ban');
-    const title = document.getElementById('scriptTitle').value.trim();
-    const desc = document.getElementById('scriptDesc').value.trim();
-    const code = editor.getValue();
-    if (!title || !code) return showToast("Title and Code required!", 'ban');
-    scripts.unshift({id:'id'+Date.now(), author:currentUser.username, authorPfp:currentUser.pfp, title, desc, code, userReactions:{}, userRatings:{}, comments:[]});
-    localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
-    document.getElementById('createCard').style.display = 'none';
-    document.getElementById('scriptTitle').value = ''; document.getElementById('scriptDesc').value = ''; editor.setValue('');
-    renderScripts(); showToast("Published!");
-}
-
-// INIT
-window.onload = () => { checkIncomingShare(); updateLoginUI(); renderScripts(); };
+// === INIT ===
+window.onload=()=>{chkShare();renderHdr();renderAll();};
 </script>
 </body>
 </html>
