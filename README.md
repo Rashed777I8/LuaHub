@@ -5,19 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lua Script Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLosA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     
     <style>
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/tomorrow-night.min.css');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css');
     </style>
     
     <style>
-        /* ===== MOBILE VIEWPORT FIX ===== */
-        * { box-sizing: border-box; }
+        /* ===== GLOBAL FONT OVERRIDE ===== */
+        /* Apply Fredoka One broadly but NOT to icon fonts or code */
+        body, button, input, textarea, select, 
+        h1, h2, h3, h4, h5, h6, p, span, div, a, label, td, th {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Preserve icon fonts */
+        .fa, .fas, .far, .fab, .fal, .fad, [class^="fa-"], [class*=" fa-"] {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+        }
+        /* Preserve monospace for code */
+        code, pre, .CodeMirror, .CodeMirror * {
+            font-family: 'Fira Code', 'Consolas', monospace !important;
+        }
 
         body { 
             font-family: 'Fredoka One', cursive; 
@@ -63,7 +75,7 @@
             background: #e03545; color: white; border-radius: 50%;
             width: 22px; height: 22px; font-size: 12px;
             display: flex; justify-content: center; align-items: center;
-            border: 2px solid #0d0d0d; font-family: sans-serif; font-weight: bold;
+            border: 2px solid #0d0d0d; font-weight: bold;
         }
 
         /* ===== BUTTONS ===== */
@@ -105,9 +117,9 @@
         }
         .panel-username:hover { background: #2a2a4a; }
         
-        .owner-tag { color: #ffd700; font-size: 13px; font-family: sans-serif; display: block; margin-bottom: 6px; font-weight: bold; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
+        .owner-tag { color: #ffd700; font-size: 13px; display: block; margin-bottom: 6px; font-weight: bold; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
         .warning-tag {
-            color: #ff6b6b; font-size: 13px; font-family: sans-serif;
+            color: #ff6b6b; font-size: 13px;
             display: inline-block; margin-bottom: 12px; background: rgba(220,53,69,0.25);
             padding: 3px 8px; border-radius: 6px; cursor: help; border: 1px solid rgba(220,53,69,0.4);
         }
@@ -208,21 +220,40 @@
         .card:hover { border-color: #3d9bff; box-shadow: 0 4px 15px rgba(61,155,255,0.1); }
         h2 { font-size: 22px; margin-top: 0; margin-bottom: 8px; color: #f0f0f0; }
         h3 { font-size: 20px; margin-top: 0; margin-bottom: 6px; color: #f0f0f0; }
-        p.desc { color: #c0c0c0; font-family: sans-serif; font-size: 15px; margin-bottom: 15px; }
+        p.desc { color: #c0c0c0; font-size: 15px; margin-bottom: 15px; }
         
-        /* ===== CODE BLOCKS ===== */
+        * { box-sizing: border-box; }
+
+        /* ===== CODE BLOCKS - Dark bg + Lua syntax glow ===== */
         pre[class*="language-"] {
+            background: #0a0a14 !important;
             border-radius: 10px;
             overflow-x: auto;
-            max-height: 400px;
-            margin-top: 10px;
+            max-height: 420px;
+            margin-top: 12px;
             white-space: pre;
-            font-size: 14px;
+            border: 1px solid #1e1e3a;
+            box-shadow: 0 0 20px rgba(61,155,255,0.08), inset 0 0 30px rgba(0,0,0,0.4);
+            padding: 16px !important;
         }
         code[class*="language-"] {
-            font-family: 'Fira Code', monospace;
+            font-family: 'Fira Code', monospace !important;
             font-size: 14px;
+            background: transparent !important;
         }
+        /* Lua keyword glow */
+        .token.keyword { color: #c792ea !important; text-shadow: 0 0 8px rgba(199,146,234,0.6) !important; font-style: italic; }
+        .token.string { color: #c3e88d !important; text-shadow: 0 0 6px rgba(195,232,141,0.5) !important; }
+        .token.number { color: #f78c6c !important; text-shadow: 0 0 6px rgba(247,140,108,0.5) !important; }
+        .token.comment { color: #546e7a !important; font-style: italic; }
+        .token.function { color: #82aaff !important; text-shadow: 0 0 8px rgba(130,170,255,0.5) !important; }
+        .token.boolean { color: #ff5370 !important; text-shadow: 0 0 6px rgba(255,83,112,0.5) !important; }
+        .token.operator { color: #89ddff !important; }
+        .token.punctuation { color: #89ddff !important; }
+        .token.builtin { color: #ffcb6b !important; text-shadow: 0 0 6px rgba(255,203,107,0.4) !important; }
+        /* Line numbers */
+        .line-numbers .line-numbers-rows { border-right: 1px solid #2a2a4a !important; }
+        .line-numbers-rows > span:before { color: #444 !important; }
         
         /* ===== INPUTS & TEXTAREAS ===== */
         input, textarea { 
@@ -301,7 +332,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-family: sans-serif;
             font-size: 15px;
             color: #ccc;
             background: #252540;
@@ -335,11 +365,11 @@
             width: 100%; padding: 12px;
             background: #252540; border: 2px solid #3a3a6a;
             border-radius: 10px; color: #f0f0f0;
-            font-family: sans-serif; font-size: 15px;
+            font-size: 15px;
         }
         .comment-item {
             background: #252540; padding: 12px; border-radius: 10px;
-            margin-top: 10px; font-family: sans-serif; font-size: 15px; 
+            margin-top: 10px; font-size: 15px; 
             position: relative; border: 1px solid #3a3a6a;
         }
         .reply-item { margin-left: 20px; border-left: 3px solid #3d9bff; }
@@ -350,15 +380,15 @@
             font-family: 'Fredoka One', cursive;
             font-size: 15px;
         }
-        .edited-tag { color: #999; font-size: 11px; font-weight: normal; font-family: sans-serif; }
+        .edited-tag { color: #999; font-size: 11px; font-weight: normal; }
         
         .pfp-tiny { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
-        .comment-text { word-wrap: break-word; white-space: pre-wrap; padding-right: 28px; font-family: sans-serif; font-size: 15px; color: #e8e8e8; }
+        .comment-text { word-wrap: break-word; white-space: pre-wrap; padding-right: 28px; font-size: 15px; color: #e8e8e8; }
         .comment-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
         .comment-options { position: absolute; top: 10px; right: 10px; cursor: pointer; color: #aaa; font-size: 16px; }
         .comment-options:hover { color: #f0f0f0; }
-        .stats-text { font-family: sans-serif; font-size: 15px; color: #bbb; margin-top: 12px; display: flex; gap: 15px; flex-wrap: wrap; }
-        .toggle-replies { background: none; border: none; color: #3d9bff; cursor: pointer; font-size: 13px; margin-top: 6px; font-family: sans-serif; }
+        .stats-text { font-size: 15px; color: #bbb; margin-top: 12px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .toggle-replies { background: none; border: none; color: #3d9bff; cursor: pointer; font-size: 13px; margin-top: 6px; }
 
         /* ===== MODAL ===== */
         .modal {
@@ -382,13 +412,13 @@
         .pfp-option { width: 54px; height: 54px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color 0.2s; }
         .pfp-option.selected { border-color: #3d9bff; box-shadow: 0 0 8px rgba(61,155,255,0.5); }
         
-        .auth-toggle { font-family: sans-serif; font-size: 15px; color: #bbb; margin-top: 16px; cursor: pointer; }
+        .auth-toggle { font-size: 15px; color: #bbb; margin-top: 16px; cursor: pointer; }
         .auth-toggle span { color: #3d9bff; text-decoration: underline; }
 
         /* ===== ADMIN PANEL ===== */
         .admin-modal-content { max-width: 95vw; text-align: left; border-color: #dc3545; overflow-x: auto; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2a2a4a; padding-bottom: 12px; margin-bottom: 16px; }
-        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-family: sans-serif; color: #f0f0f0; font-size: 14px; min-width: 500px; }
+        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; color: #f0f0f0; font-size: 14px; min-width: 500px; }
         .admin-table th, .admin-table td { border-bottom: 1px solid #2a2a4a; padding: 14px; text-align: left; }
         .admin-table th { background: #252540; color: #ccc; font-weight: bold; }
         .admin-table tr:hover { background: #1e1e38; }
@@ -485,11 +515,11 @@
         <input type="text" id="authUsername" placeholder="Username">
         <input type="password" id="authPassword" placeholder="Password">
         
-        <p style="font-family:sans-serif; margin-top:15px; color:#aaa;">Choose Profile Picture:</p>
+        <p style="margin-top:15px; color:#aaa;">Choose Profile Picture:</p>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:15px;">
-            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=1" class="pfp-option selected" onclick="selectPfp(this, 'seed=1')">
-            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=2" class="pfp-option" onclick="selectPfp(this, 'seed=2')">
-            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=3" class="pfp-option" onclick="selectPfp(this, 'seed=3')">
+            <img src="https://api.dicebear.com/8.x/pixel-art/svg?seed=1" class="pfp-option selected" onclick="selectPfp(this, 'seed=1')">
+            <img src="https://api.dicebear.com/8.x/pixel-art/svg?seed=2" class="pfp-option" onclick="selectPfp(this, 'seed=2')">
+            <img src="https://api.dicebear.com/8.x/pixel-art/svg?seed=3" class="pfp-option" onclick="selectPfp(this, 'seed=3')">
         </div>
 
         <div class="modal-buttons">
@@ -518,7 +548,7 @@
 <div id="deleteModal" class="modal">
     <div class="modal-content" style="border-color:#dc3545;">
         <h3>⚠️ Delete Item?</h3>
-        <p style="color:white; font-family:sans-serif;" id="deleteModalText">Are you sure you want to Delete this item?</p>
+        <p style="color:white;" id="deleteModalText">Are you sure you want to Delete this item?</p>
         
         <div class="modal-buttons">
             <button class="btn btn-logout" style="background:#dc3545;" id="deleteModalConfirm">Yes</button>
@@ -533,7 +563,7 @@
             <h3>🛡️ Admin Dashboard</h3>
             <button class="btn" style="background:#333;" onclick="closeAdminModal()">X</button>
         </div>
-        <p style="color:#aaa; font-family:sans-serif;">Welcome, Administrator Tasin Redwan.</p>
+        <p style="color:#aaa;">Welcome, Administrator Tasin Redwan.</p>
         
         <div id="adminContentArea"></div>
         
@@ -543,7 +573,7 @@
 <div id="banModal" class="modal">
     <div class="modal-content" style="border-color:#dc3545;">
         <h3>🚫 Ban User?</h3>
-        <p style="color:white; font-family:sans-serif;" id="banModalContext"></p>
+        <p style="color:white;" id="banModalContext"></p>
         <input type="number" id="banDays" placeholder="Days to Ban">
         <textarea id="banReason" placeholder="Reason for Ban" rows="3"></textarea>
         
@@ -772,7 +802,7 @@
             
             card.innerHTML = `
                 <h3>${escapeHTML(s.title)}</h3>
-                <span class="author-tag" style="font-family:sans-serif; font-size:12px; color:#007bff; display:flex; align-items:center; gap:5px; margin-bottom:10px;">
+                <span class="author-tag" style="font-size:13px; color:#3d9bff; display:flex; align-items:center; gap:5px; margin-bottom:10px;">
                     <img src="${s.authorPfp}" class="pfp-tiny"> ${escapeHTML(s.author)}
                     ${s.author === "Tasin Redwan" ? '<span style="color:#ffc107;">👑 OWNER</span>' : ''}
                 </span>
@@ -1308,7 +1338,7 @@
     function processAuth() {
         const username = document.getElementById('authUsername').value.trim();
         const password = document.getElementById('authPassword').value;
-        const pfp = `https://api.dicebear.com/7.x/pixel-art/svg?${selectedPfpSeed}`;
+        const pfp = `https://api.dicebear.com/8.x/pixel-art/svg?${selectedPfpSeed}`;
         if(!username || !password) return showToast("All fields required");
         
         if(authType === 'register') {
