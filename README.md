@@ -382,6 +382,149 @@
         #toast.show { display: block; }
         #toast.ban { background: #dc3545; }
         #toast.unban { background: #ffc107; color: #121212; }
+
+        /* --- FOLDER STYLES --- */
+        .btn-add-folder {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            transition: all 0.2s;
+            line-height: 1;
+        }
+        .btn-add-folder:hover { opacity: 0.85; transform: scale(1.08); }
+
+        .folder-card {
+            background: #1a1a2e;
+            border: 2px solid #2a2a5e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .folder-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        .folder-icon { font-size: 20px; }
+        .folder-title {
+            font-size: 17px;
+            font-family: 'Fredoka One', cursive;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+        .folder-title:hover { background: #2a2a4e; }
+        .folder-desc {
+            color: #8888aa;
+            font-family: sans-serif;
+            font-size: 13px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .folder-desc:hover { background: #2a2a4e; }
+        .folder-scripts { margin-top: 10px; }
+        .folder-add-script-area {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .btn-script-type {
+            flex: 1;
+            background: #2a2a4e;
+            color: #aaaaff;
+            border: 1px solid #3a3a6e;
+            border-radius: 8px;
+            padding: 8px 5px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-script-type:hover { background: #3a3a6e; color: white; }
+        .folder-script-card {
+            background: #121225;
+            border: 1px solid #2a2a5e;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .script-type-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-family: 'Fira Code', monospace;
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        .badge-server { background: #2a4a2a; color: #4caf50; border: 1px solid #3a6a3a; }
+        .badge-local { background: #4a2a2a; color: #ff7043; border: 1px solid #6a3a3a; }
+        .folder-script-title {
+            font-size: 15px;
+            font-family: 'Fredoka One', cursive;
+            margin-bottom: 3px;
+        }
+        .folder-script-desc {
+            color: #7788aa;
+            font-family: sans-serif;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .folder-card-options {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            padding: 3px;
+        }
+        .folder-card-options:hover { color: white; }
+
+        /* Script type chooser inside folder create modal */
+        .script-type-chooser {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .script-type-btn-big {
+            flex: 1;
+            background: #2a2a4e;
+            color: #aaaaff;
+            border: 2px solid #3a3a6e;
+            border-radius: 10px;
+            padding: 14px 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .script-type-btn-big:hover, .script-type-btn-big.selected { background: #3a3a8e; color: white; border-color: #007bff; }
+        .script-type-label {
+            display: block;
+            font-size: 10px;
+            font-family: 'Fira Code', monospace;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -425,6 +568,7 @@
         <input type="hidden" id="searchType" value="name">
     </div>
 
+    <!-- createCard is now hidden; scripts only go inside folders -->
     <div class="card" id="createCard" style="display:none;">
         <h2 style="font-size:18px;">✍️ Create Script</h2>
         <input type="text" id="scriptTitle" placeholder="Script Title">
@@ -436,6 +580,7 @@
     <div id="scriptFeed"></div>
 </div>
 
+<!-- AUTH MODAL -->
 <div id="authModal" class="modal">
     <div class="modal-content">
         <h3 id="authTitle" style="font-size:18px;">Login</h3>
@@ -511,6 +656,54 @@
     </div>
 </div>
 
+<!-- FOLDER CREATE MODAL -->
+<div id="folderModal" class="modal">
+    <div class="modal-content" style="border-color:#28a745; text-align:left;">
+        <h3 style="font-size:18px; text-align:center;">📁 Create Folder</h3>
+        <input type="text" id="folderNameInput" placeholder="Folder Name" style="margin-bottom:5px;">
+        <textarea id="folderDescInput" rows="2" placeholder="Folder Description (optional)"></textarea>
+        <div class="modal-buttons">
+            <button class="btn btn-post" style="background:#28a745;" onclick="submitCreateFolder()">Create</button>
+            <button class="btn btn-logout" onclick="closeFolderModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADD SCRIPT TO FOLDER MODAL -->
+<div id="addScriptModal" class="modal">
+    <div class="modal-content" style="border-color:#5555ff; text-align:left;">
+        <h3 style="font-size:17px; text-align:center;" id="addScriptModalTitle">Add Script to Folder</h3>
+        
+        <!-- Step 1: choose type -->
+        <div id="addScriptStep1">
+            <p style="color:#aaa; font-family:sans-serif; font-size:13px; text-align:center; margin-bottom:5px;">Choose Script Type:</p>
+            <div class="script-type-chooser">
+                <button class="script-type-btn-big" onclick="chooseScriptType('ServerScript')">
+                    🖥️ ServerScript
+                    <span class="script-type-label">Runs on Server</span>
+                </button>
+                <button class="script-type-btn-big" onclick="chooseScriptType('LocalScript')">
+                    💻 LocalScript
+                    <span class="script-type-label">Runs on Client</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: fill in script details -->
+        <div id="addScriptStep2" style="display:none;">
+            <div id="chosenTypeBadgeArea" style="margin-bottom:8px;"></div>
+            <input type="text" id="folderScriptTitle" placeholder="Script Title">
+            <textarea id="folderScriptDesc" rows="2" placeholder="Description (optional)"></textarea>
+            <textarea id="folderScriptCode"></textarea>
+            <div class="modal-buttons">
+                <button class="btn btn-post" onclick="submitAddScriptToFolder()">Add Script</button>
+                <button class="btn btn-logout" onclick="backToScriptTypeChoice()">Back</button>
+                <button class="btn btn-logout" onclick="closeAddScriptModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/lua/lua.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -525,6 +718,9 @@
     let reportedComments = JSON.parse(localStorage.getItem('lua_hub_reports')) || [];
     let bannedUsers = JSON.parse(localStorage.getItem('lua_hub_banned')) || [];
     let userWarningLevels = JSON.parse(localStorage.getItem('lua_hub_warnings')) || {};
+
+    // --- FOLDER DATA ---
+    let folders = JSON.parse(localStorage.getItem('lua_hub_folders')) || [];
 
     // Check if current user is banned
     if(currentUser && bannedUsers.includes(currentUser.username)) {
@@ -634,14 +830,23 @@
             }
         }
 
-        // Calculate Beloved Script
-        let userScripts = scripts.filter(s => s.author === currentUser.username);
+        // Calculate Beloved Script (from both standalone scripts and folder scripts)
+        let allUserScripts = scripts.filter(s => s.author === currentUser.username);
+        // also check folder scripts
+        folders.forEach(f => {
+            if(f.scripts) f.scripts.forEach(fs => {
+                if(fs.author === currentUser.username) {
+                    allUserScripts.push({...fs, userReactions: fs.userReactions || {}, userRatings: fs.userRatings || {}});
+                }
+            });
+        });
+
         let beloved = null;
         let maxScore = -1;
         
-        userScripts.forEach(s => {
-            let likes = Object.values(s.userReactions).filter(r => r === 'like').length;
-            let totalRating = Object.values(s.userRatings).reduce((a,b) => a+b, 0);
+        allUserScripts.forEach(s => {
+            let likes = Object.values(s.userReactions || {}).filter(r => r === 'like').length;
+            let totalRating = Object.values(s.userRatings || {}).reduce((a,b) => a+b, 0);
             let score = likes + totalRating;
             
             if(score > maxScore) {
@@ -687,6 +892,15 @@
                 });
             });
             localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
+
+            // Update author names in folder scripts
+            folders.forEach(f => {
+                if(f.author === oldName) f.author = newName;
+                if(f.scripts) f.scripts.forEach(fs => {
+                    if(fs.author === oldName) fs.author = newName;
+                });
+            });
+            localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
             
             // 4. Update reports
             reportedComments.forEach(r => {
@@ -715,6 +929,17 @@
         const searchType = hiddenInput.value;
         feed.innerHTML = '';
 
+        // Render Folders first
+        const filteredFolders = folders.filter(f => {
+            if(searchType === 'name') return f.name.toLowerCase().includes(searchTerm);
+            if(searchType === 'creator') return f.author.toLowerCase().includes(searchTerm);
+            return true;
+        });
+        filteredFolders.forEach(f => {
+            feed.appendChild(renderFolderCard(f));
+        });
+
+        // Render standalone scripts (legacy / if any remain)
         const filteredScripts = scripts.filter(s => {
             if(searchType === 'name') return s.title.toLowerCase().includes(searchTerm);
             if(searchType === 'creator') return s.author.toLowerCase().includes(searchTerm);
@@ -792,6 +1017,254 @@
         });
         
         Prism.highlightAll();
+    }
+
+    // --- FOLDER RENDER ---
+    function renderFolderCard(folder) {
+        const div = document.createElement('div');
+        div.className = 'folder-card';
+        const isOwner = currentUser && currentUser.username === folder.author;
+
+        let scriptsHtml = '';
+        if(folder.scripts && folder.scripts.length > 0) {
+            scriptsHtml = folder.scripts.map(fs => renderFolderScript(fs, folder.id, isOwner)).join('');
+        } else {
+            scriptsHtml = `<p style="color:#555; font-family:sans-serif; font-size:12px; margin:5px 0;">No scripts yet. Add one below!</p>`;
+        }
+
+        div.innerHTML = `
+            <div class="folder-header">
+                <span class="folder-icon">📁</span>
+                <span class="folder-title" onclick="${isOwner ? `renameFolderTitle('${folder.id}', this)` : ''}" title="${isOwner ? 'Click to rename' : ''}">${escapeHTML(folder.name)}</span>
+                <div class="card-options" onclick="toggleDropdown(event, 'folder-${folder.id}')" style="position:static; margin-left:auto;">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="dropdown-menu" id="dropdown-folder-${folder.id}" style="right:0; top:auto;">
+                        ${isOwner ? `<button onclick="openDeleteFolderModal('${folder.id}')" class="danger"><i class="fas fa-trash"></i> Delete Folder</button>` : ''}
+                    </div>
+                </div>
+            </div>
+            <span class="folder-desc" onclick="${isOwner ? `renameFolderDesc('${folder.id}', this)` : ''}" title="${isOwner ? 'Click to edit description' : ''}">${escapeHTML(folder.desc || 'No description.')}</span>
+            <p style="font-family:sans-serif; font-size:11px; color:#556; margin:0 0 8px 0;">By ${escapeHTML(folder.author)} ${folder.author === 'Tasin Redwan' ? '👑' : ''}</p>
+
+            <div class="folder-scripts" id="folder-scripts-${folder.id}">
+                ${scriptsHtml}
+            </div>
+
+            ${isOwner ? `
+            <div class="folder-add-script-area" style="margin-top:10px;">
+                <button class="btn-script-type" onclick="openAddScriptModal('${folder.id}', 'ServerScript')">
+                    <i class="fas fa-plus"></i> ServerScript
+                </button>
+                <button class="btn-script-type" onclick="openAddScriptModal('${folder.id}', 'LocalScript')">
+                    <i class="fas fa-plus"></i> LocalScript
+                </button>
+            </div>
+            ` : ''}
+        `;
+        return div;
+    }
+
+    function renderFolderScript(fs, folderId, isOwner) {
+        const badgeClass = fs.scriptType === 'ServerScript' ? 'badge-server' : 'badge-local';
+        return `
+            <div class="folder-script-card" id="fs-${fs.id}">
+                <span class="script-type-badge ${badgeClass}">${escapeHTML(fs.scriptType)}</span>
+                <div class="folder-card-options" onclick="toggleDropdown(event, 'fs-${fs.id}')">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="dropdown-menu" id="dropdown-fs-${fs.id}" style="right:0; top:auto; position:absolute;">
+                        <button onclick="copyFolderScript('${folderId}', '${fs.id}')"><i class="fas fa-copy"></i> Copy</button>
+                        ${isOwner ? `<button onclick="openDeleteFolderScriptModal('${folderId}', '${fs.id}')" class="danger"><i class="fas fa-trash"></i> Delete</button>` : ''}
+                    </div>
+                </div>
+                <div class="folder-script-title">${escapeHTML(fs.title)}</div>
+                ${fs.desc ? `<div class="folder-script-desc">${escapeHTML(fs.desc)}</div>` : ''}
+                <pre class="line-numbers" style="margin-top:5px;"><code class="language-lua">${escapeHTML(fs.code)}</code></pre>
+            </div>
+        `;
+    }
+
+    // --- FOLDER FUNCTIONS ---
+    function openFolderModal() {
+        if(!currentUser) return showToast("Login first!");
+        document.getElementById('folderNameInput').value = '';
+        document.getElementById('folderDescInput').value = '';
+        document.getElementById('folderModal').classList.add('show');
+    }
+    function closeFolderModal() { document.getElementById('folderModal').classList.remove('show'); }
+
+    function submitCreateFolder() {
+        const name = document.getElementById('folderNameInput').value.trim();
+        const desc = document.getElementById('folderDescInput').value.trim();
+        if(!name) return showToast("Folder name required!");
+        const newFolder = {
+            id: 'f' + Date.now(),
+            name,
+            desc,
+            author: currentUser.username,
+            authorPfp: currentUser.pfp,
+            scripts: []
+        };
+        folders.unshift(newFolder);
+        localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
+        closeFolderModal();
+        renderScripts();
+        showToast("Folder created!");
+    }
+
+    function renameFolderTitle(folderId, el) {
+        const folder = folders.find(f => f.id === folderId);
+        if(!folder) return;
+        const newName = prompt("Rename folder:", folder.name);
+        if(newName && newName.trim()) {
+            folder.name = newName.trim();
+            localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
+            el.innerText = folder.name;
+        }
+    }
+
+    function renameFolderDesc(folderId, el) {
+        const folder = folders.find(f => f.id === folderId);
+        if(!folder) return;
+        const newDesc = prompt("Edit description:", folder.desc || '');
+        if(newDesc !== null) {
+            folder.desc = newDesc.trim();
+            localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
+            el.innerText = folder.desc || 'No description.';
+        }
+    }
+
+    function openDeleteFolderModal(folderId) {
+        const modal = document.getElementById('deleteModal');
+        document.getElementById('deleteModalText').innerText = 'Are you sure you want to delete this folder and all its scripts?';
+        modal.classList.add('show');
+        document.getElementById('deleteModalConfirm').onclick = () => {
+            folders = folders.filter(f => f.id !== folderId);
+            localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
+            renderScripts();
+            closeDeleteModal();
+            showToast("Folder deleted!");
+        };
+    }
+
+    function openDeleteFolderScriptModal(folderId, scriptId) {
+        const modal = document.getElementById('deleteModal');
+        document.getElementById('deleteModalText').innerText = 'Are you sure you want to delete this script?';
+        modal.classList.add('show');
+        document.getElementById('deleteModalConfirm').onclick = () => {
+            const folder = folders.find(f => f.id === folderId);
+            if(folder) {
+                folder.scripts = folder.scripts.filter(s => s.id !== scriptId);
+                localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
+                renderScripts();
+                showToast("Script deleted!");
+            }
+            closeDeleteModal();
+        };
+    }
+
+    function copyFolderScript(folderId, scriptId) {
+        const folder = folders.find(f => f.id === folderId);
+        if(!folder) return;
+        const fs = folder.scripts.find(s => s.id === scriptId);
+        if(!fs) return;
+        navigator.clipboard.writeText(fs.code).then(() => showToast("Copied!"));
+    }
+
+    // --- ADD SCRIPT TO FOLDER MODAL ---
+    let _addScriptFolderId = null;
+    let _addScriptType = null;
+    let _folderScriptEditor = null;
+
+    function openAddScriptModal(folderId, scriptType) {
+        if(!currentUser) return showToast("Login first!");
+        _addScriptFolderId = folderId;
+        _addScriptType = scriptType;
+        document.getElementById('folderScriptTitle').value = '';
+        document.getElementById('folderScriptDesc').value = '';
+        document.getElementById('folderScriptCode').value = '';
+        // Go directly to step 2
+        document.getElementById('addScriptStep1').style.display = 'none';
+        document.getElementById('addScriptStep2').style.display = 'block';
+        const badgeClass = scriptType === 'ServerScript' ? 'badge-server' : 'badge-local';
+        document.getElementById('chosenTypeBadgeArea').innerHTML = `<span class="script-type-badge ${badgeClass}">${scriptType}</span>`;
+        document.getElementById('addScriptModal').classList.add('show');
+        // Init CodeMirror for folder script
+        setTimeout(() => {
+            if(_folderScriptEditor) {
+                _folderScriptEditor.toTextArea();
+                _folderScriptEditor = null;
+            }
+            _folderScriptEditor = CodeMirror.fromTextArea(document.getElementById('folderScriptCode'), {
+                lineNumbers: false,
+                theme: 'dracula',
+                mode: 'lua'
+            });
+        }, 100);
+    }
+
+    function chooseScriptType(type) {
+        _addScriptType = type;
+        document.getElementById('addScriptStep1').style.display = 'none';
+        document.getElementById('addScriptStep2').style.display = 'block';
+        const badgeClass = type === 'ServerScript' ? 'badge-server' : 'badge-local';
+        document.getElementById('chosenTypeBadgeArea').innerHTML = `<span class="script-type-badge ${badgeClass}">${type}</span>`;
+        setTimeout(() => {
+            if(_folderScriptEditor) {
+                _folderScriptEditor.toTextArea();
+                _folderScriptEditor = null;
+            }
+            _folderScriptEditor = CodeMirror.fromTextArea(document.getElementById('folderScriptCode'), {
+                lineNumbers: false,
+                theme: 'dracula',
+                mode: 'lua'
+            });
+        }, 100);
+    }
+
+    function backToScriptTypeChoice() {
+        document.getElementById('addScriptStep1').style.display = 'block';
+        document.getElementById('addScriptStep2').style.display = 'none';
+        if(_folderScriptEditor) {
+            _folderScriptEditor.toTextArea();
+            _folderScriptEditor = null;
+        }
+    }
+
+    function closeAddScriptModal() {
+        document.getElementById('addScriptModal').classList.remove('show');
+        document.getElementById('addScriptStep1').style.display = 'block';
+        document.getElementById('addScriptStep2').style.display = 'none';
+        if(_folderScriptEditor) {
+            _folderScriptEditor.toTextArea();
+            _folderScriptEditor = null;
+        }
+        _addScriptFolderId = null;
+        _addScriptType = null;
+    }
+
+    function submitAddScriptToFolder() {
+        if(!currentUser) return showToast("Login first!");
+        const title = document.getElementById('folderScriptTitle').value.trim();
+        const desc = document.getElementById('folderScriptDesc').value.trim();
+        const code = _folderScriptEditor ? _folderScriptEditor.getValue() : document.getElementById('folderScriptCode').value;
+        if(!title || !code) return showToast("Title and Code required!");
+        const folder = folders.find(f => f.id === _addScriptFolderId);
+        if(!folder) return;
+        folder.scripts.push({
+            id: 'fs' + Date.now(),
+            title,
+            desc,
+            code,
+            scriptType: _addScriptType,
+            author: currentUser.username,
+            authorPfp: currentUser.pfp,
+            userReactions: {},
+            userRatings: {}
+        });
+        localStorage.setItem('lua_hub_folders', JSON.stringify(folders));
+        closeAddScriptModal();
+        renderScripts();
+        showToast("Script added!");
     }
 
     function renderComment(comment, scriptId, isReply = false) {
@@ -1277,12 +1750,13 @@
             
             authArea.innerHTML = `
                 ${currentUser.username === "Tasin Redwan" ? `<button class="btn btn-admin" onclick="openAdminModal()" title="Admin Panel"><i class="fas fa-shield-alt"></i></button>` : ""}
+                <button class="btn-add-folder" onclick="openFolderModal()" title="Create Folder">+</button>
                 <div class="pfp-container">
                     <img src="${currentUser.pfp}" class="pfp-header" onclick="toggleProfilePanel(event)">
                     ${currentUser.username === "Tasin Redwan" && bannedCount > 0 ? `<div class="ban-counter">${bannedCount}</div>` : ''}
                 </div>
             `;
-            createCard.style.display = 'block';
+            createCard.style.display = 'none';
             
             // Check for unban notification
             checkUnbanNotification();
