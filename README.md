@@ -16,22 +16,37 @@
     </style>
     
     <style>
-        body { font-family: 'Fredoka One', cursive; background-color: #121212; color: #ffffff; padding: 10px; margin: 0; box-sizing: border-box; }
-        .container { max-width: 500px; margin: auto; }
+        /* --- MOBILE RESPONSIVE FIXES --- */
+        body { 
+            font-family: 'Fredoka One', cursive; 
+            background-color: #121212; 
+            color: #ffffff; 
+            padding: 5px; 
+            margin: 0; 
+            box-sizing: border-box; 
+            overflow-x: hidden; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 500px; 
+            margin: auto; 
+            padding: 5px;
+            box-sizing: border-box;
+        }
         
         /* PROFESSIONAL HEADER */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: #1e1e1e;
-            padding: 10px 15px;
+            padding: 10px;
             border-radius: 12px;
             border: 2px solid #333;
             position: relative;
         }
-        .logo { font-size: 24px; font-weight: bold; }
+        .logo { font-size: 20px; font-weight: bold; }
         .logo-hub { color: #007bff; }
         .header-actions { display: flex; align-items: center; gap: 10px; }
         
@@ -110,6 +125,7 @@
         /* PROFESSIONAL SEARCH BAR */
         .search-container {
             display: flex;
+            flex-wrap: wrap; /* MOBILE FIX */
             gap: 10px;
             margin-bottom: 20px;
             background: #1e1e1e;
@@ -124,6 +140,7 @@
             color: #fff; border-radius: 8px;
             font-family: 'Fredoka One', cursive; 
             font-size: 14px;
+            min-width: 150px; /* MOBILE FIX */
         }
         
         /* Custom Dropdown Styling */
@@ -179,6 +196,7 @@
             margin-bottom: 20px;
             transition: all 0.3s ease;
             position: relative;
+            box-sizing: border-box; /* MOBILE FIX */
         }
         .card:hover { border-color: #555; }
         h3 { font-size: 18px; margin-top: 0; margin-bottom: 5px; }
@@ -191,12 +209,14 @@
             max-height: 400px;
             margin-top: 10px;
             white-space: pre;
-            background: #121212 !important; /* Forces dark bg */
+            background: #121212 !important; 
             border: 1px solid #333;
+            width: 100%; /* MOBILE FIX */
+            box-sizing: border-box;
         }
         code[class*="language-"] {
             font-family: 'Fira Code', monospace;
-            font-size: 13px;
+            font-size: 12px; /* MOBILE FIX */
         }
         
         input, textarea { 
@@ -271,6 +291,7 @@
             padding: 5px 8px;
             border-radius: 8px;
             flex-grow: 1;
+            flex-wrap: wrap; /* MOBILE FIX */
         }
         .rating-slider {
             -webkit-appearance: none;
@@ -333,6 +354,7 @@
             background: #1e1e1e; padding: 20px; border-radius: 12px;
             border: 2px solid #007bff; text-align: center;
             width: 100%; max-width: 350px;
+            box-sizing: border-box; /* MOBILE FIX */
         }
         .modal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         
@@ -834,9 +856,74 @@
         navigator.clipboard.writeText(script.code).then(() => showToast("Copied!"));
     }
 
+    // --- UNIVERSAL SHARE LOGIC (Base64) ---
     function shareScript(scriptId) {
-        const url = window.location.href.split('?')[0] + "?script=" + scriptId;
-        navigator.clipboard.writeText(url).then(() => showToast("Link copied!"));
+        const script = scripts.find(s => s.id === scriptId);
+        if (!script) return;
+
+        const shareObj = {
+            t: script.title,
+            d: script.desc,
+            c: script.code,
+            a: script.author,
+            p: script.authorPfp
+        };
+
+        try {
+            const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(shareObj))));
+            const shareUrl = window.location.origin + window.location.pathname + "?data=" + encodedData;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: script.title,
+                    text: `Check out this Lua script: ${script.title}`,
+                    url: shareUrl
+                }).catch(() => {
+                    copyToClipboard(shareUrl);
+                });
+            } else {
+                copyToClipboard(shareUrl);
+            }
+        } catch (e) {
+            showToast("Error generating link", "ban");
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("Universal link copied!");
+        });
+    }
+
+    // --- CHECK URL FOR SHARED DATA ON LOAD ---
+    function checkIncomingShare() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedData = urlParams.get('data');
+
+        if (sharedData) {
+            try {
+                const decodedData = JSON.parse(decodeURIComponent(escape(atob(sharedData))));
+                
+                const tempScript = {
+                    id: 'shared-' + Date.now(),
+                    title: "[SHARED] " + decodedData.t,
+                    desc: decodedData.d,
+                    code: decodedData.c,
+                    author: decodedData.a,
+                    authorPfp: decodedData.p,
+                    userReactions: {},
+                    userRatings: {},
+                    comments: []
+                };
+
+                scripts.unshift(tempScript);
+                showToast("Loading shared script...");
+                
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (e) {
+                console.error("Failed to decode shared script");
+            }
+        }
     }
 
     function editScript(scriptId) {
@@ -1305,8 +1392,12 @@
         showToast("Published!");
     }
 
-    updateLoginUI();
-    renderScripts();
+    // --- INITIALIZATION ---
+    window.onload = () => {
+        checkIncomingShare(); // Check for shared data via URL
+        updateLoginUI();
+        renderScripts();
+    };
 </script>
 
 </body>
