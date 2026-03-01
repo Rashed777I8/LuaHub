@@ -535,20 +535,37 @@
     let selectedPfpSeed = 'seed=1';
     let authType = 'login';
     
-    // Data Migration
+    // Data Migration & Deduplication
     scripts.forEach(s => {
         if(!s.userReactions) s.userReactions = {};
         if(!s.userRatings) s.userRatings = {};
         if(!s.comments) s.comments = [];
+        
+        // Fix [SHARED] text
+        if(s.title.startsWith("[SHARED] ")) {
+            s.title = s.title.substring(9);
+        }
+        
         s.comments.forEach(c => {
             if(!c.replies) c.replies = [];
             if(!c.userReactions) c.userReactions = {};
-            if(c.edited === undefined) c.edited = false; // Add edited flag
+            if(c.edited === undefined) c.edited = false;
             c.replies.forEach(r => {
                 if(r.edited === undefined) r.edited = false;
             });
         });
     });
+
+    // Deduplication Logic
+    let uniqueScripts = [];
+    let seen = new Set();
+    scripts.forEach(s => {
+        if(!seen.has(s.id)) {
+            uniqueScripts.push(s);
+            seen.add(s.id);
+        }
+    });
+    scripts = uniqueScripts;
     localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
     
     // --- CUSTOM DROPDOWN LOGIC ---
@@ -866,7 +883,8 @@
             d: script.desc,
             c: script.code,
             a: script.author,
-            p: script.authorPfp
+            p: script.authorPfp,
+            id: script.id
         };
 
         try {
@@ -904,20 +922,22 @@
             try {
                 const decodedData = JSON.parse(decodeURIComponent(escape(atob(sharedData))));
                 
-                const tempScript = {
-                    id: 'shared-' + Date.now(),
-                    title: "[SHARED] " + decodedData.t,
-                    desc: decodedData.d,
-                    code: decodedData.c,
-                    author: decodedData.a,
-                    authorPfp: decodedData.p,
-                    userReactions: {},
-                    userRatings: {},
-                    comments: []
-                };
-
-                scripts.unshift(tempScript);
-                showToast("Loading shared script...");
+                // Deduplicate on import
+                if(!scripts.some(s => s.id === decodedData.id)) {
+                    scripts.unshift({
+                        id: decodedData.id,
+                        title: decodedData.t,
+                        desc: decodedData.d,
+                        code: decodedData.c,
+                        author: decodedData.a,
+                        authorPfp: decodedData.p,
+                        userReactions: {},
+                        userRatings: {},
+                        comments: []
+                    });
+                    localStorage.setItem('lua_hub_data', JSON.stringify(scripts));
+                    showToast("Script imported!");
+                }
                 
                 window.history.replaceState({}, document.title, window.location.pathname);
             } catch (e) {
