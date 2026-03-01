@@ -2,298 +2,233 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lua Script Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLosA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     
     <style>
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/tomorrow-night.min.css');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css');
     </style>
     
     <style>
-        /* ===== GLOBAL FONT OVERRIDE ===== */
-        /* Apply Fredoka One broadly but NOT to icon fonts or code */
-        body, button, input, textarea, select, 
-        h1, h2, h3, h4, h5, h6, p, span, div, a, label, td, th {
-            font-family: 'Fredoka One', cursive;
-        }
-        /* Preserve icon fonts */
-        .fa, .fas, .far, .fab, .fal, .fad, [class^="fa-"], [class*=" fa-"] {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
-        }
-        /* Preserve monospace for code */
-        code, pre, .CodeMirror, .CodeMirror * {
-            font-family: 'Fira Code', 'Consolas', monospace !important;
-        }
-
-        body { 
-            font-family: 'Fredoka One', cursive; 
-            background-color: #0d0d0d; 
-            color: #f0f0f0; 
-            padding: 12px; 
-            margin: 0; 
-            font-size: 16px;
-        }
+        body { font-family: 'Fredoka One', cursive; background-color: #121212; color: #ffffff; padding: 20px; margin: 0; }
         .container { max-width: 800px; margin: auto; }
         
-        /* ===== HEADER ===== */
+        /* PROFESSIONAL HEADER */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            background: #1a1a2e;
-            padding: 12px 16px;
-            border-radius: 14px;
-            border: 2px solid #2a2a4a;
+            margin-bottom: 20px;
+            background: #1e1e1e;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px solid #333;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,123,255,0.15);
         }
-        .logo { font-size: 30px; font-weight: bold; color: #f0f0f0; letter-spacing: 1px; }
-        .logo-hub { color: #3d9bff; text-shadow: 0 0 10px rgba(61,155,255,0.5); }
-        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .logo { font-size: 28px; font-weight: bold; }
+        .logo-hub { color: #007bff; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
         
-        /* ===== PROFILE PFP ===== */
+        /* Header PFP */
         .pfp-container { position: relative; }
         .pfp-header { 
-            width: 48px; height: 48px; 
+            width: 45px; height: 45px; 
             border-radius: 50%; 
             object-fit: cover; 
-            border: 3px solid #3d9bff; 
+            border: 3px solid #007bff; 
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 0 8px rgba(61,155,255,0.4);
+            transition: transform 0.2s;
         }
-        .pfp-header:hover { transform: scale(1.08); box-shadow: 0 0 14px rgba(61,155,255,0.7); }
+        .pfp-header:hover { transform: scale(1.05); }
         .ban-counter {
-            position: absolute; top: -6px; right: -6px;
-            background: #e03545; color: white; border-radius: 50%;
-            width: 22px; height: 22px; font-size: 12px;
+            position: absolute; top: -5px; right: -5px;
+            background: #dc3545; color: white; border-radius: 50%;
+            width: 20px; height: 20px; font-size: 11px;
             display: flex; justify-content: center; align-items: center;
-            border: 2px solid #0d0d0d; font-weight: bold;
+            border: 2px solid #121212; font-family: sans-serif;
         }
 
-        /* ===== BUTTONS ===== */
         .btn { 
-            padding: 11px 18px; border: none; border-radius: 10px; 
+            padding: 10px 15px; border: none; border-radius: 8px; 
             cursor: pointer; font-family: 'Fredoka One', cursive; 
-            font-size: 16px; transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            font-size: 14px; transition: all 0.2s;
         }
-        .btn-login { background: #3d9bff; color: white; font-size: 16px; box-shadow: 0 3px 10px rgba(61,155,255,0.4); }
-        .btn-logout { background: #444; color: #f0f0f0; }
-        .btn-admin { background: #c0303f; color: white; font-size: 17px; padding: 9px 13px; border: 2px solid #e05060; border-radius: 50%; box-shadow: 0 3px 10px rgba(220,53,69,0.4);}
-        .btn:hover { opacity: 0.88; transform: translateY(-1px); }
-        .btn:active { transform: translateY(0); }
+        .btn-login { background: #007bff; color: white; }
+        .btn-logout { background: #555; color: white; }
+        .btn-admin { background: #dc3545; color: white; font-size: 16px; padding: 8px 12px; border: 1px solid #444; border-radius: 50%;}
+        .btn:hover { opacity: 0.9; }
 
-        /* ===== USER PROFILE PANEL ===== */
+        /* --- USER PROFILE PANEL (MODAL) --- */
         .profile-panel {
             display: none;
             position: absolute;
-            top: calc(100% + 12px);
+            top: calc(100% + 10px);
             right: 0;
-            background: #1a1a2e;
-            border: 2px solid #3d9bff;
-            border-radius: 14px;
-            padding: 22px 18px;
-            width: 270px;
+            background: #1e1e1e;
+            border: 2px solid #007bff;
+            border-radius: 12px;
+            padding: 20px;
+            width: 250px;
             z-index: 1000;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             text-align: center;
         }
         .profile-panel.show { display: block; }
         
-        .panel-pfp { width: 88px; height: 88px; border-radius: 50%; border: 4px solid #3d9bff; margin-bottom: 10px; box-shadow: 0 0 15px rgba(61,155,255,0.4); }
+        .panel-pfp { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #007bff; margin-bottom: 10px; }
         
+        /* Updated Username Style */
         .panel-username { 
-            font-size: 20px; margin-bottom: 6px; cursor: pointer; 
-            display: inline-block; padding: 3px 10px; border-radius: 6px;
-            color: #ffffff;
+            font-size: 18px; margin-bottom: 5px; cursor: pointer; 
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
         }
-        .panel-username:hover { background: #2a2a4a; }
+        .panel-username:hover { background: #333; }
         
-        .owner-tag { color: #ffd700; font-size: 13px; display: block; margin-bottom: 6px; font-weight: bold; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
+        .owner-tag { color: #ffc107; font-size: 12px; font-family: sans-serif; display: block; margin-bottom: 5px; font-weight: bold;}
         .warning-tag {
-            color: #ff6b6b; font-size: 13px;
-            display: inline-block; margin-bottom: 12px; background: rgba(220,53,69,0.25);
-            padding: 3px 8px; border-radius: 6px; cursor: help; border: 1px solid rgba(220,53,69,0.4);
+            color: #dc3545; font-size: 12px; font-family: sans-serif;
+            display: inline-block; margin-bottom: 10px; background: rgba(220,53,69,0.2);
+            padding: 2px 6px; border-radius: 4px; cursor: help;
         }
-        .beloved-title { font-size: 13px; color: #bbb; margin-top: 16px; }
+        .beloved-title { font-size: 12px; color: #aaa; margin-top: 15px; }
         .beloved-script { 
-            background: #252540; 
-            padding: 11px; 
-            border-radius: 10px; 
-            margin-top: 6px; 
-            font-size: 15px; 
-            border: 1px solid #3a3a5a;
-            color: #e0e0e0;
+            background: #2a2a2a; 
+            padding: 10px; 
+            border-radius: 8px; 
+            margin-top: 5px; 
+            font-size: 14px; 
+            border: 1px solid #333;
         }
-        .panel-logout { width: 100%; margin-top: 18px; background: #dc3545; font-size: 16px; }
+        .panel-logout { width: 100%; margin-top: 20px; background: #dc3545; }
 
-        /* ===== SEARCH BAR ===== */
+        /* PROFESSIONAL SEARCH BAR */
         .search-container {
             display: flex;
             gap: 10px;
-            margin-bottom: 16px;
-            background: #1a1a2e;
+            margin-bottom: 20px;
+            background: #1e1e1e;
             padding: 10px;
-            border-radius: 14px;
-            border: 2px solid #2a2a4a;
+            border-radius: 12px;
+            border: 2px solid #333;
             align-items: center;
-            flex-wrap: wrap;
         }
         .search-input { 
-            flex-grow: 1; 
-            flex-basis: 150px;
-            padding: 13px 14px;
-            background: #252540; 
-            border: 2px solid #3a3a6a; 
-            color: #f0f0f0; 
-            border-radius: 10px;
-            font-family: 'Fredoka One', cursive;
-            font-size: 16px;
+            flex-grow: 1; padding: 12px;
+            background: #2a2a2a; border: 2px solid #444; 
+            color: #fff; border-radius: 8px;
+            font-family: 'Fredoka One', cursive; 
         }
-        .search-input::placeholder { color: #888; }
-        .search-input:focus { outline: none; border-color: #3d9bff; }
         
-        /* ===== CUSTOM DROPDOWN ===== */
+        /* Custom Dropdown Styling */
         .custom-select-wrapper {
             position: relative;
             user-select: none;
-            min-width: 130px;
-            flex-shrink: 0;
+            min-width: 150px;
         }
         .custom-select {
-            background: #252540;
-            border: 2px solid #3a3a6a;
-            color: #f0f0f0;
-            padding: 13px 14px;
-            border-radius: 10px;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: 'Fredoka One', cursive;
-            font-size: 16px;
+            font-size: 14px;
         }
-        .custom-select:hover { border-color: #3d9bff; }
+        .custom-select:hover { border-color: #555; }
         .custom-select-options {
             display: none;
             position: absolute;
-            top: calc(100% + 6px);
+            top: calc(100% + 5px);
             left: 0;
             right: 0;
-            background: #252540;
-            border: 2px solid #3a3a6a;
-            border-radius: 10px;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 8px;
             z-index: 10;
             overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .custom-select-options.open { display: block; }
         .custom-select-option {
-            padding: 13px 14px;
+            padding: 12px;
             cursor: pointer;
             font-family: 'Fredoka One', cursive;
-            font-size: 16px;
+            font-size: 14px;
             transition: background 0.2s;
-            color: #f0f0f0;
         }
-        .custom-select-option:hover { background: #33335a; }
-        .custom-select-option.selected { background: #3d9bff; color: white; }
+        .custom-select-option:hover { background: #333; }
+        .custom-select-option.selected { background: #007bff; color: white; }
 
-        /* ===== CARDS ===== */
+        /* Card Styles */
         .card { 
-            background: #1a1a2e; 
-            border: 2px solid #2a2a4a; 
-            border-radius: 14px; 
+            background: #1e1e1e; 
+            border: 2px solid #333; 
+            border-radius: 12px; 
             padding: 20px; 
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
             position: relative;
         }
-        .card:hover { border-color: #3d9bff; box-shadow: 0 4px 15px rgba(61,155,255,0.1); }
-        h2 { font-size: 22px; margin-top: 0; margin-bottom: 8px; color: #f0f0f0; }
-        h3 { font-size: 20px; margin-top: 0; margin-bottom: 6px; color: #f0f0f0; }
-        p.desc { color: #c0c0c0; font-size: 15px; margin-bottom: 15px; }
+        .card:hover { border-color: #555; }
+        h3 { font-size: 20px; margin-top: 0; margin-bottom: 5px; }
+        p.desc { color: #aaa; font-family: sans-serif; margin-bottom: 15px; }
         
-        * { box-sizing: border-box; }
-
-        /* ===== CODE BLOCKS - Dark bg + Lua syntax glow ===== */
+        /* Fix Code Overflow */
         pre[class*="language-"] {
-            background: #0a0a14 !important;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow-x: auto;
-            max-height: 420px;
-            margin-top: 12px;
+            max-height: 400px;
+            margin-top: 10px;
             white-space: pre;
-            border: 1px solid #1e1e3a;
-            box-shadow: 0 0 20px rgba(61,155,255,0.08), inset 0 0 30px rgba(0,0,0,0.4);
-            padding: 16px !important;
         }
         code[class*="language-"] {
-            font-family: 'Fira Code', monospace !important;
+            font-family: 'Fira Code', monospace;
             font-size: 14px;
-            background: transparent !important;
         }
-        /* Lua keyword glow */
-        .token.keyword { color: #c792ea !important; text-shadow: 0 0 8px rgba(199,146,234,0.6) !important; font-style: italic; }
-        .token.string { color: #c3e88d !important; text-shadow: 0 0 6px rgba(195,232,141,0.5) !important; }
-        .token.number { color: #f78c6c !important; text-shadow: 0 0 6px rgba(247,140,108,0.5) !important; }
-        .token.comment { color: #546e7a !important; font-style: italic; }
-        .token.function { color: #82aaff !important; text-shadow: 0 0 8px rgba(130,170,255,0.5) !important; }
-        .token.boolean { color: #ff5370 !important; text-shadow: 0 0 6px rgba(255,83,112,0.5) !important; }
-        .token.operator { color: #89ddff !important; }
-        .token.punctuation { color: #89ddff !important; }
-        .token.builtin { color: #ffcb6b !important; text-shadow: 0 0 6px rgba(255,203,107,0.4) !important; }
-        /* Line numbers */
-        .line-numbers .line-numbers-rows { border-right: 1px solid #2a2a4a !important; }
-        .line-numbers-rows > span:before { color: #444 !important; }
         
-        /* ===== INPUTS & TEXTAREAS ===== */
         input, textarea { 
-            width: 100%; padding: 13px 14px; margin: 8px 0; 
-            background: #252540; 
-            border: 2px solid #3a3a6a; 
-            color: #f0f0f0; 
-            border-radius: 10px; 
-            font-family: 'Fredoka One', cursive;
-            font-size: 16px;
+            width: 100%; padding: 12px; margin: 10px 0; 
+            background: #2a2a2a; border: 2px solid #444; 
+            color: #fff; border-radius: 8px; 
+            box-sizing: border-box;
+            font-family: 'Fredoka One', cursive; 
         }
-        input::placeholder, textarea::placeholder { color: #888; }
-        input:focus, textarea:focus { outline: none; border-color: #3d9bff; }
 
-        /* ===== CARD MENU (Three Dots) ===== */
+        /* CARD MENU (Three Dots) */
         .card-options {
             position: absolute;
-            top: 18px;
-            right: 18px;
+            top: 20px;
+            right: 20px;
             cursor: pointer;
-            color: #aaa;
-            padding: 6px;
-            font-size: 20px;
+            color: #888;
+            padding: 5px;
+            font-size: 18px;
             transition: color 0.2s;
             z-index: 5;
         }
-        .card-options:hover { color: #f0f0f0; }
+        .card-options:hover { color: white; }
         
         .dropdown-menu {
             display: none;
             position: absolute;
             top: 100%;
             right: 0;
-            background: #252540;
-            border-radius: 10px;
-            padding: 6px;
+            background: #333;
+            border-radius: 8px;
+            padding: 5px;
             z-index: 100;
-            min-width: 160px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.7);
-            border: 1px solid #3a3a6a;
+            min-width: 150px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border: 1px solid #444;
         }
         .dropdown-menu button {
             display: flex;
@@ -302,159 +237,122 @@
             width: 100%;
             background: none;
             border: none;
-            color: #f0f0f0;
+            color: white;
             text-align: left;
-            padding: 12px 10px;
+            padding: 10px;
             cursor: pointer;
             font-family: 'Fredoka One', cursive;
-            font-size: 15px;
-            border-radius: 6px;
+            font-size: 14px;
+            border-radius: 4px;
         }
-        .dropdown-menu button:hover { background: #33335a; }
-        .dropdown-menu button.danger { color: #ff6b6b; }
+        .dropdown-menu button:hover { background: #444; }
+        .dropdown-menu button.danger { color: #dc3545; }
 
-        .btn-post { background: #3d9bff; color: white; width: 100%; font-size: 17px; padding: 13px; box-shadow: 0 3px 12px rgba(61,155,255,0.35); }
+        .btn-post { background: #007bff; color: white; width: 100%; }
         
-        /* ===== REACTION BUTTONS ===== */
-        .btn-reaction { 
-            background: #252540; 
-            color: #ccc; 
-            padding: 8px 14px; 
-            font-size: 14px; 
-            font-family: 'Fredoka One', cursive;
-            border: 1px solid #3a3a6a;
-        }
-        .btn-reaction.active-like { background: #28a745; color: white; border-color: #28a745; }
-        .btn-reaction.active-dislike { background: #dc3545; color: white; border-color: #dc3545; }
+        /* Reaction Buttons */
+        .btn-reaction { background: #333; color: #aaa; padding: 5px 10px; font-size: 12px; font-family: 'Fredoka One', cursive; }
+        .btn-reaction.active-like { background: #28a745; color: white; }
+        .btn-reaction.active-dislike { background: #dc3545; color: white; }
         
-        /* ===== RATING SLIDER ===== */
+        /* 10-Point Rating Slider */
         .rating-container {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 15px;
-            color: #ccc;
-            background: #252540;
-            padding: 8px 14px;
-            border-radius: 10px;
-            border: 1px solid #3a3a6a;
-            flex-wrap: wrap;
+            font-family: sans-serif;
+            font-size: 14px;
+            color: #aaa;
+            background: #2a2a2a;
+            padding: 5px 10px;
+            border-radius: 8px;
         }
         .rating-slider {
             -webkit-appearance: none;
-            flex: 1;
-            min-width: 100px;
-            height: 10px;
-            background: #3a3a6a;
+            width: 150px;
+            height: 8px;
+            background: #444;
             border-radius: 5px;
             outline: none;
         }
         .rating-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            background: #3d9bff;
+            width: 18px;
+            height: 18px;
+            background: #007bff;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 6px rgba(61,155,255,0.5);
         }
 
-        /* ===== COMMENTS ===== */
-        .comment-section { margin-top: 18px; border-top: 1px solid #2a2a4a; padding-top: 15px; }
+        /* Comments Styling */
+        .comment-section { margin-top: 20px; border-top: 1px solid #444; padding-top: 15px; }
         .comment-input {
-            width: 100%; padding: 12px;
-            background: #252540; border: 2px solid #3a3a6a;
-            border-radius: 10px; color: #f0f0f0;
-            font-size: 15px;
+            width: 100%; padding: 10px;
+            background: #2a2a2a; border: 1px solid #444;
+            border-radius: 8px; color: white;
+            font-family: sans-serif; box-sizing: border-box;
         }
         .comment-item {
-            background: #252540; padding: 12px; border-radius: 10px;
-            margin-top: 10px; font-size: 15px; 
-            position: relative; border: 1px solid #3a3a6a;
+            background: #2a2a2a; padding: 10px; border-radius: 8px;
+            margin-top: 10px; font-family: sans-serif; font-size: 14px; position: relative;
         }
-        .reply-item { margin-left: 20px; border-left: 3px solid #3d9bff; }
+        .reply-item { margin-left: 25px; border-left: 2px solid #444; }
         
+        /* Updated Author Tag Styling for "edited" marker */
         .author-tag { 
-            color: #3d9bff; font-weight: bold; margin-bottom: 5px; 
-            display: flex; align-items: center; gap: 6px;
+            color: #007bff; font-weight: bold; margin-bottom: 5px; 
+            display: flex; align-items: center; gap: 5px;
             font-family: 'Fredoka One', cursive;
-            font-size: 15px;
         }
-        .edited-tag { color: #999; font-size: 11px; font-weight: normal; }
+        .edited-tag { color: #888; font-size: 10px; font-weight: normal; font-family: sans-serif; }
         
-        .pfp-tiny { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
-        .comment-text { word-wrap: break-word; white-space: pre-wrap; padding-right: 28px; font-size: 15px; color: #e8e8e8; }
-        .comment-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-        .comment-options { position: absolute; top: 10px; right: 10px; cursor: pointer; color: #aaa; font-size: 16px; }
-        .comment-options:hover { color: #f0f0f0; }
-        .stats-text { font-size: 15px; color: #bbb; margin-top: 12px; display: flex; gap: 15px; flex-wrap: wrap; }
-        .toggle-replies { background: none; border: none; color: #3d9bff; cursor: pointer; font-size: 13px; margin-top: 6px; }
+        .pfp-tiny { width: 16px; height: 16px; border-radius: 50%; object-fit: cover; }
+        .comment-text { word-wrap: break-word; white-space: pre-wrap; padding-right: 25px; font-family: sans-serif; color: #eee; }
+        .comment-actions { display: flex; gap: 5px; margin-top: 5px; }
+        .comment-options { position: absolute; top: 10px; right: 10px; cursor: pointer; color: #888; }
+        .stats-text { font-family: sans-serif; font-size: 14px; color: #aaa; margin-top: 10px; display: flex; gap: 15px; }
+        .toggle-replies { background: none; border: none; color: #007bff; cursor: pointer; font-size: 12px; margin-top: 5px; font-family: sans-serif; }
 
-        /* ===== MODAL ===== */
+        /* MODAL */
         .modal {
             display: none; position: fixed; top: 0; left: 0; 
-            width: 100%; height: 100%; background-color: rgba(0,0,0,0.88);
-            justify-content: center; align-items: flex-start; z-index: 2000;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.85);
+            justify-content: center; align-items: center; z-index: 2000;
             overflow-y: auto;
-            padding: 20px 0;
         }
         .modal.show { display: flex; }
         
         .modal-content {
-            background: #1a1a2e; padding: 28px 22px; border-radius: 14px;
-            border: 2px solid #3d9bff; text-align: center;
-            width: 92%; max-width: 420px;
-            margin: auto;
+            background: #1e1e1e; padding: 25px; border-radius: 12px;
+            border: 2px solid #007bff; text-align: center;
+            width: 90%; max-width: 400px;
         }
-        .modal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .modal-buttons .btn { flex: 1; min-width: 100px; }
+        .modal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
         
-        .pfp-option { width: 54px; height: 54px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color 0.2s; }
-        .pfp-option.selected { border-color: #3d9bff; box-shadow: 0 0 8px rgba(61,155,255,0.5); }
+        .pfp-option { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; }
+        .pfp-option.selected { border-color: #007bff; }
         
-        .auth-toggle { font-size: 15px; color: #bbb; margin-top: 16px; cursor: pointer; }
-        .auth-toggle span { color: #3d9bff; text-decoration: underline; }
+        .auth-toggle { font-family: sans-serif; font-size: 14px; color: #aaa; margin-top: 15px; cursor: pointer; }
+        .auth-toggle span { color: #007bff; text-decoration: underline; }
 
-        /* ===== ADMIN PANEL ===== */
-        .admin-modal-content { max-width: 95vw; text-align: left; border-color: #dc3545; overflow-x: auto; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2a2a4a; padding-bottom: 12px; margin-bottom: 16px; }
-        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; color: #f0f0f0; font-size: 14px; min-width: 500px; }
-        .admin-table th, .admin-table td { border-bottom: 1px solid #2a2a4a; padding: 14px; text-align: left; }
-        .admin-table th { background: #252540; color: #ccc; font-weight: bold; }
-        .admin-table tr:hover { background: #1e1e38; }
-        .report-comment-preview { background: #0d0d1a; padding: 10px; border-radius: 8px; font-size: 12px; color: #bbb; margin-top: 5px; border: 1px solid #2a2a4a; font-family: 'Fira Code', monospace;}
+        /* ADMIN PANEL STYLING - PROFESSIONAL */
+        .admin-modal-content { max-width: 900px; text-align: left; border-color: #dc3545; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+        .admin-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-family: sans-serif; color: white; font-size: 14px;}
+        .admin-table th, .admin-table td { border-bottom: 1px solid #333; padding: 15px; text-align: left; }
+        .admin-table th { background: #2a2a2a; color: #aaa; font-weight: bold; }
+        .admin-table tr:hover { background: #252525; }
+        .report-comment-preview { background: #121212; padding: 10px; border-radius: 8px; font-size: 12px; color: #aaa; margin-top: 5px; border: 1px solid #333; font-family: 'Fira Code', monospace;}
         
-        /* ===== TOAST ===== */
+        /* TOAST NOTIFICATION */
         #toast {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            background: #28a745; color: white; padding: 14px 26px; border-radius: 10px;
-            display: none; z-index: 3000; font-family: 'Fredoka One', cursive; 
-            font-size: 16px; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            max-width: 90vw;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #28a745; color: white; padding: 15px 25px; border-radius: 8px;
+            display: none; z-index: 3000; font-family: 'Fredoka One', cursive; text-align: center;
         }
         #toast.show { display: block; }
         #toast.ban { background: #dc3545; }
         #toast.unban { background: #ffc107; color: #121212; }
-
-        /* ===== MOBILE RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            body { padding: 8px; }
-            .logo { font-size: 24px; }
-            .header { padding: 10px 12px; }
-            .pfp-header { width: 42px; height: 42px; }
-            .btn { font-size: 15px; padding: 10px 14px; }
-            .profile-panel { width: calc(100vw - 32px); right: -60px; }
-            .search-container { padding: 8px; gap: 8px; }
-            .custom-select-wrapper { min-width: 110px; }
-            .card { padding: 16px; }
-            h2 { font-size: 20px; }
-            h3 { font-size: 18px; }
-            .stats-text { flex-direction: column; gap: 8px; }
-            .admin-modal-content { padding: 16px 12px; }
-            .modal-content { padding: 20px 16px; }
-            pre[class*="language-"] { font-size: 12px; }
-        }
     </style>
 </head>
 <body>
@@ -515,11 +413,11 @@
         <input type="text" id="authUsername" placeholder="Username">
         <input type="password" id="authPassword" placeholder="Password">
         
-        <p style="margin-top:15px; color:#aaa;">Choose Profile Picture:</p>
+        <p style="font-family:sans-serif; margin-top:15px; color:#aaa;">Choose Profile Picture:</p>
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:15px;">
-            <img src="https://api.dicebear.com/8.x/pixel-art/svg?seed=1" class="pfp-option selected" onclick="selectPfp(this, 'seed=1')">
-            <img src="https://api.dicebear.com/8.x/pixel-art/svg?seed=2" class="pfp-option" onclick="selectPfp(this, 'seed=2')">
-            <img src="https://api.dicebear.com/8.x/pixel-art/svg?seed=3" class="pfp-option" onclick="selectPfp(this, 'seed=3')">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=1" class="pfp-option selected" onclick="selectPfp(this, 'seed=1')">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=2" class="pfp-option" onclick="selectPfp(this, 'seed=2')">
+            <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=3" class="pfp-option" onclick="selectPfp(this, 'seed=3')">
         </div>
 
         <div class="modal-buttons">
@@ -548,7 +446,7 @@
 <div id="deleteModal" class="modal">
     <div class="modal-content" style="border-color:#dc3545;">
         <h3>⚠️ Delete Item?</h3>
-        <p style="color:white;" id="deleteModalText">Are you sure you want to Delete this item?</p>
+        <p style="color:white; font-family:sans-serif;" id="deleteModalText">Are you sure you want to Delete this item?</p>
         
         <div class="modal-buttons">
             <button class="btn btn-logout" style="background:#dc3545;" id="deleteModalConfirm">Yes</button>
@@ -563,7 +461,7 @@
             <h3>🛡️ Admin Dashboard</h3>
             <button class="btn" style="background:#333;" onclick="closeAdminModal()">X</button>
         </div>
-        <p style="color:#aaa;">Welcome, Administrator Tasin Redwan.</p>
+        <p style="color:#aaa; font-family:sans-serif;">Welcome, Administrator Tasin Redwan.</p>
         
         <div id="adminContentArea"></div>
         
@@ -573,7 +471,7 @@
 <div id="banModal" class="modal">
     <div class="modal-content" style="border-color:#dc3545;">
         <h3>🚫 Ban User?</h3>
-        <p style="color:white;" id="banModalContext"></p>
+        <p style="color:white; font-family:sans-serif;" id="banModalContext"></p>
         <input type="number" id="banDays" placeholder="Days to Ban">
         <textarea id="banReason" placeholder="Reason for Ban" rows="3"></textarea>
         
@@ -802,7 +700,7 @@
             
             card.innerHTML = `
                 <h3>${escapeHTML(s.title)}</h3>
-                <span class="author-tag" style="font-size:13px; color:#3d9bff; display:flex; align-items:center; gap:5px; margin-bottom:10px;">
+                <span class="author-tag" style="font-family:sans-serif; font-size:12px; color:#007bff; display:flex; align-items:center; gap:5px; margin-bottom:10px;">
                     <img src="${s.authorPfp}" class="pfp-tiny"> ${escapeHTML(s.author)}
                     ${s.author === "Tasin Redwan" ? '<span style="color:#ffc107;">👑 OWNER</span>' : ''}
                 </span>
@@ -1338,7 +1236,7 @@
     function processAuth() {
         const username = document.getElementById('authUsername').value.trim();
         const password = document.getElementById('authPassword').value;
-        const pfp = `https://api.dicebear.com/8.x/pixel-art/svg?${selectedPfpSeed}`;
+        const pfp = `https://api.dicebear.com/7.x/pixel-art/svg?${selectedPfpSeed}`;
         if(!username || !password) return showToast("All fields required");
         
         if(authType === 'register') {
