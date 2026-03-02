@@ -12,7 +12,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#07070f;--bg2:#0c0c1a;--bg3:#11112a;--bg4:#161635;--bg5:#1c1c42;
+  --bg:#030308;--bg2:#07070f;--bg3:#0a0a18;--bg4:#0e0e22;--bg5:#13132e;
   --border:#1e1e50;--border2:#262665;
   --accent:#5b8ef0;--accent2:#7b6ef6;
   --green:#27ae60;--red:#e74c3c;--gold:#f1c40f;
@@ -40,7 +40,7 @@ body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;
 .au2{animation:fadeUp 0.32s var(--tr) 0.1s both}
 
 /* HEADER */
-.header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm),inset 0 1px 0 rgba(255,255,255,0.03)}
+.header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:linear-gradient(135deg,#080818,#0d0d28);border:1.5px solid var(--border2);border-radius:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm),inset 0 1px 0 rgba(255,255,255,0.03)}
 .logo{font-family:'Fredoka One',cursive;font-size:26px;line-height:1;letter-spacing:-0.5px;display:flex;align-items:center;gap:2px}
 .logo-lua{color:var(--text)}
 .logo-hub{color:var(--accent);text-shadow:0 0 22px rgba(91,142,240,0.5)}
@@ -75,7 +75,7 @@ body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;
 .pp-out:hover{opacity:0.88;transform:translateY(-1px)}
 
 /* SEARCH */
-.sw{display:flex;gap:8px;align-items:stretch;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:10px;margin-bottom:14px}
+.sw{display:flex;gap:8px;align-items:stretch;background:#07070f;border:1.5px solid var(--border2);border-radius:var(--r);padding:10px;margin-bottom:14px}
 .si{flex:1;min-width:0;background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text);padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border var(--tr)}
 .si:focus{border-color:var(--accent)}
 .si::placeholder{color:var(--text3)}
@@ -126,7 +126,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 /* MODAL */
 .modal{display:none;position:fixed;inset:0;background:rgba(3,3,12,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:1000;padding:16px;overflow-y:auto}
 .modal.show{display:flex}
-.modal-box{background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:400px;box-shadow:0 24px 70px rgba(0,0,0,0.85);position:relative;text-align:center}
+.modal-box{background:linear-gradient(160deg,#090918,#0c0c22);border:1.5px solid var(--border2);border-radius:20px;padding:24px;width:100%;max-width:400px;box-shadow:0 24px 70px rgba(0,0,0,0.85);position:relative;text-align:center}
 .modal-box.wide{max-width:490px}
 .modal-box.dng{border-color:var(--red)}
 .modal-box.suc{border-color:var(--green)}
@@ -152,14 +152,6 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 .btn-login:hover{opacity:0.88;transform:translateY(-1px)}
 
 /* AUTH MODAL */
-.auth-methods{display:flex;flex-direction:column;gap:9px;margin:12px 0}
-.apbtn{display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text);cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;transition:all var(--tr);text-align:left}
-.apbtn:hover{background:var(--bg4);border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.35)}
-.apbtn img{width:20px;height:20px;flex-shrink:0}
-.apbtn .an{flex:1}
-.apbtn .aa{color:var(--text3);font-size:11px}
-.adiv{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--text3);font-size:12px;font-family:'Inter',sans-serif}
-.adiv::before,.adiv::after{content:'';flex:1;height:1px;background:var(--border)}
 .atog{font-family:'Inter',sans-serif;font-size:13px;color:var(--text3);margin-top:12px;cursor:pointer}
 .atog span{color:var(--accent);text-decoration:underline}
 .pfp-row{display:flex;justify-content:center;gap:8px;margin:8px 0;flex-wrap:wrap}
@@ -175,7 +167,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 #toast.inf{background:var(--accent)}
 
 /* FOLDER CARD */
-.fcard{background:linear-gradient(160deg,#090920,#0e0e2c);border:1.5px solid #1c1c55;border-radius:18px;padding:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm);transition:border var(--tr),box-shadow var(--tr)}
+.fcard{background:linear-gradient(160deg,#050512,#080820);border:1.5px solid #1c1c55;border-radius:18px;padding:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm);transition:border var(--tr),box-shadow var(--tr)}
 .fcard:hover{border-color:#2c2c88;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
 .fhd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .fchev{background:none;border:none;cursor:pointer;color:#2a2a88;font-size:13px;padding:5px;border-radius:6px;transition:all var(--tr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -189,12 +181,12 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 /* FOLDER COLLAPSE */
 .fbody{overflow:hidden;max-height:0;transition:max-height 0.44s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;opacity:0}
 .fbody.open{max-height:99999px;opacity:1}
-.fadd-row{display:flex;gap:8px;margin-top:12px}
-.sadd-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#0c0c30;color:#4444aa;border:1px solid #1a1a55;border-radius:var(--rsm);padding:9px;font-family:'Fredoka One',cursive;font-size:13px;cursor:pointer;transition:all var(--tr)}
+.fadd-row{display:flex;gap:8px;margin-top:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.sadd-btn{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;background:#080820;color:#4444aa;border:1px solid #1a1a55;border-radius:var(--rsm);padding:9px 14px;font-family:'Fredoka One',cursive;font-size:13px;cursor:pointer;transition:all var(--tr);white-space:nowrap}
 .sadd-btn:hover{background:#14144a;color:#8888ff;border-color:var(--accent)}
 
 /* SCRIPT CARD (inside folder) */
-.scard{background:#060618;border:1px solid #111148;border-radius:12px;padding:14px;margin-bottom:10px;position:relative;transition:border var(--tr)}
+.scard{background:#030310;border:1px solid #0d0d40;border-radius:12px;padding:14px;margin-bottom:10px;position:relative;transition:border var(--tr)}
 .scard:hover{border-color:#202070}
 .sbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'Fira Code',monospace;font-weight:600;padding:3px 9px;border-radius:20px;margin-bottom:8px}
 .sbadge.srv{background:rgba(46,204,113,0.1);color:var(--server);border:1px solid rgba(46,204,113,0.22)}
@@ -253,6 +245,52 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 
 /* PFP tiny */
 .pfp-xs{width:16px;height:16px;border-radius:50%;object-fit:cover}
+
+/* INSTRUCTIONS PANEL */
+.instr-panel{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;margin:0}
+.instr-panel.open{max-height:9999px;opacity:1;margin:10px 0 4px}
+.instr-box{background:#04040e;border:1px solid #151545;border-radius:10px;padding:14px 16px}
+.instr-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.instr-ttl{font-family:'Fredoka One',cursive;font-size:14px;color:#8080cc;display:flex;align-items:center;gap:7px}
+.instr-chev{color:#33336a;font-size:11px;transition:transform var(--tr)}
+.instr-chev.open{transform:rotate(180deg)}
+.instr-body{font-family:'Inter',sans-serif;font-size:13px;color:#5a5a90;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin-top:10px;padding-top:10px;border-top:1px solid #0f0f35}
+.instr-empty{color:#25255a;font-size:12px;font-style:italic}
+
+/* FAVOURITE */
+.fav-btn{position:absolute;top:17px;left:15px;font-size:15px;cursor:pointer;color:#222255;transition:all var(--tr);background:none;border:none;line-height:1;padding:2px;border-radius:4px}
+.fav-btn:hover{color:var(--gold);transform:scale(1.15)}
+.fav-btn.on{color:var(--gold);text-shadow:0 0 10px rgba(241,196,15,0.6)}
+
+/* DASHBOARD */
+.ibtn.dash-btn{background:linear-gradient(135deg,#3a1a7a,#5a2aaa);color:white;box-shadow:0 2px 10px rgba(90,42,170,0.4)}
+.ibtn.dash-btn:hover{box-shadow:0 4px 18px rgba(90,42,170,0.6)}
+.dash-tabs{display:flex;gap:8px;margin-bottom:14px}
+.dash-tab{flex:1;background:var(--bg5);border:1px solid var(--border2);color:var(--text3);padding:9px;border-radius:var(--rsm);cursor:pointer;font-family:'Fredoka One',cursive;font-size:13px;transition:all var(--tr)}
+.dash-tab.act{background:linear-gradient(135deg,#3a1a7a,#5a2aaa);color:white;border-color:#5a2aaa}
+.dfi{background:#04040e;border:1px solid #111140;border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:border var(--tr)}
+.dfi:hover{border-color:#2a2a70}
+.dfi-nm{font-family:'Fredoka One',cursive;font-size:15px;color:#c0c0ff;margin-bottom:3px}
+.dfi-mt{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3)}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .wrap{padding:8px 5px 50px}
+  .header{padding:11px 13px;border-radius:14px}
+  .logo{font-size:21px}
+  .fcard{padding:14px;border-radius:14px}
+  .sadd-btn{padding:8px 10px;font-size:12px}
+  .modal-box{padding:18px 15px}
+  .sw{padding:8px 7px}
+  .ibtn{width:34px;height:34px;font-size:13px}
+  .pfp-hdr{width:35px;height:35px}
+  .pp{right:5px}
+}
+@media(max-width:360px){
+  .logo{font-size:19px}
+  .sadd-btn{font-size:11px;padding:7px 8px}
+  .ibtn{width:30px;height:30px;font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -295,21 +333,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
   <div class="modal-box">
     <div class="mt" id="authTitle">Welcome to LuaHub</div>
     <div class="ms" id="authSub">Sign in to share your Roblox scripts.</div>
-    <div class="auth-methods" id="authProviders">
-      <button class="apbtn" onclick="oauthLogin('github')">
-        <img src="https://api.iconify.design/mdi:github.svg?color=%23ffffff" alt="">
-        <span class="an">Continue with GitHub</span><i class="fas fa-arrow-right aa"></i>
-      </button>
-      <button class="apbtn" onclick="oauthLogin('google')">
-        <img src="https://api.iconify.design/flat-color-icons:google.svg" alt="">
-        <span class="an">Continue with Google</span><i class="fas fa-arrow-right aa"></i>
-      </button>
-      <button class="apbtn" onclick="oauthLogin('apple')">
-        <img src="https://api.iconify.design/ic:baseline-apple.svg?color=%23ffffff" alt="">
-        <span class="an">Continue with Apple</span><i class="fas fa-arrow-right aa"></i>
-      </button>
-    </div>
-    <div class="adiv">or use username &amp; password</div>
+
     <input type="text" id="authUser" placeholder="Username">
     <input type="password" id="authPass" placeholder="Password">
     <div id="authPfpRow" style="display:none">
@@ -330,22 +354,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
   </div>
 </div>
 
-<!-- OAUTH MODAL -->
-<div class="modal" id="oauthModal">
-  <div class="modal-box" style="max-width:360px">
-    <div style="font-size:38px;margin-bottom:10px" id="oiIcon">&#x1F510;</div>
-    <div class="mt" id="oiTitle">Sign-In</div>
-    <div class="ms" id="oiSub" style="line-height:1.6"></div>
-    <div id="oiSpinner" style="display:none;margin:18px auto;width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
-    <div id="oiStep2" style="display:none"></div>
-    <div id="oiAltBtn" style="display:none">
-      <div class="mbtns">
-        <button class="btn pr" onclick="oauthGoBack()">&#x1F4DD; Sign Up with Username</button>
-        <button class="btn se" onclick="closeM('oauthModal')">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <!-- CHANGE NAME -->
 <div class="modal" id="chgNameModal">
@@ -521,6 +530,35 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
   </div>
 </div>
 
+<!-- DASHBOARD MODAL -->
+<div class="modal" id="dashModal">
+  <div class="modal-box wide" style="text-align:left;max-width:500px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px">
+      <div class="mt" style="margin:0">&#x1F4CA; Dashboard</div>
+      <button class="btn se" style="padding:5px 12px" onclick="closeM('dashModal')">&#x2715;</button>
+    </div>
+    <div class="dash-tabs">
+      <button class="dash-tab act" id="dtab-fav" onclick="dTab('fav')">&#x2B50; Favourites</button>
+      <button class="dash-tab" id="dtab-liked" onclick="dTab('liked')">&#x1F44D; Liked Folders</button>
+    </div>
+    <div id="dashArea" style="max-height:360px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- INSTRUCTIONS EDIT MODAL -->
+<div class="modal" id="instrModal">
+  <div class="modal-box wide">
+    <div class="mt">&#x1F4DD; Edit Instructions</div>
+    <div class="ms" style="margin-bottom:8px">Users will see this when they open the Instructions panel inside your folder.</div>
+    <input type="hidden" id="instrFid">
+    <textarea id="instrText" rows="6" placeholder="Explain how to use the scripts in this folder...&#10;&#10;e.g. Step 1: Copy the ServerScript into ServerScriptService&#10;Step 2: ..."></textarea>
+    <div class="mbtns">
+      <button class="btn pr" onclick="saveInstr()">Save Instructions</button>
+      <button class="btn se" onclick="closeM('instrModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/lua/lua.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -537,6 +575,7 @@ let D = {
   warnings:LS('warnings')||{},
   reports: LS('reports') ||[],
   unrep:   LS('unrep')   ||[],
+  favs:    LS('favs')    ||{},
 };
 let curUser = LS('session');
 let openF={}, selPfpSeed='seed=1', authMode='login', admTab='reports', _sme=null, _fv='folder';
@@ -624,6 +663,7 @@ function renderHdr(){
     const bc=D.banned.length;
     a.innerHTML=`
       ${isAdmin()?`<button class="ibtn admin-btn" onclick="openAdmin()" title="Admin"><i class="fas fa-shield-alt"></i></button>`:''}
+      <button class="ibtn dash-btn" onclick="openDash()" title="Dashboard"><i class="fas fa-chart-bar"></i></button>
       <button class="ibtn add-btn" onclick="openNewFolder()" title="Create Folder">+</button>
       <div class="pfp-wrap">
         <img src="${curUser.pfp}" class="pfp-hdr" onclick="tglPP(event)" title="${esc(curUser.username)}">
@@ -680,38 +720,56 @@ function buildFC(f){
   } else {
     scHtml=cnt?(f.scripts||[]).map(fs=>buildSC(fs,f.id,mine,admin)).join(''):`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;margin:0">No scripts yet${mine?' — add one below!':'.'}</p>`;
   }
+  const isFav=curUser&&(D.favs[curUser.username]||[]).includes(f.id);
+  const hasInstr=f.instructions&&f.instructions.trim();
   el.innerHTML=`
-    <div class="fhd">
+    ${curUser?`<button class="fav-btn${isFav?' on':''}" onclick="tglFav('${f.id}',event)" title="${isFav?'Unfavourite':'Favourite'}">&#x2605;</button>`:''}
+    <div class="fhd" style="${curUser?'padding-left:24px':''}">
       <button class="fchev${isOpen?' open':''}" onclick="tglF('${f.id}',this)"><i class="fas fa-chevron-right"></i></button>
       <span style="font-size:20px">&#x1F4C1;</span>
       <span class="ftitle">${esc(f.name)}</span>
       <div style="position:relative;margin-left:auto">
         <button class="dots-btn" onclick="tglM(event,'fdm-${f.id}')"><i class="fas fa-ellipsis-v"></i></button>
-        <div class="drop-menu" id="fdm-${f.id}" style="position:absolute;right:0;top:100%;min-width:170px">
-          ${mine?`<button onclick="openEditFolder('${f.id}')"><i class="fas fa-edit"></i>Edit Folder</button><div class="menu-sep"></div><button class="dng" onclick="openDel('folder','${f.id}',null)"><i class="fas fa-trash"></i>Delete Folder</button>`
+        <div class="drop-menu" id="fdm-${f.id}" style="position:absolute;right:0;top:100%;min-width:185px">
+          ${mine?`<button onclick="openEditFolder('${f.id}')"><i class="fas fa-edit"></i>Edit Folder</button>
+          <button onclick="openInstr('${f.id}')"><i class="fas fa-book"></i>Edit Instructions</button>
+          <div class="menu-sep"></div>
+          <button class="dng" onclick="openDel('folder','${f.id}',null)"><i class="fas fa-trash"></i>Delete Folder</button>`
           :`<button class="dng" onclick="openRep('folder','${f.id}',null)"><i class="fas fa-flag"></i>Report</button>`}
           <button onclick="openShrFolder('${f.id}')"><i class="fas fa-share-alt"></i>Share Folder</button>
+          ${curUser?`<button onclick="tglFav('${f.id}',null)"><i class="fas fa-star"></i>${isFav?'Unfavourite':'Favourite'}</button>`:''}
           ${admin&&!mine?`<button class="dng" onclick="openBan('${esc(f.author)}',null,null,null)"><i class="fas fa-ban"></i>Ban Creator</button>`:''}
         </div>
       </div>
     </div>
-    ${f.desc?`<div class="fdesc">${esc(f.desc)}</div>`:''}
-    <div class="fmeta">
+    ${f.desc?`<div class="fdesc" style="${curUser?'padding-left:24px':''}">${esc(f.desc)}</div>`:''}
+    <div class="fmeta" style="${curUser?'padding-left:24px':''}">
       <img src="${f.authorPfp||''}" class="pfp-xs" style="cursor:pointer;border:1px solid var(--border2)" onclick="openUserProfile('${esc(f.author)}')">
       <span style="cursor:pointer;color:var(--accent);font-weight:500" onclick="openUserProfile('${esc(f.author)}')">${esc(f.author)}${f.author==='Tasin Redwan'?' &#x1F451;':''}</span>
       <span>&#x2022;</span><span>${cnt} script${cnt!==1?'s':''}</span>
       <span>&#x2022;</span><span>${fmtD(f.createdAt||Date.now())}</span>
     </div>
-    <div class="frxns">
+    <div class="frxns" style="${curUser?'padding-left:24px':''}">
       <button class="rbtn${myR==='like'?' lkd':''}" onclick="rxnF('${f.id}','like')"><i class="fas fa-thumbs-up"></i> ${likes}</button>
       <button class="rbtn${myR==='dislike'?' dlkd':''}" onclick="rxnF('${f.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${dlikes}</button>
     </div>
     <div class="fbody${isOpen?' open':''}" id="fb-${f.id}">
+      ${hasInstr||mine?`<div class="instr-panel" id="ip-${f.id}">
+        <div class="instr-box">
+          <div class="instr-hdr" onclick="tglInstr('${f.id}')">
+            <span class="instr-ttl"><i class="fas fa-book-open" style="font-size:12px"></i>Instructions</span>
+            <i class="fas fa-chevron-down instr-chev" id="ich-${f.id}"></i>
+          </div>
+          <div id="ib-${f.id}" style="display:none">
+            <div class="instr-body">${hasInstr?esc(f.instructions):`<span class="instr-empty">No instructions yet.</span>`}</div>
+          </div>
+        </div>
+      </div>`:''}
       <div id="fi-${f.id}">${scHtml}</div>
       ${mine?`<div class="fadd-row">
         <button class="sadd-btn" onclick="openSM('${f.id}','ServerScript')"><i class="fas fa-plus"></i>ServerScript</button>
         <button class="sadd-btn" onclick="openSM('${f.id}','LocalScript')"><i class="fas fa-plus"></i>LocalScript</button>
-        <button class="sadd-btn" onclick="openSM('${f.id}','ModuleScript')" style="color:#bbaa55;border-color:rgba(241,196,15,0.2)"><i class="fas fa-plus"></i>ModuleScript</button>
+        <button class="sadd-btn" onclick="openSM('${f.id}','ModuleScript')" style="color:#aaaa44;border-color:rgba(200,180,0,0.2)"><i class="fas fa-plus"></i>ModuleScript</button>
       </div>`:''}
     </div>`;
   return el;
@@ -721,6 +779,82 @@ function tglF(id,btn){
   openF[id]=!openF[id];
   btn.classList.toggle('open',openF[id]);
   document.getElementById('fb-'+id).classList.toggle('open',openF[id]);
+}
+
+// === FAVOURITE ===
+function tglFav(fid, e){
+  if(e) e.stopPropagation();
+  if(!curUser) return toast("Login first!",'err');
+  if(!D.favs[curUser.username]) D.favs[curUser.username]=[];
+  const idx=D.favs[curUser.username].indexOf(fid);
+  if(idx===-1){ D.favs[curUser.username].push(fid); toast("Added to Favourites ⭐"); }
+  else{ D.favs[curUser.username].splice(idx,1); toast("Removed from Favourites"); }
+  sv('favs'); renderAll();
+}
+
+// === INSTRUCTIONS ===
+function openInstr(fid){
+  const f=D.folders.find(f=>f.id===fid); if(!f) return;
+  document.getElementById('instrFid').value=fid;
+  document.getElementById('instrText').value=f.instructions||'';
+  openM('instrModal');
+}
+function saveInstr(){
+  const fid=document.getElementById('instrFid').value;
+  const txt=document.getElementById('instrText').value.trim();
+  const f=D.folders.find(f=>f.id===fid); if(!f) return;
+  f.instructions=txt;
+  sv('folders'); closeM('instrModal'); renderAll(); toast("Instructions saved!");
+}
+function tglInstr(fid){
+  const body=document.getElementById('ib-'+fid);
+  const chev=document.getElementById('ich-'+fid);
+  if(!body) return;
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(chev) chev.classList.toggle('open',!open);
+}
+
+// === DASHBOARD ===
+let _dTab='fav';
+function openDash(){
+  if(!curUser) return toast("Login first!",'err');
+  _dTab='fav';
+  document.getElementById('dtab-fav').classList.add('act');
+  document.getElementById('dtab-liked').classList.remove('act');
+  showDash(); openM('dashModal');
+}
+function dTab(t){
+  _dTab=t;
+  document.getElementById('dtab-fav').classList.toggle('act',t==='fav');
+  document.getElementById('dtab-liked').classList.toggle('act',t==='liked');
+  showDash();
+}
+function showDash(){
+  const area=document.getElementById('dashArea');
+  if(!curUser){area.innerHTML='<p style="color:var(--text3);font-size:13px;font-family:Inter,sans-serif">Please login.</p>';return;}
+  let folders=[];
+  if(_dTab==='fav'){
+    const ids=(D.favs[curUser.username]||[]);
+    folders=D.folders.filter(f=>ids.includes(f.id));
+  } else {
+    folders=D.folders.filter(f=>(f.userReactions||{})[curUser.username]==='like');
+  }
+  if(!folders.length){
+    area.innerHTML=`<div style="text-align:center;padding:30px 10px;color:var(--text3);font-family:'Inter',sans-serif;font-size:13px">
+      <i class="fas fa-${_dTab==='fav'?'star':'thumbs-up'}" style="font-size:28px;opacity:0.3;display:block;margin-bottom:10px"></i>
+      ${_dTab==='fav'?'No favourited folders yet. Click ⭐ on any folder!':'No liked folders yet. Like some folders first!'}
+    </div>`;
+    return;
+  }
+  area.innerHTML=folders.map(f=>`
+    <div class="dfi" onclick="closeM('dashModal')">
+      <div class="dfi-nm">&#x1F4C1; ${esc(f.name)}</div>
+      <div class="dfi-mt">by ${esc(f.author)} &bull; ${(f.scripts||[]).length} scripts &bull;
+        &#x1F44D; ${Object.values(f.userReactions||{}).filter(r=>r==='like').length}
+        ${(D.favs[curUser.username]||[]).includes(f.id)?'&bull; &#x2B50; Favourited':''}
+      </div>
+    </div>`).join('');
 }
 
 // === SCRIPT CARD ===
@@ -1055,26 +1189,7 @@ function doAuth(){
   }
 }
 
-// === OAUTH ===
-// NOTE: Real OAuth (Google/GitHub/Apple) requires a backend server to handle
-// the OAuth token exchange securely. This is a browser-only app with no server,
-// so true OAuth cannot be implemented here. Clicking these buttons will show
-// an explanation and redirect the user to sign up with username/password instead.
-let _oauthP='';
-function oauthLogin(p){
-  _oauthP=p;
-  const names={github:'GitHub',google:'Google',apple:'Apple'};
-  const icons={github:'<img src="https://api.iconify.design/mdi:github.svg?color=%23ffffff" style="width:36px">',google:'<img src="https://api.iconify.design/flat-color-icons:google.svg" style="width:36px">',apple:'<img src="https://api.iconify.design/ic:baseline-apple.svg?color=%23ffffff" style="width:36px">'};
-  document.getElementById('oiIcon').innerHTML=icons[p]||'🔐';
-  document.getElementById('oiTitle').textContent=`${names[p]||p} Sign-In`;
-  document.getElementById('oiSub').innerHTML=`<b>Real ${names[p]||p} OAuth requires a backend server</b> to securely handle the token exchange. This app runs entirely in your browser without a server.<br><br>Please sign up with a username &amp; password below instead.`;
-  document.getElementById('oiSpinner').style.display='none';
-  document.getElementById('oiStep2').style.display='none';
-  document.getElementById('oiAltBtn').style.display='block';
-  closeM('authModal');openM('oauthModal');
-}
-function oauthGoBack(){closeM('oauthModal');openM('authModal');authMode='register';updAuth();}
-function finishOauth(){} // unused but kept for safety
+
 function logout(){curUser=null;localStorage.removeItem('lh_session');document.getElementById('pp').classList.remove('show');renderHdr();renderAll();}
 
 // === INIT ===
