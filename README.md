@@ -48,7 +48,7 @@ body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;
 .hact{display:flex;align-items:center;gap:10px}
 
 /* ICON BUTTON */
-.ibtn{width:38px;height:38px;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all var(--tr)}
+.ibtn{width:37px;height:37px;border:1px solid var(--border2);background:var(--bg4);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all var(--tr)}
 .ibtn:hover{transform:scale(1.08)}
 .ibtn.admin-btn{background:linear-gradient(135deg,#c0392b,#96281b);color:white;box-shadow:0 2px 10px rgba(192,57,43,0.4)}
 .ibtn.add-btn{background:linear-gradient(135deg,var(--green),#1e8449);color:white;box-shadow:0 2px 10px rgba(39,174,96,0.35);font-size:20px;font-family:'Fredoka One',cursive}
@@ -160,11 +160,12 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 .pfp-opt.sel{border-color:var(--accent);transform:scale(1.12);box-shadow:0 0 12px rgba(91,142,240,0.4)}
 
 /* TOAST */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:white;padding:11px 22px;border-radius:12px;display:none;z-index:5000;font-family:'Fredoka One',cursive;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,0.5);white-space:nowrap;pointer-events:none}
-#toast.show{display:block;animation:popIn 0.2s var(--tr) both}
-#toast.err{background:var(--red)}
-#toast.wrn{background:#f39c12;color:#111}
-#toast.inf{background:var(--accent)}
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:rgba(8,8,22,0.96);color:var(--text);padding:10px 20px;border-radius:30px;display:none;z-index:5000;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.7);white-space:nowrap;pointer-events:none;border:1px solid var(--border2);backdrop-filter:blur(20px);align-items:center;gap:8px}
+#toast.show{display:flex;animation:popIn 0.2s var(--tr) both}
+#toast::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+#toast.err{border-color:rgba(239,68,68,0.35)}#toast.err::before{background:var(--red)}
+#toast.wrn{border-color:rgba(245,158,11,0.35)}#toast.wrn::before{background:var(--gold)}
+#toast.inf{border-color:rgba(91,142,240,0.35)}#toast.inf::before{background:var(--accent)}
 
 /* FOLDER CARD */
 .fcard{background:linear-gradient(160deg,#050512,#080820);border:1.5px solid #1c1c55;border-radius:18px;padding:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm);transition:border var(--tr),box-shadow var(--tr)}
@@ -228,6 +229,15 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 .uf-nm{font-family:'Fredoka One',cursive;font-size:14px;color:#c0c0ff;margin-bottom:3px}
 .uf-ct{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3)}
 
+/* BIO */
+.pp-bio-box{margin:5px 0 8px;padding:7px 10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border var(--tr);text-align:left}
+.pp-bio-box:hover{border-color:var(--accent)}
+.pp-bio-txt{font-size:11px;color:var(--text2);font-style:italic;line-height:1.5}
+.pp-bio-empty{font-size:11px;color:var(--text3);font-style:italic}
+.up-bio-wrap{background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin:5px 0 10px;text-align:left}
+.up-bio-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;margin-bottom:4px}
+.up-bio-text{font-family:'Inter',sans-serif;font-size:12px;color:var(--text2);line-height:1.65;white-space:pre-wrap;word-break:break-word}
+
 /* SHARE */
 .shr-row{display:flex;gap:8px;align-items:center}
 .shr-row input{flex:1;color:var(--accent);font-family:'Fira Code',monospace;font-size:11px;background:#04040e;cursor:pointer}
@@ -247,15 +257,28 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 .pfp-xs{width:16px;height:16px;border-radius:50%;object-fit:cover}
 
 /* INSTRUCTIONS PANEL */
-.instr-panel{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;margin:0}
-.instr-panel.open{max-height:9999px;opacity:1;margin:10px 0 4px}
-.instr-box{background:#04040e;border:1px solid #151545;border-radius:10px;padding:14px 16px}
-.instr-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.instr-ttl{font-family:'Fredoka One',cursive;font-size:14px;color:#8080cc;display:flex;align-items:center;gap:7px}
-.instr-chev{color:#33336a;font-size:11px;transition:transform var(--tr)}
-.instr-chev.open{transform:rotate(180deg)}
-.instr-body{font-family:'Inter',sans-serif;font-size:13px;color:#5a5a90;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin-top:10px;padding-top:10px;border-top:1px solid #0f0f35}
-.instr-empty{color:#25255a;font-size:12px;font-style:italic}
+.instr-wrap{margin:10px 0 6px}
+.instr-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 12px;background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.13);border-radius:10px;transition:all var(--tr);user-select:none}
+.instr-toggle:hover{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.28)}
+.instr-toggle-lbl{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text2);flex:1;display:flex;align-items:center;gap:6px}
+.instr-toggle-lbl i{color:var(--accent);font-size:11px;opacity:0.8}
+.instr-chev{color:var(--text3);font-size:10px;transition:transform var(--tr)}
+.instr-chev.open{transform:rotate(180deg);color:var(--accent)}
+.instr-body-wrap{overflow:hidden;max-height:0;transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;opacity:0}
+.instr-body-wrap.open{max-height:2000px;opacity:1}
+.instr-content{padding:12px 14px;background:rgba(2,2,12,0.7);border:1px solid rgba(20,20,60,0.8);border-top:none;border-radius:0 0 10px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text2);line-height:1.8;white-space:pre-wrap;word-break:break-word}
+.instr-none{color:var(--text3);font-style:italic;font-size:12px}
+
+/* CATEGORY BAR */
+.cat-bar{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat-btn{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.cat-btn:hover{border-color:var(--accent);color:var(--text)}
+.cat-btn.act{background:rgba(91,142,240,0.1);border-color:var(--accent);color:var(--accent);font-weight:600}
+.cat-btn.cat-owner.act{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.45);color:var(--gold)}
+.cat-btn i{font-size:10px;opacity:0.75}
+.fcard.owner-folder{border-color:rgba(245,158,11,0.2)}
+.fcard.owner-folder:hover{border-color:rgba(245,158,11,0.42)}
 
 /* FAVOURITE */
 .fav-btn{position:absolute;top:17px;left:15px;font-size:15px;cursor:pointer;color:#222255;transition:all var(--tr);background:none;border:none;line-height:1;padding:2px;border-radius:4px}
@@ -306,6 +329,12 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
   <!-- Profile panel (outside header to avoid z-index overlap) -->
   <div class="pp" id="pp"></div>
 
+  <!-- CATEGORY BAR -->
+  <div class="cat-bar au1">
+    <button class="cat-btn act" id="cat-all" onclick="setCat('all',this)"><i class="fas fa-border-all"></i> All Folders</button>
+    <button class="cat-btn cat-owner" id="cat-owner" onclick="setCat('owner',this)"><i class="fas fa-crown"></i> Owner Only Scripts</button>
+  </div>
+
   <!-- SEARCH -->
   <div class="sw au1">
     <input type="text" id="sq" class="si" placeholder="&#128269;  Search..." oninput="renderAll()">
@@ -355,6 +384,20 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 </div>
 
 
+
+<!-- BIO MODAL -->
+<div class="modal" id="bioModal">
+  <div class="modal-box">
+    <div style="font-size:30px;margin-bottom:8px">📝</div>
+    <div class="mt">About Me</div>
+    <div class="ms">Let others know who you are.</div>
+    <textarea id="bioText" rows="4" placeholder="e.g. Roblox developer from the UK &#10;I love building systems and tools!"></textarea>
+    <div class="mbtns">
+      <button class="btn pr" onclick="saveBio()">Save Bio</button>
+      <button class="btn se" onclick="closeM('bioModal')">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- CHANGE NAME -->
 <div class="modal" id="chgNameModal">
@@ -522,6 +565,7 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
     <div class="up-nm" id="um-nm"></div>
     <div id="um-own" style="display:none;color:var(--gold);font-size:12px;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600">&#x1F451; OWNER</div>
     <div class="up-join" id="um-join"></div>
+    <div class="up-bio-wrap" id="um-bio-wrap" style="display:none"><div class="up-bio-label">About</div><div class="up-bio-text" id="um-bio-text"></div></div>
     <div class="up-bel" id="um-bel" style="display:none">
       <div class="up-bel-lbl">&#x1F3C6; Beloved Script</div>
       <div class="up-bel-nm" id="um-bel-nm"></div>
@@ -578,7 +622,7 @@ let D = {
   favs:    LS('favs')    ||{},
 };
 let curUser = LS('session');
-let openF={}, selPfpSeed='seed=1', authMode='login', admTab='reports', _sme=null, _fv='folder';
+let openF={}, selPfpSeed='seed=1', authMode='login', admTab='reports', _sme=null, _fv='folder', _cat='all';
 
 if(curUser&&D.banned.includes(curUser.username)){curUser=null;localStorage.removeItem('lh_session');}
 
@@ -630,6 +674,14 @@ function setFilter(v,el){
   renderAll();
 }
 
+// === CATEGORY ===
+function setCat(cat,el){
+  _cat=cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('act'));
+  el.classList.add('act');
+  renderAll();
+}
+
 // === PROFILE PANEL ===
 function tglPP(e){e.stopPropagation();const pp=document.getElementById('pp');pp.classList.toggle('show');if(pp.classList.contains('show'))updPP();}
 function updPP(){
@@ -637,14 +689,17 @@ function updPP(){
   const isOw=curUser.username==='Tasin Redwan';
   const lvl=D.warnings[curUser.username]||0;
   const bel=getBeloved(curUser.username);
+  const bio=(D.users[curUser.username]||{}).bio||'';
   document.getElementById('pp').innerHTML=`
-    <img src="${curUser.pfp}" class="pp-av">
-    <div class="pp-nm" onclick="openChgName()">${esc(curUser.username)}</div>
-    ${isOw?`<span class="pp-own">&#x1F451; OWNER</span>`:''}
+    <img src="${esc(curUser.pfp)}" class="pp-av">
+    <div class="pp-nm" onclick="openChgName()">${esc(curUser.username)} <i class="fas fa-pen" style="font-size:9px;opacity:0.35;margin-left:2px"></i></div>
+    ${isOw?`<span class="pp-own" style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;justify-content:center;gap:4px"><i class="fas fa-crown" style="font-size:9px"></i>OWNER</span>`:''}
     ${!isOw&&lvl>0?`<span class="pp-wrn">&#x26A0; Warning Level: ${lvl}</span>`:''}
+    <div class="pp-bio-box" onclick="openBioModal()">${bio?`<div class="pp-bio-txt">${esc(bio)}</div>`:`<div class="pp-bio-empty">&#x270F;&#xFE0F; Add a bio...</div>`}</div>
+    <div style="height:1px;background:var(--border);margin:8px 0"></div>
     <div class="pp-bl-lbl">&#x1F3C6; Beloved Script</div>
     <div class="pp-bl">${bel?esc(bel.title):'No scripts yet!'}</div>
-    <button class="pp-out" onclick="logout()">Logout</button>
+    <button class="pp-out" onclick="logout()"><i class="fas fa-sign-out-alt" style="font-size:11px"></i> Logout</button>
   `;
 }
 function getBeloved(u){
@@ -688,13 +743,14 @@ function renderAll(){
   const q=document.getElementById('sq').value.toLowerCase().trim();
   feed.innerHTML='';
   let show=[...D.folders];
+  if(_cat==='owner') show=show.filter(f=>f.author==='Tasin Redwan');
   if(_fv==='folder'){if(q)show=show.filter(f=>f.name.toLowerCase().includes(q));}
   else if(_fv==='creator'){if(q)show=show.filter(f=>(f.author||'').toLowerCase().includes(q));}
   else if(_fv==='server'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ServerScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
   else if(_fv==='local'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='LocalScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
   else if(_fv==='module'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ModuleScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
   if(!show.length){
-    feed.innerHTML=`<div class="empty"><i class="fas fa-folder-open"></i><p>No folders found.<br>${curUser?'Click <b>+</b> to create your first folder!':'Login to create and share folders.'}</p></div>`;
+    feed.innerHTML=`<div class="empty"><i class="fas fa-folder-open"></i><p>${_cat==='owner'?'The owner hasn\'t posted any folders yet.':curUser?'No folders found. Click <b>+</b> to create your first folder!':'Login to create and share folders.'}</p></div>`;
     return;
   }
   show.forEach(f=>feed.appendChild(buildFC(f)));
@@ -704,7 +760,8 @@ function renderAll(){
 // === FOLDER CARD ===
 function buildFC(f){
   const el=document.createElement('div');
-  el.className='fcard au';
+  const isOwnerFolder=f.author==='Tasin Redwan';
+  el.className='fcard au'+(isOwnerFolder?' owner-folder':'');
   const mine=curUser&&curUser.username===f.author;
   const admin=isAdmin();
   const isOpen=!!openF[f.id];
@@ -726,7 +783,7 @@ function buildFC(f){
     ${curUser?`<button class="fav-btn${isFav?' on':''}" onclick="tglFav('${f.id}',event)" title="${isFav?'Unfavourite':'Favourite'}">&#x2605;</button>`:''}
     <div class="fhd" style="${curUser?'padding-left:24px':''}">
       <button class="fchev${isOpen?' open':''}" onclick="tglF('${f.id}',this)"><i class="fas fa-chevron-right"></i></button>
-      <span style="font-size:20px">&#x1F4C1;</span>
+      <span style="font-size:20px">${isOwnerFolder?'&#x1F451;':'&#x1F4C1;'}</span>
       <span class="ftitle">${esc(f.name)}</span>
       <div style="position:relative;margin-left:auto">
         <button class="dots-btn" onclick="tglM(event,'fdm-${f.id}')"><i class="fas fa-ellipsis-v"></i></button>
@@ -754,15 +811,13 @@ function buildFC(f){
       <button class="rbtn${myR==='dislike'?' dlkd':''}" onclick="rxnF('${f.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${dlikes}</button>
     </div>
     <div class="fbody${isOpen?' open':''}" id="fb-${f.id}">
-      ${hasInstr||mine?`<div class="instr-panel" id="ip-${f.id}">
-        <div class="instr-box">
-          <div class="instr-hdr" onclick="tglInstr('${f.id}')">
-            <span class="instr-ttl"><i class="fas fa-book-open" style="font-size:12px"></i>Instructions</span>
-            <i class="fas fa-chevron-down instr-chev" id="ich-${f.id}"></i>
-          </div>
-          <div id="ib-${f.id}" style="display:none">
-            <div class="instr-body">${hasInstr?esc(f.instructions):`<span class="instr-empty">No instructions yet.</span>`}</div>
-          </div>
+      ${(hasInstr||mine)?`<div class="instr-wrap">
+        <div class="instr-toggle" onclick="tglInstr('${f.id}')">
+          <span class="instr-toggle-lbl"><i class="fas fa-book-open"></i>Instructions${!hasInstr?' <span style=\"font-size:10px;opacity:0.5;font-weight:400\">(none yet)</span>':''}</span>
+          <i class="fas fa-chevron-down instr-chev" id="ich-${f.id}"></i>
+        </div>
+        <div class="instr-body-wrap" id="ibw-${f.id}">
+          <div class="instr-content">${hasInstr?esc(f.instructions):'<span class=\"instr-none\">No instructions added yet. Folder owner can add them via the ⋮ menu.</span>'}</div>
         </div>
       </div>`:''}
       <div id="fi-${f.id}">${scHtml}</div>
@@ -807,12 +862,12 @@ function saveInstr(){
   sv('folders'); closeM('instrModal'); renderAll(); toast("Instructions saved!");
 }
 function tglInstr(fid){
-  const body=document.getElementById('ib-'+fid);
+  const wrap=document.getElementById('ibw-'+fid);
   const chev=document.getElementById('ich-'+fid);
-  if(!body) return;
-  const open=body.style.display==='block';
-  body.style.display=open?'none':'block';
-  if(chev) chev.classList.toggle('open',!open);
+  if(!wrap) return;
+  const isOpen=wrap.classList.contains('open');
+  wrap.classList.toggle('open',!isOpen);
+  if(chev) chev.classList.toggle('open',!isOpen);
 }
 
 // === DASHBOARD ===
@@ -1125,6 +1180,10 @@ function openUserProfile(username){
   document.getElementById('um-nm').textContent=username;
   document.getElementById('um-own').style.display=username==='Tasin Redwan'?'block':'none';
   document.getElementById('um-join').textContent=`Joined ${fmtD(u.joinedAt||Date.now())}`;
+  const bioWrap=document.getElementById('um-bio-wrap');
+  const bioTxt=document.getElementById('um-bio-text');
+  if(u.bio&&u.bio.trim()){bioWrap.style.display='block';bioTxt.textContent=u.bio;}
+  else{bioWrap.style.display='none';}
   const bel=getBeloved(username);
   const bEl=document.getElementById('um-bel');
   if(bel){bEl.style.display='block';document.getElementById('um-bel-nm').textContent=bel.title;}else bEl.style.display='none';
@@ -1139,12 +1198,29 @@ function openUserProfile(username){
   openM('userModal');
 }
 
+// === BIO ===
+function openBioModal(){
+  const bio=(D.users[curUser.username]||{}).bio||'';
+  document.getElementById('bioText').value=bio;
+  openM('bioModal');
+}
+function saveBio(){
+  const bio=document.getElementById('bioText').value.trim();
+  if(!D.users[curUser.username])return;
+  D.users[curUser.username].bio=bio;
+  curUser.bio=bio;
+  sv('users');
+  localStorage.setItem('lh_session',JSON.stringify(curUser));
+  closeM('bioModal');updPP();toast("Bio updated!");
+}
+
 // === CHANGE NAME ===
 function openChgName(){document.getElementById('newName').value=curUser?curUser.username:'';openM('chgNameModal');}
 function doChgName(){
   const n=document.getElementById('newName').value.trim();
   if(!n)return toast("Name required",'err');
   if(n===curUser.username)return closeM('chgNameModal');
+  if(n==='Tasin Redwan')return toast("That username is reserved!",'err');
   if(D.users[n])return toast("Username taken!",'err');
   const old=curUser.username;
   D.users[n]={...D.users[old],username:n};delete D.users[old];sv('users');
@@ -1178,6 +1254,7 @@ function doAuth(){
   const u=document.getElementById('authUser').value.trim(),p=document.getElementById('authPass').value;
   if(!u||!p)return toast("All fields required",'err');
   if(authMode==='register'){
+    if(u==='Tasin Redwan')return toast("That username is reserved!",'err');
     if(D.users[u])return toast("Username taken!",'err');
     D.users[u]={username:u,password:p,pfp:`https://api.dicebear.com/7.x/pixel-art/svg?${selPfpSeed}`,joinedAt:Date.now()};
     sv('users');toast("Account created! Please login.");authMode='login';updAuth();
