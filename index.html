@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>LuaHub</title>
+<meta name="description" content="LuaHub - Share your Roblox Lua scripts">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#010108;--bg2:#04040e;--bg3:#070714;--bg4:#0a0a1c;--bg5:#0e0e26;
+  --border:#161640;--border2:#1e1e55;
+  --accent:#6366f1;--accent2:#8b5cf6;
+  --green:#27ae60;--red:#e74c3c;--gold:#f1c40f;
+  --text:#eaeaff;--text2:#7878aa;--text3:#404068;
+  --server:#f0f0ff;--local:#60a5fa;--module:#c4b5fd;
+  --r:14px;--rsm:9px;
+  --sh:0 8px 32px rgba(0,0,0,0.65);--shsm:0 4px 18px rgba(0,0,0,0.45);
+  --tr:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.03) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-40%;left:-40%;width:180%;height:180%;background:radial-gradient(ellipse at 20% 15%,rgba(99,102,241,0.1) 0%,transparent 50%),radial-gradient(ellipse at 80% 85%,rgba(139,92,246,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(59,130,246,0.03) 0%,transparent 70%);pointer-events:none;z-index:0;animation:bgp 9s ease-in-out infinite alternate}
+@keyframes bgp{from{opacity:0.6}to{opacity:1}}
+.wrap{width:100%;max-width:560px;margin:0 auto;padding:10px 8px 50px;position:relative;z-index:1}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.9) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.au{animation:fadeUp 0.32s var(--tr) both}
+.au1{animation:fadeUp 0.32s var(--tr) 0.05s both}
+.au2{animation:fadeUp 0.32s var(--tr) 0.1s both}
+
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:center;position:sticky;top:8px;z-index:100;padding:14px 20px;background:rgba(5,5,18,0.95);border:1px solid rgba(99,102,241,0.25);border-radius:20px;margin-bottom:12px;position:relative;box-shadow:0 4px 30px rgba(0,0,0,0.7),0 0 60px rgba(99,102,241,0.04),inset 0 1px 0 rgba(255,255,255,0.05);backdrop-filter:blur(20px)}
+.logo{font-family:'Fredoka One',cursive;font-size:26px;line-height:1;letter-spacing:-0.5px;display:flex;align-items:center;gap:2px}
+.logo-lua{color:var(--text)}
+.logo-hub{color:var(--accent);text-shadow:0 0 22px rgba(91,142,240,0.7),0 0 60px rgba(91,142,240,0.3)}
+.logo-dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-bottom:10px;animation:blink 2.5s infinite}
+.hact{display:flex;align-items:center;gap:10px}
+
+/* ICON BUTTON */
+.ibtn{width:37px;height:37px;border:1px solid var(--border2);background:var(--bg4);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all var(--tr)}
+.ibtn:hover{transform:scale(1.08)}
+.ibtn.admin-btn{background:linear-gradient(135deg,#c0392b,#96281b);color:white;box-shadow:0 2px 10px rgba(192,57,43,0.4)}
+.ibtn.add-btn{background:linear-gradient(135deg,#22c55e,#16a34a);color:white;box-shadow:0 2px 14px rgba(34,197,94,0.4);font-size:20px;font-family:'Fredoka One',cursive}
+.ibtn.add-btn:hover{box-shadow:0 4px 18px rgba(39,174,96,0.55)}
+
+/* PFP */
+.pfp-wrap{position:relative}
+.pfp-hdr{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2.5px solid var(--accent);cursor:pointer;transition:all var(--tr);display:block}
+.pfp-hdr:hover{transform:scale(1.08);box-shadow:0 0 14px rgba(91,142,240,0.5)}
+.ban-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);font-family:'Inter',sans-serif}
+
+/* PROFILE PANEL */
+.pp{display:none;position:fixed;top:70px;right:calc(50% - 290px + 8px);width:248px;background:rgba(5,5,18,0.97);border:1px solid rgba(99,102,241,0.22);border-radius:18px;padding:18px 16px;z-index:2000;box-shadow:0 20px 60px rgba(0,0,0,0.9),0 0 40px rgba(99,102,241,0.06);text-align:center;backdrop-filter:blur(28px)}
+@media(max-width:600px){.pp{right:8px;top:68px}}
+.pp.show{display:block;animation:slideDown 0.2s var(--tr) both}
+.pp-av{width:72px;height:72px;border-radius:50%;border:3px solid var(--accent);margin-bottom:10px;box-shadow:0 0 22px rgba(91,142,240,0.3)}
+.pp-nm{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);margin-bottom:4px;cursor:pointer;padding:2px 8px;border-radius:6px;transition:background var(--tr);display:inline-block}
+.pp-nm:hover{background:var(--bg5)}
+.pp-own{color:var(--gold);font-size:11px;font-family:'Inter',sans-serif;font-weight:600;margin-bottom:4px;display:block}
+.pp-wrn{color:var(--red);font-size:11px;display:inline-block;margin-bottom:10px;background:rgba(231,76,60,0.1);padding:2px 8px;border-radius:5px;border:1px solid rgba(231,76,60,0.2);font-family:'Inter',sans-serif}
+.pp-bl-lbl{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:10px;font-family:'Inter',sans-serif}
+.pp-bl{background:var(--bg2);padding:8px 10px;border-radius:8px;margin-top:5px;font-size:12px;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;text-align:left}
+.pp-out{width:100%;margin-top:14px;background:linear-gradient(135deg,var(--red),#c0392b);color:white;border:none;border-radius:var(--rsm);padding:9px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;transition:all var(--tr)}
+.pp-out:hover{opacity:0.88;transform:translateY(-1px)}
+
+/* SEARCH */
+.sw{display:flex;gap:8px;align-items:stretch;background:rgba(5,5,15,0.8);border:1px solid rgba(99,102,241,0.18);border-radius:16px;padding:9px;margin-bottom:12px;backdrop-filter:blur(10px)}
+.si{flex:1;min-width:0;background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text);padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border var(--tr)}
+.si:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1),0 0 12px rgba(99,102,241,0.15)}
+.si::placeholder{color:var(--text3)}
+.csel-w{position:relative;user-select:none;min-width:145px}
+.csel{background:var(--bg5);border:1.5px solid var(--border2);border-radius:var(--rsm);color:var(--text2);padding:10px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:'Inter',sans-serif;font-size:12px;transition:border var(--tr),color var(--tr);white-space:nowrap;height:100%}
+.csel:hover{border-color:var(--accent);color:var(--text)}
+.csel i.arr{font-size:9px;transition:transform var(--tr)}
+.csel.open i.arr{transform:rotate(180deg)}
+.csel-opts{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bg4);border:1.5px solid var(--border2);border-radius:11px;z-index:300;overflow:hidden;box-shadow:var(--sh);min-width:170px}
+.csel-opts.open{display:block;animation:slideDown 0.16s var(--tr) both}
+.csel-opt{padding:10px 14px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);transition:background var(--tr),color var(--tr);display:flex;align-items:center;gap:9px}
+.csel-opt:hover{background:var(--bg5);color:var(--text)}
+.csel-opt.act{background:rgba(91,142,240,0.13);color:var(--accent);font-weight:600}
+.csel-opt i{width:15px;text-align:center;font-size:11px}
+
+/* CARD (legacy) */
+.card{background:linear-gradient(160deg,var(--bg3),var(--bg4));border:1.5px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px;position:relative;box-shadow:var(--shsm);transition:border var(--tr)}
+.card:hover{border-color:#3535aa}
+
+/* DROP MENU */
+.dots-btn{background:transparent;border:none;color:var(--text3);cursor:pointer;padding:5px 7px;border-radius:7px;font-size:14px;transition:all var(--tr)}
+.dots-btn:hover{background:var(--bg5);color:var(--text)}
+.drop-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:rgba(6,6,22,0.98);border:1px solid rgba(99,102,241,0.25);border-radius:14px;padding:6px;z-index:9999;min-width:190px;box-shadow:0 20px 60px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,255,255,0.04);backdrop-filter:blur(30px)}
+.drop-menu.open{display:block;animation:slideDown 0.18s cubic-bezier(0.34,1.56,0.64,1) both}
+.drop-menu button{display:flex;align-items:center;gap:9px;width:100%;background:none;border:none;color:var(--text2);text-align:left;padding:9px 12px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;border-radius:7px;transition:background var(--tr),color var(--tr)}
+.drop-menu button:hover{background:var(--bg5);color:var(--text)}
+.drop-menu button i{width:14px;text-align:center;font-size:12px;color:var(--text3)}
+.drop-menu button.dng{color:rgba(231,76,60,0.85)}
+.drop-menu button.dng i{color:rgba(231,76,60,0.6)}
+.drop-menu button.dng:hover{background:rgba(231,76,60,0.1);color:var(--red)}
+.menu-sep{height:1px;background:var(--border);margin:4px 8px}
+
+/* CODE */
+pre[class*="language-"]{border-radius:12px;overflow-x:auto;max-height:360px;margin-top:10px;background:#010109 !important;border:1px solid rgba(30,30,80,0.8);font-size:12px;box-shadow:inset 0 2px 10px rgba(0,0,0,0.5),0 0 20px rgba(99,102,241,0.04)}
+code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px;text-shadow:0 0 8px rgba(180,180,255,0.15)}
+.CodeMirror{border-radius:var(--rsm);font-family:'Fira Code',monospace;font-size:12px;min-height:120px;background:#04040e !important;border:1.5px solid var(--border2);text-align:left !important}
+.CodeMirror pre{text-align:left !important}
+.CodeMirror-scroll{min-height:120px}
+
+/* REACTIONS */
+.rxns{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px}
+.rbtn{display:inline-flex;align-items:center;gap:5px;background:rgba(14,14,38,0.8);border:1px solid rgba(30,30,70,0.9);border-radius:20px;color:#404068;padding:6px 14px;font-size:12px;font-family:'Inter',sans-serif;font-weight:600;cursor:pointer;transition:all var(--tr)}
+.rbtn:hover{background:var(--bg4);color:var(--text2)}
+.rbtn.lkd{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.35);color:#4ade80;box-shadow:0 0 16px rgba(34,197,94,0.15)}
+.rbtn.dlkd{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.35);color:#f87171;box-shadow:0 0 16px rgba(239,68,68,0.15)}
+.stats{font-size:11px;color:var(--text3);margin-top:10px;display:flex;gap:14px;font-family:'Inter',sans-serif}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(3,3,12,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);justify-content:center;align-items:center;z-index:1000;padding:16px;overflow-y:auto}
+.modal.show{display:flex}
+.modal-box{background:rgba(5,5,18,0.98);border:1px solid rgba(99,102,241,0.22);border-radius:24px;padding:28px;width:100%;max-width:420px;box-shadow:0 32px 90px rgba(0,0,0,0.97),0 0 80px rgba(99,102,241,0.06),inset 0 1px 0 rgba(255,255,255,0.04);position:relative;text-align:center;backdrop-filter:blur(32px)}
+.modal-box.wide{max-width:490px}
+.modal-box.dng{border-color:var(--red)}
+.modal-box.suc{border-color:var(--green)}
+.modal.show .modal-box{animation:popIn 0.26s cubic-bezier(0.34,1.56,0.64,1) both}
+.mt{font-family:'Fredoka One',cursive;font-size:19px;color:var(--text);margin-bottom:12px}
+.ms{font-size:13px;color:var(--text2);font-family:'Inter',sans-serif;margin-bottom:12px;line-height:1.5}
+.mbtns{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.flbl{font-size:11px;color:var(--text3);font-family:'Inter',sans-serif;text-align:left;display:block;margin:8px 0 2px;letter-spacing:0.3px}
+.modal input:not([type=range]):not([type=hidden]),.modal textarea{width:100%;padding:10px 14px;margin:4px 0;background:var(--bg5);border:1.5px solid var(--border2);color:var(--text);border-radius:var(--rsm);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border var(--tr);resize:vertical}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent)}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border:none;border-radius:var(--rsm);cursor:pointer;font-family:'Fredoka One',cursive;font-size:14px;transition:all var(--tr);display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{opacity:0.88;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.pr{background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;box-shadow:0 4px 18px rgba(99,102,241,0.35);letter-spacing:0.2px}
+.btn.se{background:var(--bg5);color:var(--text2);border:1.5px solid var(--border2)}
+.btn.se:hover{color:var(--text)}
+.btn.dng{background:linear-gradient(135deg,var(--red),#c0392b);color:white}
+.btn.suc{background:linear-gradient(135deg,var(--green),#1e8449);color:white}
+.btn.full{width:100%}
+.btn-login{background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;border:none;border-radius:var(--rsm);padding:9px 22px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;transition:all var(--tr);box-shadow:0 4px 18px rgba(99,102,241,0.35);letter-spacing:0.2px}
+.btn-login:hover{opacity:0.88;transform:translateY(-1px)}
+
+/* AUTH MODAL */
+.atog{font-family:'Inter',sans-serif;font-size:13px;color:var(--text3);margin-top:12px;cursor:pointer}
+.atog span{color:var(--accent);text-decoration:underline}
+.pfp-row{display:flex;justify-content:center;gap:8px;margin:8px 0;flex-wrap:wrap}
+.pfp-opt{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all var(--tr)}
+.pfp-opt:hover{transform:scale(1.1)}
+.pfp-opt.sel{border-color:var(--accent);transform:scale(1.12);box-shadow:0 0 12px rgba(91,142,240,0.4)}
+
+/* TOAST */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:rgba(8,8,22,0.96);color:var(--text);padding:10px 20px;border-radius:30px;display:none;z-index:5000;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.7);white-space:nowrap;pointer-events:none;border:1px solid var(--border2);backdrop-filter:blur(20px);align-items:center;gap:8px}
+#toast.show{display:flex;animation:popIn 0.2s var(--tr) both}
+#toast::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+#toast.err{border-color:rgba(239,68,68,0.35)}#toast.err::before{background:var(--red)}
+#toast.wrn{border-color:rgba(245,158,11,0.35)}#toast.wrn::before{background:var(--gold)}
+#toast.inf{border-color:rgba(91,142,240,0.35)}#toast.inf::before{background:var(--accent)}
+
+/* FOLDER CARD */
+.fcard{background:linear-gradient(145deg,rgba(8,8,28,0.95),rgba(5,5,18,0.98));border:1px solid rgba(40,40,100,0.7);border-radius:20px;padding:18px 18px 14px;margin-bottom:14px;position:relative;box-shadow:0 4px 28px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.03);transition:border-color 0.3s ease,box-shadow 0.3s ease,transform 0.3s ease;overflow:visible}
+.fcard:hover{border-color:rgba(99,102,241,0.45);box-shadow:0 12px 40px rgba(0,0,0,0.75),0 0 60px rgba(99,102,241,0.06);transform:translateY(-1px)}
+.fhd{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fchev{background:none;border:none;cursor:pointer;color:#3a3a90;font-size:12px;padding:5px;border-radius:8px;transition:all var(--tr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fchev:hover{background:rgba(99,102,241,0.1);color:#8888ee}
+.fchev.open{transform:rotate(90deg);color:var(--accent)}
+.ftitle{font-family:'Fredoka One',cursive;font-size:19px;color:#dde0ff;flex:1;line-height:1.2;text-shadow:0 0 24px rgba(140,130,255,0.5),0 0 48px rgba(99,102,241,0.25),0 0 80px rgba(99,102,241,0.1)}
+.fdesc{color:#5a5a88;font-family:'Inter',sans-serif;font-size:13px;margin-bottom:8px;line-height:1.6}
+.fmeta-nm{cursor:pointer;color:var(--accent);font-weight:600;font-size:11px;transition:text-shadow var(--tr)}.fmeta-nm:hover{text-shadow:0 0 14px rgba(99,102,241,0.8)}
+.fmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:'Inter',sans-serif;font-size:11px;color:#505080;margin-bottom:7px}
+.frxns{display:flex;align-items:center;gap:6px;margin:8px 0 4px}
+
+/* FOLDER COLLAPSE */
+.fbody{overflow:hidden;max-height:0;transition:max-height 0.44s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;opacity:0}
+.fbody.open{max-height:99999px;opacity:1}
+.fadd-row{display:flex;gap:8px;margin-top:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.sadd-btn{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(8,8,28,0.8);color:#4040a0;border:1px solid rgba(40,40,100,0.6);border-radius:20px;padding:7px 14px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.sadd-btn:hover{background:rgba(99,102,241,0.1);color:#a5b4fc;border-color:rgba(99,102,241,0.4);box-shadow:0 0 16px rgba(99,102,241,0.12)}
+
+/* SCRIPT CARD (inside folder) */
+.scard{background:linear-gradient(145deg,rgba(4,4,18,0.9),rgba(3,3,14,0.95));border:1px solid rgba(25,25,75,0.7);border-radius:14px;padding:14px;margin-bottom:10px;position:relative;transition:border-color 0.3s ease,box-shadow 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.4)}
+.scard:hover{border-color:rgba(99,102,241,0.35);box-shadow:0 6px 24px rgba(0,0,0,0.5),0 0 30px rgba(99,102,241,0.07)}
+.sbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'Fira Code',monospace;font-weight:700;padding:4px 11px;border-radius:20px;margin-bottom:8px;letter-spacing:0.3px}
+.sbadge.srv{background:rgba(255,255,255,0.07);color:#f0f0ff;border:1px solid rgba(255,255,255,0.22);text-shadow:0 0 12px rgba(255,255,255,0.6),0 0 24px rgba(200,200,255,0.3);box-shadow:0 0 12px rgba(255,255,255,0.08)}
+.sbadge.lcl{background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.35);text-shadow:0 0 12px rgba(96,165,250,0.7),0 0 28px rgba(59,130,246,0.4);box-shadow:0 0 14px rgba(59,130,246,0.12)}
+.sbadge.mod{background:rgba(139,92,246,0.12);color:#c4b5fd;border:1px solid rgba(139,92,246,0.4);text-shadow:0 0 12px rgba(196,181,253,0.7),0 0 28px rgba(139,92,246,0.5);box-shadow:0 0 14px rgba(139,92,246,0.15)}
+.stitle{font-family:'Fredoka One',cursive;font-size:15px;color:#dde0ff;margin-bottom:4px;text-shadow:0 0 18px rgba(140,130,255,0.45),0 0 36px rgba(99,102,241,0.2)}
+.sdesc{font-family:'Inter',sans-serif;font-size:12px;color:#4a4a78;margin-bottom:7px;line-height:1.5}
+.sdots{position:absolute;top:10px;right:10px;background:transparent;border:none;color:#22225a;cursor:pointer;padding:4px 6px;border-radius:6px;font-size:13px;transition:all var(--tr)}
+.sdots:hover{background:var(--bg5);color:var(--text2)}
+
+/* TYPE CHOOSER */
+.trow{display:flex;gap:10px;margin:12px 0}
+.tbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:#0c0c30;color:#4444aa;border:2px solid #1a1a55;border-radius:12px;padding:16px 8px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;transition:all var(--tr)}
+.tbtn:hover{background:#141448;color:#aaaaff;border-color:var(--accent);box-shadow:0 0 14px rgba(91,142,240,0.18)}
+.tbtn small{font-family:'Fira Code',monospace;font-size:9px;opacity:0.5}
+
+/* ADMIN */
+.atabs{display:flex;gap:8px;margin-bottom:14px}
+.atab{flex:1;background:var(--bg5);border:1px solid var(--border2);color:var(--text3);padding:9px;border-radius:var(--rsm);cursor:pointer;font-family:'Fredoka One',cursive;font-size:13px;transition:all var(--tr)}
+.atab.act{background:var(--accent);color:white;border-color:var(--accent)}
+.atbl{width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;color:var(--text2);font-size:12px}
+.atbl th{background:var(--bg5);color:var(--text3);padding:8px 6px;text-align:left;font-weight:600}
+.atbl td{border-bottom:1px solid var(--border);padding:8px 6px;vertical-align:top}
+.atbl tr:last-child td{border-bottom:none}
+.rprev{background:var(--bg2);padding:4px 7px;border-radius:5px;font-size:10px;color:var(--text3);margin-top:3px;border:1px solid var(--border);font-family:'Fira Code',monospace;word-break:break-all}
+.rbdg{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;font-family:'Fredoka One',cursive}
+.rbdg.bf{background:rgba(91,142,240,0.13);color:var(--accent);border:1px solid rgba(91,142,240,0.22)}
+.rbdg.bs{background:rgba(123,110,246,0.13);color:#9b8ef6;border:1px solid rgba(123,110,246,0.22)}
+.rbdg.bc{background:rgba(231,126,34,0.13);color:#e67e22;border:1px solid rgba(231,126,34,0.22)}
+
+/* USER PROFILE MODAL */
+.up-av{width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);margin-bottom:10px;box-shadow:0 0 24px rgba(91,142,240,0.3)}
+.up-nm{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:4px}
+.up-join{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3);margin-bottom:12px}
+.up-bel{background:linear-gradient(135deg,rgba(91,142,240,0.08),rgba(123,110,246,0.08));border:1px solid rgba(91,142,240,0.18);border-radius:var(--rsm);padding:10px 12px;margin:10px 0;text-align:left}
+.up-bel-lbl{font-size:10px;color:var(--text3);font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.up-bel-nm{font-family:'Fredoka One',cursive;font-size:14px;color:var(--gold)}
+.uf-item{background:var(--bg5);border:1px solid var(--border2);border-radius:var(--rsm);padding:10px 12px;margin-bottom:6px;text-align:left}
+.uf-nm{font-family:'Fredoka One',cursive;font-size:14px;color:#c0c0ff;margin-bottom:3px}
+.uf-ct{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3)}
+
+/* BIO */
+.pp-bio-box{margin:5px 0 8px;padding:7px 10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border var(--tr);text-align:left}
+.pp-bio-box:hover{border-color:var(--accent)}
+.pp-bio-txt{font-size:11px;color:var(--text2);font-style:italic;line-height:1.5}
+.pp-bio-empty{font-size:11px;color:var(--text3);font-style:italic}
+.up-bio-wrap{background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin:5px 0 10px;text-align:left}
+.up-bio-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;margin-bottom:4px}
+.up-bio-text{font-family:'Inter',sans-serif;font-size:12px;color:var(--text2);line-height:1.65;white-space:pre-wrap;word-break:break-word}
+
+/* SHARE */
+.shr-row{display:flex;gap:8px;align-items:center}
+.shr-row input{flex:1;color:var(--accent);font-family:'Fira Code',monospace;font-size:11px;background:#04040e;cursor:pointer}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-family:'Inter',sans-serif}
+.empty i{font-size:36px;margin-bottom:12px;display:block;opacity:0.35}
+.empty p{font-size:14px;line-height:1.6}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);box-shadow:0 0 6px rgba(99,102,241,0.5)}
+
+/* PFP tiny */
+.pfp-xs{width:16px;height:16px;border-radius:50%;object-fit:cover}
+
+/* INSTRUCTIONS PANEL */
+.instr-wrap{margin:10px 0 6px}
+.instr-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:9px 13px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.16);border-radius:11px;transition:all var(--tr);user-select:none}
+.instr-toggle:hover{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.28)}
+.instr-toggle-lbl{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text2);flex:1;display:flex;align-items:center;gap:6px}
+.instr-toggle-lbl i{color:var(--accent);font-size:11px;opacity:0.8}
+.instr-chev{color:var(--text3);font-size:10px;transition:transform var(--tr)}
+.instr-chev.open{transform:rotate(180deg);color:var(--accent)}
+.instr-body-wrap{overflow:hidden;max-height:0;transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;opacity:0}
+.instr-body-wrap.open{max-height:2000px;opacity:1}
+.instr-content{padding:14px 16px;background:rgba(2,2,8,0.85);border:1px solid rgba(99,102,241,0.15);border-top:none;border-radius:0 0 11px 11px;font-family:'Inter',sans-serif;font-size:13px;color:#6868a0;line-height:1.85;white-space:pre-wrap;word-break:break-word;text-shadow:0 0 24px rgba(99,102,241,0.15)}
+.instr-none{color:var(--text3);font-style:italic;font-size:12px}
+
+/* CATEGORY BAR */
+.cat-bar{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat-btn{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr);white-space:nowrap;letter-spacing:0.1px}
+.cat-btn:hover{border-color:var(--accent);color:var(--text)}
+.cat-btn.act{background:rgba(91,142,240,0.1);border-color:var(--accent);color:var(--accent);font-weight:600}
+.cat-btn.cat-owner.act{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.45);color:var(--gold)}
+.cat-btn i{font-size:10px;opacity:0.75}
+.fcard.owner-folder{border-color:rgba(241,196,15,0.28);box-shadow:0 4px 28px rgba(0,0,0,0.7),0 0 40px rgba(241,196,15,0.05)}
+.fcard.owner-folder:hover{border-color:rgba(241,196,15,0.5);box-shadow:0 12px 40px rgba(0,0,0,0.75),0 0 60px rgba(241,196,15,0.08)}
+
+/* FAVOURITE */
+.fav-btn{position:absolute;top:17px;left:15px;font-size:14px;cursor:pointer;color:#2a2a5a;transition:all var(--tr);background:none;border:none;line-height:1;padding:3px;border-radius:6px}
+.fav-btn:hover{color:var(--gold);transform:scale(1.15)}
+.fav-btn.on{color:#fbbf24;text-shadow:0 0 14px rgba(251,191,36,0.8),0 0 28px rgba(251,191,36,0.4)}
+
+/* DASHBOARD */
+.ibtn.dash-btn{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white;box-shadow:0 2px 14px rgba(79,70,229,0.45)}
+.ibtn.dash-btn:hover{box-shadow:0 4px 18px rgba(90,42,170,0.6)}
+.dash-tabs{display:flex;gap:8px;margin-bottom:14px}
+.dash-tab{flex:1;background:var(--bg5);border:1px solid var(--border2);color:var(--text3);padding:9px;border-radius:var(--rsm);cursor:pointer;font-family:'Fredoka One',cursive;font-size:13px;transition:all var(--tr)}
+.dash-tab.act{background:linear-gradient(135deg,#3a1a7a,#5a2aaa);color:white;border-color:#5a2aaa}
+.dfi{background:#04040e;border:1px solid #111140;border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:border var(--tr)}
+.dfi:hover{border-color:#2a2a70}
+.dfi-nm{font-family:'Fredoka One',cursive;font-size:15px;color:#c0c0ff;margin-bottom:3px}
+.dfi-mt{font-family:'Inter',sans-serif;font-size:11px;color:var(--text3)}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .wrap{padding:8px 5px 50px}
+  .header{padding:11px 13px;border-radius:14px}
+  .logo{font-size:21px}
+  .fcard{padding:14px;border-radius:14px}
+  .sadd-btn{padding:8px 10px;font-size:12px}
+  .modal-box{padding:18px 15px}
+  .sw{padding:8px 7px}
+  .ibtn{width:34px;height:34px;font-size:13px}
+  .pfp-hdr{width:35px;height:35px}
+  .pp{right:5px}
+}
+@media(max-width:360px){
+  .logo{font-size:19px}
+  .sadd-btn{font-size:11px;padding:7px 8px}
+  .ibtn{width:30px;height:30px;font-size:12px}
+}
+
+/* ── GLOW & POLISH ───────────────────────────────── */
+/* Folder title stronger glow */
+.ftitle{text-shadow:0 0 16px rgba(160,170,255,0.5),0 0 40px rgba(99,102,241,0.2)!important}
+/* Script title glow */
+.stitle{text-shadow:0 0 12px rgba(150,160,255,0.45),0 0 28px rgba(99,102,241,0.18)!important}
+/* Code block glow border */
+pre[class*="language-"]{box-shadow:0 0 20px rgba(0,0,0,0.6),0 0 1px rgba(99,102,241,0.12)!important}
+/* Modal title glow */
+.mt{text-shadow:0 0 20px rgba(140,150,255,0.35)}
+/* Logo hub gradient (already set but override) */
+.logo-hub{filter:drop-shadow(0 0 8px rgba(99,102,241,0.6))}
+/* Accent link / user name global glow on hover */
+.fmeta-nm:hover{text-shadow:0 0 12px rgba(99,102,241,0.75),0 0 24px rgba(99,102,241,0.35)}
+/* Owner badge gold glow */
+.up-owner-badge{box-shadow:0 0 12px rgba(245,158,11,0.2)}
+/* Reaction liked glow */
+.rbtn.lkd{box-shadow:0 0 12px rgba(34,197,94,0.2)}
+.rbtn.dlkd{box-shadow:0 0 12px rgba(239,68,68,0.15)}
+/* Cat btn active - subtle glow */
+.cat-btn.act{box-shadow:0 0 14px rgba(99,102,241,0.15)}
+.cat-btn.cat-owner.act{box-shadow:0 0 14px rgba(245,158,11,0.12)}
+/* Instr toggle glow on hover */
+.instr-toggle:hover{box-shadow:0 0 16px rgba(99,102,241,0.1)}
+/* pfp header glow */
+.pfp-hdr:hover{box-shadow:0 0 18px rgba(99,102,241,0.55)!important}
+/* Button hover glow */
+.btn.pr:hover{box-shadow:0 6px 24px rgba(99,102,241,0.5)!important}
+.btn.suc:hover{box-shadow:0 6px 24px rgba(34,197,94,0.45)!important}
+.btn.dng:hover{box-shadow:0 6px 24px rgba(239,68,68,0.45)!important}
+/* Dashboard item glow */
+.dfi-nm{font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);text-shadow:0 0 10px rgba(140,150,255,0.3)}
+/* Script add buttons */
+.sadd-btn.srv:hover{color:#f0f0ff;border-color:rgba(240,240,255,0.5);box-shadow:0 0 12px rgba(255,255,255,0.1);background:rgba(240,240,255,0.06)}
+.sadd-btn.lcl:hover{color:#60a5fa;border-color:rgba(96,165,250,0.5);box-shadow:0 0 12px rgba(96,165,250,0.15);background:rgba(96,165,250,0.06)}
+.sadd-btn.mod:hover{color:#a78bfa;border-color:rgba(167,139,250,0.5);box-shadow:0 0 12px rgba(167,139,250,0.15);background:rgba(167,139,250,0.06)}
+/* pp bio glow on hover */
+.pp-bio-box:hover{border-color:var(--accent);box-shadow:0 0 12px rgba(99,102,241,0.12)}
+
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="wrap">
+  <!-- HEADER -->
+  <div class="header au">
+    <div class="logo">
+      <span class="logo-lua">Lua</span><span class="logo-hub">Hub</span><span class="logo-dot"></span>
+    </div>
+    <div class="hact" id="hact"></div>
+  </div>
+  <!-- Profile panel (outside header to avoid z-index overlap) -->
+  <div class="pp" id="pp"></div>
+
+  <!-- CATEGORY BAR -->
+  <div class="cat-bar au1">
+    <button class="cat-btn act" id="cat-all" onclick="setCat('all',this)"><i class="fas fa-border-all"></i> All Folders</button>
+    <button class="cat-btn cat-owner" id="cat-owner" onclick="setCat('owner',this)"><i class="fas fa-crown"></i> Owner Only Scripts</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="sw au1">
+    <input type="text" id="sq" class="si" placeholder="&#128269;  Search..." oninput="renderAll()">
+    <div class="csel-w" id="filterW">
+      <div class="csel" id="cselBtn" onclick="tglCsel()">
+        <span id="cselLbl" style="display:flex;align-items:center;gap:5px"><i class="fas fa-folder" style="font-size:10px"></i>Folders</span>
+        <i class="fas fa-chevron-down arr"></i>
+      </div>
+      <div class="csel-opts" id="cselOpts">
+        <div class="csel-opt act" data-v="folder" onclick="setFilter('folder',this)"><i class="fas fa-folder"></i>Folders</div>
+        <div class="csel-opt" data-v="creator" onclick="setFilter('creator',this)"><i class="fas fa-user"></i>Creator</div>
+        <div class="csel-sep" style="height:1px;background:var(--border);margin:3px 10px"></div>
+        <div class="csel-opt" data-v="server" onclick="setFilter('server',this)"><i class="fas fa-server"></i>ServerScript only</div>
+        <div class="csel-opt" data-v="local" onclick="setFilter('local',this)"><i class="fas fa-laptop"></i>LocalScript only</div>
+        <div class="csel-opt" data-v="module" onclick="setFilter('module',this)"><i class="fas fa-cube"></i>ModuleScript only</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="feed"></div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal">
+  <div class="modal-box">
+    <div class="mt" id="authTitle">Welcome to LuaHub</div>
+    <div class="ms" id="authSub">Sign in to share your Roblox scripts.</div>
+
+    <input type="text" id="authUser" placeholder="Username">
+    <input type="password" id="authPass" placeholder="Password">
+    <div id="authPfpRow" style="display:none">
+      <div class="flbl">Choose Avatar</div>
+      <div class="pfp-row" id="authPfpOptions">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=1" class="pfp-opt sel" onclick="selPfp(this,'seed=1')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=2" class="pfp-opt" onclick="selPfp(this,'seed=2')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=3" class="pfp-opt" onclick="selPfp(this,'seed=3')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=4" class="pfp-opt" onclick="selPfp(this,'seed=4')">
+        <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=5" class="pfp-opt" onclick="selPfp(this,'seed=5')">
+      </div>
+    </div>
+    <div class="mbtns">
+      <button class="btn pr" id="authSubmit" onclick="doAuth()">Login</button>
+      <button class="btn se" onclick="closeM('authModal')">Cancel</button>
+    </div>
+    <div class="atog" id="authTog" onclick="tglAuth()">Don't have an account? <span>Sign Up</span></div>
+  </div>
+</div>
+
+
+
+<!-- BIO MODAL -->
+<div class="modal" id="bioModal">
+  <div class="modal-box">
+    <div style="font-size:30px;margin-bottom:8px">📝</div>
+    <div class="mt">About Me</div>
+    <div class="ms">Let others know who you are.</div>
+    <textarea id="bioText" rows="4" placeholder="e.g. Roblox developer from the UK &#10;I love building systems and tools!"></textarea>
+    <div class="mbtns">
+      <button class="btn pr" onclick="saveBio()">Save Bio</button>
+      <button class="btn se" onclick="closeM('bioModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE NAME -->
+<div class="modal" id="chgNameModal">
+  <div class="modal-box">
+    <div class="mt">&#x270F;&#xFE0F; Change Username</div>
+    <span class="flbl">New Username</span>
+    <input type="text" id="newName" placeholder="Enter new username">
+    <div class="mbtns">
+      <button class="btn pr" onclick="doChgName()">Save</button>
+      <button class="btn se" onclick="closeM('chgNameModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE FOLDER -->
+<div class="modal" id="newFolderModal">
+  <div class="modal-box suc">
+    <div class="mt">&#x1F4C1; Create Folder</div>
+    <span class="flbl">Folder Name *</span>
+    <input type="text" id="nfName" placeholder="My Awesome Scripts">
+    <span class="flbl">Description</span>
+    <textarea id="nfDesc" rows="2" placeholder="What's in here?"></textarea>
+    <div class="mbtns">
+      <button class="btn suc" onclick="doCreateFolder()">Create Folder</button>
+      <button class="btn se" onclick="closeM('newFolderModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT FOLDER -->
+<div class="modal" id="editFolderModal">
+  <div class="modal-box">
+    <div class="mt">&#x270F;&#xFE0F; Edit Folder</div>
+    <input type="hidden" id="efId">
+    <span class="flbl">Name *</span><input type="text" id="efName">
+    <span class="flbl">Description</span><textarea id="efDesc" rows="2"></textarea>
+    <div class="mbtns">
+      <button class="btn pr" onclick="doEditFolder()">Save</button>
+      <button class="btn se" onclick="closeM('editFolderModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT MODAL -->
+<div class="modal" id="scriptModal">
+  <div class="modal-box wide">
+    <div class="mt" id="smTitle">Add Script</div>
+    <input type="hidden" id="smFid"><input type="hidden" id="smSid"><input type="hidden" id="smType">
+    <div id="smS1">
+      <div class="ms">Choose the script type:</div>
+      <div class="trow">
+        <button class="tbtn" onclick="smChoose('ServerScript')">&#x1F5A5;&#xFE0F; ServerScript<small>Runs on Server</small></button>
+        <button class="tbtn" onclick="smChoose('LocalScript')">&#x1F4BB; LocalScript<small>Runs on Client</small></button>
+      </div>
+      <div class="trow" style="margin-top:0">
+        <button class="tbtn" onclick="smChoose('ModuleScript')" style="border-color:rgba(241,196,15,0.3);color:#bbaa55">&#x1F9E9; ModuleScript<small>Shared Module</small></button>
+      </div>
+    </div>
+    <div id="smS2" style="display:none">
+      <div id="smBadge" style="margin-bottom:10px"></div>
+      <span class="flbl">Title *</span><input type="text" id="smSTitle" placeholder="Script Title">
+      <span class="flbl">Description</span><textarea id="smSDesc" rows="2" placeholder="Optional"></textarea>
+      <span class="flbl">Code *</span><textarea id="smSCode"></textarea>
+      <div class="mbtns">
+        <button class="btn pr" onclick="doSaveScript()">Save Script</button>
+        <button class="btn se" id="smBack" onclick="smGoBack()">&#x2190; Back</button>
+        <button class="btn se" onclick="closeScriptModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE -->
+<div class="modal" id="delModal">
+  <div class="modal-box dng">
+    <div style="font-size:36px;margin-bottom:10px">&#x1F5D1;&#xFE0F;</div>
+    <div class="mt" id="delTitle">Delete?</div>
+    <div class="ms" id="delSub">This cannot be undone.</div>
+    <div class="mbtns">
+      <button class="btn dng" id="delOk">Yes, Delete</button>
+      <button class="btn se" onclick="closeM('delModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT -->
+<div class="modal" id="repModal">
+  <div class="modal-box dng">
+    <div style="font-size:32px;margin-bottom:8px">&#x1F6A9;</div>
+    <div class="mt" id="repTitle">Report</div>
+    <div class="ms" id="repCtx" style="background:var(--bg5);padding:8px 10px;border-radius:8px;border:1px solid var(--border);text-align:left"></div>
+    <span class="flbl">Reason *</span>
+    <textarea id="repReason" rows="3" placeholder="Describe the issue clearly..."></textarea>
+    <div class="mbtns">
+      <button class="btn dng" id="repOk">Submit Report</button>
+      <button class="btn se" onclick="closeM('repModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- BAN -->
+<div class="modal" id="banModal">
+  <div class="modal-box dng">
+    <div style="font-size:32px;margin-bottom:8px">&#x1F6AB;</div>
+    <div class="mt">Ban User</div>
+    <div class="ms" id="banCtx"></div>
+    <span class="flbl">Duration (days)</span>
+    <input type="number" id="banDays" placeholder="e.g. 7" min="1">
+    <span class="flbl">Reason</span>
+    <textarea id="banReason" rows="2" placeholder="State the reason..."></textarea>
+    <div class="mbtns">
+      <button class="btn dng" id="banOk">Ban User</button>
+      <button class="btn se" onclick="closeM('banModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="modal" id="adminModal">
+  <div class="modal-box wide dng" style="max-width:520px;text-align:left">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:12px">
+      <div class="mt" style="margin:0">&#x1F6E1;&#xFE0F; Admin Panel</div>
+      <button class="btn se" style="padding:5px 12px" onclick="closeM('adminModal')">&#x2715;</button>
+    </div>
+    <div style="font-size:12px;color:var(--text3);font-family:'Inter',sans-serif;margin-bottom:12px">Welcome, Administrator Tasin Redwan.</div>
+    <div class="atabs">
+      <button class="atab act" id="tabRep" onclick="adminTab('reports')">&#x1F4CB; Reports</button>
+      <button class="atab" id="tabBan" onclick="adminTab('bans')">&#x1F6AB; Banned</button>
+    </div>
+    <div id="adminArea"></div>
+  </div>
+</div>
+
+<!-- COMMENT MODAL -->
+<div class="modal" id="comModal">
+  <div class="modal-box">
+    <div class="mt" id="comTitle">Comment</div>
+    <textarea id="comText" rows="3" placeholder=""></textarea>
+    <div class="mbtns">
+      <button class="btn pr" id="comOk">Submit</button>
+      <button class="btn se" onclick="closeM('comModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE -->
+<div class="modal" id="shrModal">
+  <div class="modal-box">
+    <div style="font-size:32px;margin-bottom:8px" id="shrIcon">&#x1F517;</div>
+    <div class="mt" id="shrTitle">Share</div>
+    <div class="ms" id="shrDesc">Works across all devices.</div>
+    <div class="shr-row">
+      <input type="text" id="shrLink" readonly onclick="this.select()">
+      <button class="btn pr" style="white-space:nowrap;padding:10px 14px" onclick="copyShrLink()">Copy</button>
+    </div>
+    <div class="mbtns"><button class="btn se" onclick="closeM('shrModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- USER PROFILE MODAL -->
+<div class="modal" id="userModal">
+  <div class="modal-box wide" style="text-align:center">
+    <button class="btn se" style="position:absolute;top:14px;right:14px;padding:5px 10px" onclick="closeM('userModal')">&#x2715;</button>
+    <img src="" id="um-av" class="up-av">
+    <div class="up-nm" id="um-nm"></div>
+    <div id="um-own" style="display:none;color:var(--gold);font-size:12px;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600">&#x1F451; OWNER</div>
+    <div class="up-join" id="um-join"></div>
+    <div class="up-bio-wrap" id="um-bio-wrap" style="display:none"><div class="up-bio-label">About</div><div class="up-bio-text" id="um-bio-text"></div></div>
+    <div class="up-bel" id="um-bel" style="display:none">
+      <div class="up-bel-lbl">&#x1F3C6; Beloved Folder</div>
+      <div class="up-bel-nm" id="um-bel-nm"></div>
+    </div>
+    <div id="um-folders" style="text-align:left;margin-top:12px;max-height:280px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD MODAL -->
+<div class="modal" id="dashModal">
+  <div class="modal-box wide" style="text-align:left;max-width:500px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:12px">
+      <div class="mt" style="margin:0">&#x1F4CA; Dashboard</div>
+      <button class="btn se" style="padding:5px 12px" onclick="closeM('dashModal')">&#x2715;</button>
+    </div>
+    <div class="dash-tabs">
+      <button class="dash-tab act" id="dtab-fav" onclick="dTab('fav')">&#x2B50; Favourites</button>
+      <button class="dash-tab" id="dtab-liked" onclick="dTab('liked')">&#x1F44D; Liked</button>
+      <button class="dash-tab" id="dtab-my" onclick="dTab('my')">&#x1F4C2; My Folders</button>
+    </div>
+    <div id="dashArea" style="max-height:360px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- INSTRUCTIONS EDIT MODAL -->
+<div class="modal" id="instrModal">
+  <div class="modal-box wide">
+    <div class="mt">&#x1F4DD; Edit Instructions</div>
+    <div class="ms" style="margin-bottom:8px">Users will see this when they open the Instructions panel inside your folder.</div>
+    <input type="hidden" id="instrFid">
+    <textarea id="instrText" rows="6" placeholder="Explain how to use the scripts in this folder...&#10;&#10;e.g. Step 1: Copy the ServerScript into ServerScriptService&#10;Step 2: ..."></textarea>
+    <div class="mbtns">
+      <button class="btn pr" onclick="saveInstr()">Save Instructions</button>
+      <button class="btn se" onclick="closeM('instrModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/lua/lua.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+<script>
+// === DATA ===
+const LS = k=>JSON.parse(localStorage.getItem('lh_'+k)||'null');
+const WS = (k,v)=>localStorage.setItem('lh_'+k,JSON.stringify(v));
+let D = {
+  users:   LS('users')   ||{},
+  folders: LS('folders') ||[],
+  banned:  LS('banned')  ||[],
+  warnings:LS('warnings')||{},
+  reports: LS('reports') ||[],
+  unrep:   LS('unrep')   ||[],
+  favs:    LS('favs')    ||{},
+};
+let curUser = LS('session');
+let openF={}, selPfpSeed='seed=1', authMode='login', admTab='reports', _sme=null, _fv='folder', _cat='all';
+
+if(curUser&&D.banned.includes(curUser.username)){curUser=null;localStorage.removeItem('lh_session');}
+
+D.folders.forEach(f=>{
+  if(!f.userReactions) f.userReactions={};
+  if(!f.scripts) f.scripts=[];
+  if(!f.createdAt) f.createdAt=Date.now();
+  f.scripts.forEach(fs=>{if(!fs.userReactions)fs.userReactions={};if(!fs.userRatings)fs.userRatings={};});
+});
+WS('folders',D.folders);
+
+function sv(k){WS(k,D[k]);}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function uid(){return '_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}
+function fmtD(ts){return new Date(ts).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
+function isAdmin(){return curUser&&curUser.username==='Tasin Redwan';}
+
+// === TOAST ===
+function toast(msg,type,dur=2800){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='show'+(type?' '+type:'');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.className='',dur);
+}
+
+// === MODAL ===
+function openM(id){document.getElementById(id).classList.add('show');}
+function closeM(id){document.getElementById(id).classList.remove('show');}
+
+// === GLOBAL CLICKS ===
+document.addEventListener('click',e=>{
+  document.querySelectorAll('.drop-menu.open').forEach(m=>{if(!m.closest('.fcard,.card')?.contains(e.target)&&!m.contains(e.target))m.classList.remove('open');});
+  const pp=document.getElementById('pp');
+  if(pp.classList.contains('show')&&!pp.contains(e.target)&&!e.target.classList.contains('pfp-hdr'))pp.classList.remove('show');
+  if(!document.getElementById('filterW').contains(e.target)){
+    document.getElementById('cselOpts').classList.remove('open');
+    document.getElementById('cselBtn').classList.remove('open');
+  }
+});
+
+// === SEARCH FILTER ===
+function tglCsel(){document.getElementById('cselOpts').classList.toggle('open');document.getElementById('cselBtn').classList.toggle('open');}
+function setFilter(v,el){
+  _fv=v;
+  document.querySelectorAll('.csel-opt').forEach(o=>o.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById('cselLbl').innerHTML=el.innerHTML;
+  document.getElementById('cselOpts').classList.remove('open');
+  document.getElementById('cselBtn').classList.remove('open');
+  renderAll();
+}
+
+// === CATEGORY ===
+function setCat(cat,el){
+  _cat=cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('act'));
+  el.classList.add('act');
+  renderAll();
+}
+
+// === PROFILE PANEL ===
+function tglPP(e){e.stopPropagation();const pp=document.getElementById('pp');pp.classList.toggle('show');if(pp.classList.contains('show'))updPP();}
+function updPP(){
+  if(!curUser)return;
+  const isOw=curUser.username==='Tasin Redwan';
+  const lvl=D.warnings[curUser.username]||0;
+  const bel=getBeloved(curUser.username);
+  const bio=(D.users[curUser.username]||{}).bio||'';
+  document.getElementById('pp').innerHTML=`
+    <img src="${esc(curUser.pfp)}" class="pp-av">
+    <div class="pp-nm" onclick="openChgName()">${esc(curUser.username)} <i class="fas fa-pen" style="font-size:9px;opacity:0.35;margin-left:2px"></i></div>
+    ${isOw?`<span class="pp-own" style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;justify-content:center;gap:4px"><i class="fas fa-crown" style="font-size:9px"></i>OWNER</span>`:''}
+    ${!isOw&&lvl>0?`<span class="pp-wrn">&#x26A0; Warning Level: ${lvl}</span>`:''}
+    <div class="pp-bio-box" onclick="openBioModal()">${bio?`<div class="pp-bio-txt">${esc(bio)}</div>`:`<div class="pp-bio-empty">&#x270F;&#xFE0F; Add a bio...</div>`}</div>
+    <div style="height:1px;background:var(--border);margin:8px 0"></div>
+    <div class="pp-bl-lbl">&#x1F3C6; Beloved Folder</div>
+    <div class="pp-bl">${bel?esc(bel.name):'No folders yet!'}</div>
+    <button class="pp-out" onclick="logout()"><i class="fas fa-sign-out-alt" style="font-size:11px"></i> Logout</button>
+  `;
+}
+function getBeloved(u){
+  let best=null,bs=-1;
+  D.folders.filter(f=>f.author===u).forEach(f=>{
+    const sc=Object.values(f.userReactions||{}).filter(r=>r==='like').length;
+    if(sc>bs){bs=sc;best=f;}
+  });
+  return best;
+}
+
+// === HEADER ===
+function renderHdr(){
+  const a=document.getElementById('hact');
+  if(curUser){
+    const bc=D.banned.length;
+    a.innerHTML=`
+      ${isAdmin()?`<button class="ibtn admin-btn" onclick="openAdmin()" title="Admin"><i class="fas fa-shield-alt"></i></button>`:''}
+      <button class="ibtn dash-btn" onclick="openDash()" title="Dashboard"><i class="fas fa-chart-bar"></i></button>
+      <button class="ibtn add-btn" onclick="openNewFolder()" title="Create Folder">+</button>
+      <div class="pfp-wrap">
+        <img src="${curUser.pfp}" class="pfp-hdr" onclick="tglPP(event)" title="${esc(curUser.username)}">
+        ${isAdmin()&&bc>0?`<div class="ban-badge">${bc}</div>`:''}
+      </div>`;
+    chkUnban();
+  } else {
+    a.innerHTML=`<button class="btn-login" onclick="openAuthM()">Login</button>`;
+  }
+}
+function chkUnban(){
+  if(!curUser)return;
+  if(D.unrep.includes(curUser.username)){
+    toast("You've been unbanned — follow the guidelines!",'wrn',5000);
+    D.unrep=D.unrep.filter(u=>u!==curUser.username);WS('unrep',D.unrep);
+  }
+}
+
+// === RENDER ALL ===
+function renderAll(){
+  const feed=document.getElementById('feed');
+  const q=document.getElementById('sq').value.toLowerCase().trim();
+  feed.innerHTML='';
+  let show=[...D.folders];
+  if(_cat==='owner') show=show.filter(f=>f.author==='Tasin Redwan');
+  if(_fv==='folder'){if(q)show=show.filter(f=>f.name.toLowerCase().includes(q));}
+  else if(_fv==='creator'){if(q)show=show.filter(f=>(f.author||'').toLowerCase().includes(q));}
+  else if(_fv==='server'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ServerScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
+  else if(_fv==='local'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='LocalScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
+  else if(_fv==='module'){show=show.filter(f=>(f.scripts||[]).some(s=>s.scriptType==='ModuleScript'&&(!q||s.title.toLowerCase().includes(q)||f.name.toLowerCase().includes(q))));}
+  if(!show.length){
+    feed.innerHTML=`<div class="empty"><i class="fas fa-folder-open"></i><p>${_cat==='owner'?'The owner hasn\'t posted any folders yet.':curUser?'No folders found. Click <b>+</b> to create your first folder!':'Login to create and share folders.'}</p></div>`;
+    return;
+  }
+  show.forEach(f=>feed.appendChild(buildFC(f)));
+  Prism.highlightAll();
+}
+
+// === FOLDER CARD ===
+function buildFC(f){
+  const el=document.createElement('div');
+  const isOwnerFolder=f.author==='Tasin Redwan';
+  el.className='fcard au'+(isOwnerFolder?' owner-folder':'');
+  const mine=curUser&&curUser.username===f.author;
+  const admin=isAdmin();
+  const isOpen=!!openF[f.id];
+  const likes=Object.values(f.userReactions||{}).filter(r=>r==='like').length;
+  const dlikes=Object.values(f.userReactions||{}).filter(r=>r==='dislike').length;
+  const myR=curUser?(f.userReactions||{})[curUser.username]:null;
+  const cnt=(f.scripts||[]).length;
+  let scHtml='';
+  if(_fv==='server'||_fv==='local'||_fv==='module'){
+    const tp=_fv==='server'?'ServerScript':_fv==='local'?'LocalScript':'ModuleScript';
+    const flt=(f.scripts||[]).filter(s=>s.scriptType===tp);
+    scHtml=flt.length?flt.map(fs=>buildSC(fs,f.id,mine,admin)).join(''):`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;margin:0">No ${tp}s here.</p>`;
+  } else {
+    scHtml=cnt?(f.scripts||[]).map(fs=>buildSC(fs,f.id,mine,admin)).join(''):`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;padding:6px 0;margin:0">No scripts yet${mine?' — add one below!':'.'}</p>`;
+  }
+  const isFav=curUser&&(D.favs[curUser.username]||[]).includes(f.id);
+  const hasInstr=f.instructions&&f.instructions.trim();
+  el.innerHTML=`
+    ${curUser?`<button class="fav-btn${isFav?' on':''}" onclick="tglFav('${f.id}',event)" title="${isFav?'Unfavourite':'Favourite'}">&#x2605;</button>`:''}
+    <div class="fhd" style="${curUser?'padding-left:24px':''}">
+      <button class="fchev${isOpen?' open':''}" onclick="tglF('${f.id}',this)"><i class="fas fa-chevron-right"></i></button>
+      <span style="font-size:20px">${isOwnerFolder?'&#x1F451;':'&#x1F4C1;'}</span>
+      <span class="ftitle">${esc(f.name)}</span>
+      <div style="position:relative;margin-left:auto">
+        <button class="dots-btn" onclick="tglM(event,'fdm-${f.id}')"><i class="fas fa-ellipsis-v"></i></button>
+        <div class="drop-menu" id="fdm-${f.id}">
+          ${mine?`<button onclick="openEditFolder('${f.id}')"><i class="fas fa-edit"></i>Edit Folder</button>
+          <button onclick="openInstr('${f.id}')"><i class="fas fa-book"></i>Edit Instructions</button>
+          <div class="menu-sep"></div>
+          <button class="dng" onclick="openDel('folder','${f.id}',null)"><i class="fas fa-trash"></i>Delete Folder</button>`
+          :`<button class="dng" onclick="openRep('folder','${f.id}',null)"><i class="fas fa-flag"></i>Report</button>`}
+          <button onclick="openShrFolder('${f.id}')"><i class="fas fa-share-alt"></i>Share Folder</button>
+          ${curUser?`<button onclick="tglFav('${f.id}',null)"><i class="fas fa-star"></i>${isFav?'Unfavourite':'Favourite'}</button>`:''}
+          ${admin&&!mine?`<button class="dng" onclick="openBan('${esc(f.author)}',null,null,null)"><i class="fas fa-ban"></i>Ban Creator</button>`:''}
+        </div>
+      </div>
+    </div>
+    ${f.desc?`<div class="fdesc" style="${curUser?'padding-left:24px':''}">${esc(f.desc)}</div>`:''}
+    <div class="fmeta" style="${curUser?'padding-left:24px':''}">
+      <img src="${f.authorPfp||''}" class="pfp-xs" style="cursor:pointer;border:1px solid var(--border2)" onclick="openUserProfile('${esc(f.author)}')">
+      <span class="fmeta-nm" onclick="openUserProfile('${esc(f.author)}')">${esc(f.author)}${f.author==='Tasin Redwan'?' &#x1F451;':''}</span>
+      <span>&#x2022;</span><span>${cnt} script${cnt!==1?'s':''}</span>
+      <span>&#x2022;</span><span>${fmtD(f.createdAt||Date.now())}</span>
+    </div>
+    <div class="frxns" style="${curUser?'padding-left:24px':''}">
+      <button class="rbtn${myR==='like'?' lkd':''}" onclick="rxnF('${f.id}','like')"><i class="fas fa-thumbs-up"></i> ${likes}</button>
+      <button class="rbtn${myR==='dislike'?' dlkd':''}" onclick="rxnF('${f.id}','dislike')"><i class="fas fa-thumbs-down"></i> ${dlikes}</button>
+    </div>
+    <div class="fbody${isOpen?' open':''}" id="fb-${f.id}">
+      ${(hasInstr||mine)?`<div class="instr-wrap">
+        <div class="instr-toggle" onclick="tglInstr('${f.id}')">
+          <span class="instr-toggle-lbl"><i class="fas fa-book-open"></i>Instructions${!hasInstr?' <span style=\"font-size:10px;opacity:0.5;font-weight:400\">(none yet)</span>':''}</span>
+          <i class="fas fa-chevron-down instr-chev" id="ich-${f.id}"></i>
+        </div>
+        <div class="instr-body-wrap" id="ibw-${f.id}">
+          <div class="instr-content">${hasInstr?esc(f.instructions):'<span class=\"instr-none\">No instructions added yet. Folder owner can add them via the ⋮ menu.</span>'}</div>
+        </div>
+      </div>`:''}
+      <div id="fi-${f.id}">${scHtml}</div>
+      ${mine?`<div class="fadd-row">
+        <button class="sadd-btn" onclick="openSM('${f.id}','ServerScript')"><i class="fas fa-plus"></i>ServerScript</button>
+        <button class="sadd-btn" onclick="openSM('${f.id}','LocalScript')"><i class="fas fa-plus"></i>LocalScript</button>
+        <button class="sadd-btn" onclick="openSM('${f.id}','ModuleScript')" style="color:#aaaa44;border-color:rgba(200,180,0,0.2)"><i class="fas fa-plus"></i>ModuleScript</button>
+      </div>`:''}
+    </div>`;
+  return el;
+}
+
+function tglF(id,btn){
+  openF[id]=!openF[id];
+  btn.classList.toggle('open',openF[id]);
+  document.getElementById('fb-'+id).classList.toggle('open',openF[id]);
+}
+
+// === FAVOURITE ===
+function tglFav(fid, e){
+  if(e) e.stopPropagation();
+  if(!curUser) return toast("Login first!",'err');
+  if(!D.favs[curUser.username]) D.favs[curUser.username]=[];
+  const idx=D.favs[curUser.username].indexOf(fid);
+  if(idx===-1){ D.favs[curUser.username].push(fid); toast("Added to Favourites ⭐"); }
+  else{ D.favs[curUser.username].splice(idx,1); toast("Removed from Favourites"); }
+  sv('favs'); renderAll();
+}
+
+// === INSTRUCTIONS ===
+function openInstr(fid){
+  const f=D.folders.find(f=>f.id===fid); if(!f) return;
+  document.getElementById('instrFid').value=fid;
+  document.getElementById('instrText').value=f.instructions||'';
+  openM('instrModal');
+}
+function saveInstr(){
+  const fid=document.getElementById('instrFid').value;
+  const txt=document.getElementById('instrText').value.trim();
+  const f=D.folders.find(f=>f.id===fid); if(!f) return;
+  f.instructions=txt;
+  sv('folders'); closeM('instrModal'); renderAll(); toast("Instructions saved!");
+}
+function tglInstr(fid){
+  const wrap=document.getElementById('ibw-'+fid);
+  const chev=document.getElementById('ich-'+fid);
+  if(!wrap) return;
+  const isOpen=wrap.classList.contains('open');
+  wrap.classList.toggle('open',!isOpen);
+  if(chev) chev.classList.toggle('open',!isOpen);
+}
+
+// === DASHBOARD ===
+let _dTab='fav';
+function openDash(){
+  if(!curUser) return toast("Login first!",'err');
+  _dTab='fav';
+  document.getElementById('dtab-fav').classList.add('act');
+  document.getElementById('dtab-liked').classList.remove('act');
+  showDash(); openM('dashModal');
+}
+function dTab(t){
+  _dTab=t;
+  document.getElementById('dtab-fav').classList.toggle('act',t==='fav');
+  document.getElementById('dtab-liked').classList.toggle('act',t==='liked');
+  document.getElementById('dtab-my').classList.toggle('act',t==='my');
+  showDash();
+}
+function showDash(){
+  const area=document.getElementById('dashArea');
+  if(!curUser){area.innerHTML='<p style="color:var(--text3);font-size:13px;font-family:Inter,sans-serif">Please login.</p>';return;}
+  let folders=[];
+  if(_dTab==='fav'){
+    const ids=(D.favs[curUser.username]||[]);
+    folders=D.folders.filter(f=>ids.includes(f.id));
+  } else if(_dTab==='my'){
+    folders=D.folders.filter(f=>f.author===curUser.username);
+  } else {
+    folders=D.folders.filter(f=>(f.userReactions||{})[curUser.username]==='like');
+  }
+  if(!folders.length){
+    area.innerHTML=`<div style="text-align:center;padding:30px 10px;color:var(--text3);font-family:'Inter',sans-serif;font-size:13px">
+      <i class="fas fa-${_dTab==='fav'?'star':'thumbs-up'}" style="font-size:28px;opacity:0.3;display:block;margin-bottom:10px"></i>
+      ${_dTab==='fav'?'No favourited folders yet. Click ⭐ on any folder!':'No liked folders yet. Like some folders first!'}
+    </div>`;
+    return;
+  }
+  area.innerHTML=folders.map(f=>`
+    <div class="dfi" onclick="closeM('dashModal')">
+      <div class="dfi-nm">&#x1F4C1; ${esc(f.name)}</div>
+      <div class="dfi-mt">by ${esc(f.author)} &bull; ${(f.scripts||[]).length} scripts &bull;
+        &#x1F44D; ${Object.values(f.userReactions||{}).filter(r=>r==='like').length}
+        ${(D.favs[curUser.username]||[]).includes(f.id)?'&bull; &#x2B50; Favourited':''}
+      </div>
+    </div>`).join('');
+}
+
+// === SCRIPT CARD ===
+function buildSC(fs,fid,mine,admin){
+  const bc=fs.scriptType==='ServerScript'?'srv':fs.scriptType==='LocalScript'?'lcl':'mod';
+  const label=fs.scriptType==='ServerScript'?'<i class="fas fa-server" style="font-size:9px"></i> ServerScript':fs.scriptType==='LocalScript'?'<i class="fas fa-laptop" style="font-size:9px"></i> LocalScript':'<i class="fas fa-cube" style="font-size:9px"></i> ModuleScript';
+  const notMine=!mine;
+  return `<div class="scard" id="sc-${fs.id}">
+    <span class="sbadge ${bc}">${label}</span>
+    <div style="position:relative;float:right;display:inline-block">
+      <button class="sdots" onclick="tglM(event,'sdm-${fs.id}')"><i class="fas fa-ellipsis-v"></i></button>
+      <div class="drop-menu" id="sdm-${fs.id}">
+        <button onclick="copyCode('${fid}','${fs.id}')"><i class="fas fa-copy"></i>Copy Code</button>
+        <button onclick="openShr('${fid}','${fs.id}')"><i class="fas fa-share-alt"></i>Share</button>
+        ${mine?`<div class="menu-sep"></div><button onclick="openEditSM('${fid}','${fs.id}')"><i class="fas fa-edit"></i>Edit</button><button class="dng" onclick="openDel('script','${fid}','${fs.id}')"><i class="fas fa-trash"></i>Delete</button>`:''}
+        ${notMine?`<div class="menu-sep"></div><button class="dng" onclick="openRep('script','${fid}','${fs.id}')"><i class="fas fa-flag"></i>Report</button>`:''}
+        ${admin&&notMine?`<button class="dng" onclick="openBan('${esc(fs.author)}',null,null,null)"><i class="fas fa-ban"></i>Ban Author</button>`:''}
+      </div>
+    </div>
+    <div class="stitle">${esc(fs.title)}</div>
+    ${fs.desc?`<div class="sdesc">${esc(fs.desc)}</div>`:''}
+    <pre class="line-numbers"><code class="language-lua">${esc(fs.code)}</code></pre>
+  </div>`;
+}
+
+// === THREE DOT ===
+function tglM(e,id){
+  e.stopPropagation();
+  const m=document.getElementById(id);
+  document.querySelectorAll('.drop-menu.open').forEach(x=>{if(x!==m)x.classList.remove('open');});
+  m&&m.classList.toggle('open');
+}
+
+// === FOLDER REACTIONS ===
+function rxnF(fid,type){
+  if(!curUser)return toast("Login first!",'err');
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  if(!f.userReactions)f.userReactions={};
+  if(f.userReactions[curUser.username]===type)delete f.userReactions[curUser.username];
+  else f.userReactions[curUser.username]=type;
+  sv('folders');renderAll();
+}
+
+// === COPY / SHARE ===
+function copyCode(fid,sid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
+  navigator.clipboard.writeText(fs.code).then(()=>toast("Code copied!"));
+}
+function openShr(fid,sid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
+  const enc=btoa(unescape(encodeURIComponent(JSON.stringify({_type:'script',t:fs.title,d:fs.desc,c:fs.code,a:fs.author,p:fs.authorPfp,id:fs.id,st:fs.scriptType}))));
+  document.getElementById('shrIcon').textContent='\uD83D\uDD17';
+  document.getElementById('shrTitle').textContent='Share Script';
+  document.getElementById('shrDesc').textContent='Share this individual script.';
+  document.getElementById('shrLink').value=`${location.origin}${location.pathname}?share=${enc}`;
+  openM('shrModal');
+}
+function openShrFolder(fid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const payload={_type:'folder',id:f.id,name:f.name,desc:f.desc||'',author:f.author,authorPfp:f.authorPfp||'',createdAt:f.createdAt||Date.now(),scripts:(f.scripts||[])};
+  const enc=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  document.getElementById('shrIcon').textContent='\uD83D\uDCC1';
+  document.getElementById('shrTitle').textContent='Share Folder';
+  document.getElementById('shrDesc').textContent='Recipient will get the full folder with all scripts.';
+  document.getElementById('shrLink').value=`${location.origin}${location.pathname}?share=${enc}`;
+  openM('shrModal');
+}
+function copyShrLink(){navigator.clipboard.writeText(document.getElementById('shrLink').value).then(()=>toast("Link copied!"));}
+function chkShare(){
+  const p=new URLSearchParams(location.search);
+  const s=p.get('share');if(!s)return;
+  try{
+    const o=JSON.parse(decodeURIComponent(escape(atob(s))));
+    if(o._type==='folder'){
+      // Import whole folder — use real author/name/desc from payload
+      if(!D.folders.some(f=>f.id===o.id)){
+        D.folders.unshift({id:o.id,name:o.name,desc:o.desc,author:o.author,authorPfp:o.authorPfp,createdAt:o.createdAt,scripts:o.scripts,userReactions:{},_imported:true});
+        openF[o.id]=true;sv('folders');
+        if(!D.users[o.author]){D.users[o.author]={username:o.author,pfp:o.authorPfp,joinedAt:o.createdAt||Date.now()};sv('users');}
+        toast(`Folder "${o.name}" imported!`,'inf');
+      } else toast("Folder already imported!",'wrn');
+    } else {
+      // Single script — create a folder named after the original folder or just "Shared Scripts"
+      const folderName=`Scripts from ${o.a||'Unknown'}`;
+      let imp=D.folders.find(f=>f._imported&&f.author===o.a&&f.name===folderName);
+      if(!imp){imp={id:'fimp_'+o.a,name:folderName,desc:'',author:o.a,authorPfp:o.p||'',scripts:[],userReactions:{},createdAt:Date.now(),_imported:true};D.folders.unshift(imp);}
+      if(!imp.scripts.some(x=>x.id===o.id)){
+        imp.scripts.push({id:o.id,title:o.t,desc:o.d||'',code:o.c,scriptType:o.st||'ServerScript',author:o.a,authorPfp:o.p,userReactions:{},userRatings:{}});
+        openF[imp.id]=true;sv('folders');
+        if(!D.users[o.a]){D.users[o.a]={username:o.a,pfp:o.p,joinedAt:Date.now()};sv('users');}
+        toast("Script imported!",'inf');
+      }
+    }
+  }catch(e){console.warn('share parse error',e);}
+  history.replaceState({},'',location.pathname);
+}
+
+// === CREATE / EDIT FOLDER ===
+function openNewFolder(){if(!curUser)return toast("Login first!",'err');document.getElementById('nfName').value='';document.getElementById('nfDesc').value='';openM('newFolderModal');}
+function doCreateFolder(){
+  const nm=document.getElementById('nfName').value.trim();
+  if(!nm)return toast("Folder name required!",'err');
+  const f={id:uid(),name:nm,desc:document.getElementById('nfDesc').value.trim(),author:curUser.username,authorPfp:curUser.pfp,scripts:[],userReactions:{},createdAt:Date.now()};
+  D.folders.unshift(f);openF[f.id]=true;sv('folders');closeM('newFolderModal');renderAll();toast("Folder created!");
+}
+function openEditFolder(fid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  document.getElementById('efId').value=fid;document.getElementById('efName').value=f.name;document.getElementById('efDesc').value=f.desc||'';openM('editFolderModal');
+}
+function doEditFolder(){
+  const id=document.getElementById('efId').value;
+  const nm=document.getElementById('efName').value.trim();
+  if(!nm)return toast("Name required!",'err');
+  const f=D.folders.find(f=>f.id===id);if(!f)return;
+  f.name=nm;f.desc=document.getElementById('efDesc').value.trim();sv('folders');closeM('editFolderModal');renderAll();toast("Folder updated!");
+}
+
+// === SCRIPT MODAL ===
+function openSM(fid,preType){
+  if(!curUser)return toast("Login first!",'err');
+  document.getElementById('smFid').value=fid;document.getElementById('smSid').value='';document.getElementById('smType').value='';
+  document.getElementById('smTitle').textContent='Add Script';
+  document.getElementById('smS1').style.display='block';document.getElementById('smS2').style.display='none';
+  ['smSTitle','smSDesc'].forEach(id=>document.getElementById(id).value='');
+  if(_sme){_sme.toTextArea();_sme=null;}
+  openM('scriptModal');
+  if(preType)setTimeout(()=>smChoose(preType),40);
+}
+function smChoose(type){
+  document.getElementById('smType').value=type;
+  document.getElementById('smS1').style.display='none';document.getElementById('smS2').style.display='block';
+  document.getElementById('smBack').style.display='';
+  const bc=type==='ServerScript'?'srv':type==='LocalScript'?'lcl':'mod';
+  const label=type==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':type==='LocalScript'?'&#x1F4BB; LocalScript':'&#x1F9E9; ModuleScript';
+  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc}">${label}</span>`;
+  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua',direction:'ltr',rtlMoveVisually:false});},60);
+}
+function smGoBack(){document.getElementById('smS1').style.display='block';document.getElementById('smS2').style.display='none';if(_sme){_sme.toTextArea();_sme=null;}}
+function openEditSM(fid,sid){
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;
+  document.getElementById('smFid').value=fid;document.getElementById('smSid').value=sid;document.getElementById('smType').value=fs.scriptType;
+  document.getElementById('smTitle').textContent='Edit Script';
+  document.getElementById('smS1').style.display='none';document.getElementById('smS2').style.display='block';
+  document.getElementById('smBack').style.display='none';
+  const bc2=fs.scriptType==='ServerScript'?'srv':fs.scriptType==='LocalScript'?'lcl':'mod';
+  const label2=fs.scriptType==='ServerScript'?'&#x1F5A5;&#xFE0F; ServerScript':fs.scriptType==='LocalScript'?'&#x1F4BB; LocalScript':'&#x1F9E9; ModuleScript';
+  document.getElementById('smBadge').innerHTML=`<span class="sbadge ${bc2}">${label2}</span>`;
+  document.getElementById('smSTitle').value=fs.title;document.getElementById('smSDesc').value=fs.desc||'';document.getElementById('smSCode').value=fs.code;
+  openM('scriptModal');
+  setTimeout(()=>{if(_sme){_sme.toTextArea();_sme=null;}_sme=CodeMirror.fromTextArea(document.getElementById('smSCode'),{lineNumbers:true,theme:'dracula',mode:'lua',direction:'ltr',rtlMoveVisually:false});_sme.setValue(fs.code);},60);
+}
+function closeScriptModal(){if(_sme){_sme.toTextArea();_sme=null;}closeM('scriptModal');}
+function doSaveScript(){
+  const fid=document.getElementById('smFid').value,sid=document.getElementById('smSid').value,type=document.getElementById('smType').value;
+  const title=document.getElementById('smSTitle').value.trim(),desc=document.getElementById('smSDesc').value.trim();
+  const code=_sme?_sme.getValue():'';
+  if(!title||!code)return toast("Title and Code required!",'err');
+  const f=D.folders.find(f=>f.id===fid);if(!f)return;
+  if(sid){const fs=f.scripts.find(s=>s.id===sid);if(!fs)return;fs.title=title;fs.desc=desc;fs.code=code;toast("Script updated!");}
+  else{f.scripts.push({id:uid(),title,desc,code,scriptType:type,author:curUser.username,authorPfp:curUser.pfp,userReactions:{},userRatings:{}});toast("Script added!");}
+  sv('folders');if(_sme){_sme.toTextArea();_sme=null;}closeM('scriptModal');renderAll();
+}
+
+// === DELETE ===
+function openDel(type,id1,id2){
+  const t={folder:'Delete Folder?',script:'Delete Script?'};
+  const s={folder:'This will permanently delete the folder and all its scripts.',script:'This script will be permanently removed.'};
+  document.getElementById('delTitle').textContent=t[type]||'Delete?';
+  document.getElementById('delSub').textContent=s[type]||'This cannot be undone.';
+  openM('delModal');
+  document.getElementById('delOk').onclick=()=>{
+    if(type==='folder'){D.folders=D.folders.filter(f=>f.id!==id1);delete openF[id1];sv('folders');}
+    else if(type==='script'){const f=D.folders.find(f=>f.id===id1);if(f){f.scripts=f.scripts.filter(s=>s.id!==id2);sv('folders');}}
+    closeM('delModal');renderAll();toast("Deleted!");
+  };
+}
+
+// === REPORT ===
+function openRep(type,id1,id2){
+  if(!curUser)return toast("Login first!",'err');
+  let ctx='';
+  if(type==='folder'){const f=D.folders.find(f=>f.id===id1);ctx=f?`Folder: "${esc(f.name)}" by ${esc(f.author)}`:''}
+  else{const f=D.folders.find(f=>f.id===id1);const fs=f&&f.scripts.find(s=>s.id===id2);ctx=fs?`Script: "${esc(fs.title)}" by ${esc(fs.author)}`:''}
+  document.getElementById('repTitle').textContent=`\u{1F6A9} Report ${type.charAt(0).toUpperCase()+type.slice(1)}`;
+  document.getElementById('repCtx').textContent=ctx;document.getElementById('repReason').value='';
+  document.getElementById('repOk').onclick=()=>{
+    const reason=document.getElementById('repReason').value.trim();
+    if(!reason)return toast("Reason required!",'err');
+    let ru='',inm='';
+    if(type==='folder'){const f=D.folders.find(f=>f.id===id1);if(!f)return;ru=f.author;inm=f.name;}
+    else{const f=D.folders.find(f=>f.id===id1);const fs=f&&f.scripts.find(s=>s.id===id2);if(!fs)return;ru=fs.author;inm=fs.title;}
+    D.reports.push({type,id1,id2,reporter:curUser.username,reportedUser:ru,reason,itemName:inm,ts:Date.now()});
+    sv('reports');closeM('repModal');toast("Reported!",'inf');
+  };
+  openM('repModal');
+}
+
+// === BAN ===
+function openBan(username,rRef,_a,_b){
+  document.getElementById('banCtx').textContent=`You are about to ban: ${username}`;
+  document.getElementById('banDays').value='';document.getElementById('banReason').value='';
+  openM('banModal');
+  document.getElementById('banOk').onclick=()=>{
+    const days=document.getElementById('banDays').value,reason=document.getElementById('banReason').value.trim();
+    if(!days||!reason)return toast("Fill all fields!",'err');
+    if(!D.banned.includes(username)){
+      D.banned.push(username);D.warnings[username]=(D.warnings[username]||0)+1;
+      sv('banned');sv('warnings');
+      const lvl=D.warnings[username];
+      toast(lvl>=10?`${username} permanently banned!`:`${username} banned for ${days} days (Warn ${lvl}/10)`,'err');
+    }
+    if(rRef)dismissRep(rRef.i);
+    closeM('banModal');renderHdr();renderAll();
+    if(document.getElementById('adminModal').classList.contains('show'))showAdmin();
+  };
+}
+function unban(u){
+  D.banned=D.banned.filter(x=>x!==u);sv('banned');
+  D.unrep.push(u);WS('unrep',D.unrep);
+  toast(`${u} unbanned!`,'wrn');showAdmin();renderHdr();
+}
+
+// === ADMIN ===
+function openAdmin(){openM('adminModal');showAdmin();}
+function adminTab(t){
+  admTab=t;
+  document.getElementById('tabRep').classList.toggle('act',t==='reports');
+  document.getElementById('tabBan').classList.toggle('act',t==='bans');
+  showAdmin();
+}
+function dismissRep(i){D.reports.splice(Number(i),1);sv('reports');showAdmin();}
+function showAdmin(){
+  const a=document.getElementById('adminArea');
+  if(admTab==='reports'){
+    if(!D.reports.length){a.innerHTML=`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;padding:10px 0">No reports yet.</p>`;return;}
+    a.innerHTML=`<table class="atbl">
+      <tr><th>Type</th><th>User</th><th>Details</th><th></th></tr>
+      ${D.reports.map((r,i)=>`<tr>
+        <td><span class="rbdg ${r.type==='folder'?'bf':'bs'}">${r.type}</span></td>
+        <td style="font-family:'Fredoka One',cursive;font-size:13px">${esc(r.reportedUser)}</td>
+        <td><b style="font-size:11px">${esc(r.reason)}</b><div class="rprev">${esc(r.itemName||'')}</div></td>
+        <td style="white-space:nowrap">
+          <button class="rbtn" style="background:var(--red);color:white;border-color:var(--red);padding:3px 8px;font-size:10px;margin-bottom:3px" onclick="openBan('${esc(r.reportedUser)}',{i:${i}},null,null)">Ban</button><br>
+          <button class="rbtn" style="padding:3px 8px;font-size:10px" onclick="dismissRep(${i})">&#x2715;</button>
+        </td>
+      </tr>`).join('')}
+    </table>`;
+  } else {
+    if(!D.banned.length){a.innerHTML=`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;padding:10px 0">No banned users.</p>`;return;}
+    a.innerHTML=`<table class="atbl">
+      <tr><th>Username</th><th>Warnings</th><th></th></tr>
+      ${D.banned.map(u=>`<tr>
+        <td style="font-family:'Fredoka One',cursive;font-size:13px">${esc(u)}</td>
+        <td style="color:var(--red);font-weight:700">&#x26A0; ${D.warnings[u]||1}/10</td>
+        <td><button class="rbtn" style="background:var(--green);color:white;border-color:var(--green);padding:3px 8px;font-size:10px" onclick="unban('${u}')">Unban</button></td>
+      </tr>`).join('')}
+    </table>`;
+  }
+}
+
+// === USER PROFILE ===
+function openUserProfile(username){
+  const u=D.users[username];if(!u)return;
+  document.getElementById('um-av').src=u.pfp||'';
+  document.getElementById('um-nm').textContent=username;
+  document.getElementById('um-own').style.display=username==='Tasin Redwan'?'block':'none';
+  document.getElementById('um-join').textContent=`Joined ${fmtD(u.joinedAt||Date.now())}`;
+  const bioWrap=document.getElementById('um-bio-wrap');
+  const bioTxt=document.getElementById('um-bio-text');
+  if(u.bio&&u.bio.trim()){bioWrap.style.display='block';bioTxt.textContent=u.bio;}
+  else{bioWrap.style.display='none';}
+  const bel=getBeloved(username);
+  const bEl=document.getElementById('um-bel');
+  if(bel){bEl.style.display='block';document.getElementById('um-bel-nm').textContent=bel.name;}else bEl.style.display='none';
+  const uf=D.folders.filter(f=>f.author===username);
+  const fa=document.getElementById('um-folders');
+  if(uf.length){
+    fa.innerHTML=`<div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="fas fa-folder" style="color:var(--accent)"></i>Folders (${uf.length})</div>`;
+    uf.forEach(f=>{fa.innerHTML+=`<div class="uf-item"><div class="uf-nm">&#x1F4C1; ${esc(f.name)}</div><div class="uf-ct">${(f.scripts||[]).length} scripts${f.desc?' &bull; '+esc(f.desc.substring(0,40)):''}<span style="color:rgba(91,142,240,0.5);margin-left:8px">&#x1F44D; ${Object.values(f.userReactions||{}).filter(r=>r==='like').length}</span></div></div>`;});
+  } else {
+    fa.innerHTML=`<p style="color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;text-align:center;margin-top:10px">No folders yet.</p>`;
+  }
+  openM('userModal');
+}
+
+// === BIO ===
+function openBioModal(){
+  const bio=(D.users[curUser.username]||{}).bio||'';
+  document.getElementById('bioText').value=bio;
+  openM('bioModal');
+}
+function saveBio(){
+  const bio=document.getElementById('bioText').value.trim();
+  if(!D.users[curUser.username])return;
+  D.users[curUser.username].bio=bio;
+  curUser.bio=bio;
+  sv('users');
+  localStorage.setItem('lh_session',JSON.stringify(curUser));
+  closeM('bioModal');updPP();toast("Bio updated!");
+}
+
+// === CHANGE NAME ===
+function openChgName(){document.getElementById('newName').value=curUser?curUser.username:'';openM('chgNameModal');}
+function doChgName(){
+  const n=document.getElementById('newName').value.trim();
+  if(!n)return toast("Name required",'err');
+  if(n===curUser.username)return closeM('chgNameModal');
+  if(n==='Tasin Redwan')return toast("That username is reserved!",'err');
+  if(D.users[n])return toast("Username taken!",'err');
+  const old=curUser.username;
+  D.users[n]={...D.users[old],username:n};delete D.users[old];sv('users');
+  curUser.username=n;localStorage.setItem('lh_session',JSON.stringify(curUser));
+  D.folders.forEach(f=>{if(f.author===old)f.author=n;(f.scripts||[]).forEach(fs=>{if(fs.author===old)fs.author=n;});});
+  sv('folders');if(D.warnings[old]){D.warnings[n]=D.warnings[old];delete D.warnings[old];sv('warnings');}
+  closeM('chgNameModal');updPP();renderAll();renderHdr();toast("Username updated!");
+}
+
+// === AUTH ===
+// Seed/update Tasin Redwan admin account on every load
+if(!D.users['Tasin Redwan']||D.users['Tasin Redwan'].password!=='0I7I759i913'){
+  D.users['Tasin Redwan']=Object.assign(D.users['Tasin Redwan']||{},{username:'Tasin Redwan',password:'0I7I759i913',pfp:D.users['Tasin Redwan']?.pfp||'https://api.dicebear.com/7.x/pixel-art/svg?seed=TasinRedwan',joinedAt:D.users['Tasin Redwan']?.joinedAt||Date.now()});
+  sv('users');
+}
+function openAuthM(){authMode='login';updAuth();openM('authModal');}
+function tglAuth(){authMode=authMode==='login'?'register':'login';updAuth();}
+function updAuth(){
+  const l=authMode==='login';
+  document.getElementById('authTitle').textContent=l?'Welcome Back':'Create Account';
+  document.getElementById('authSub').textContent=l?'Sign in to share your Roblox scripts.':'Join LuaHub and start sharing!';
+  document.getElementById('authSubmit').textContent=l?'Login':'Create Account';
+  document.getElementById('authTog').innerHTML=l?"Don't have an account? <span>Sign Up</span>":"Already have an account? <span>Login</span>";
+  document.getElementById('authPfpRow').style.display=l?'none':'block';
+}
+function selPfp(el,seed){
+  document.querySelectorAll('.pfp-opt').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');selPfpSeed=seed;
+}
+function doAuth(){
+  const u=document.getElementById('authUser').value.trim(),p=document.getElementById('authPass').value;
+  if(!u||!p)return toast("All fields required",'err');
+  if(authMode==='register'){
+    if(u==='Tasin Redwan')return toast("That username is reserved!",'err');
+    if(D.users[u])return toast("Username taken!",'err');
+    D.users[u]={username:u,password:p,pfp:`https://api.dicebear.com/7.x/pixel-art/svg?${selPfpSeed}`,joinedAt:Date.now()};
+    sv('users');toast("Account created! Please login.");authMode='login';updAuth();
+  } else {
+    if(D.banned.includes(u))return toast("Account is banned!",'err');
+    const usr=D.users[u];
+    if(usr&&usr.password===p){curUser=usr;localStorage.setItem('lh_session',JSON.stringify(curUser));closeM('authModal');renderHdr();renderAll();toast("Welcome back!");}
+    else toast("Wrong credentials",'err');
+  }
+}
+
+
+function logout(){curUser=null;localStorage.removeItem('lh_session');document.getElementById('pp').classList.remove('show');renderHdr();renderAll();}
+
+// === INIT ===
+window.addEventListener('scroll',()=>{document.querySelectorAll('.drop-menu.open').forEach(m=>m.classList.remove('open'));},true);
+window.onload=()=>{chkShare();renderHdr();renderAll();};
+</script>
+</body>
+</html>
