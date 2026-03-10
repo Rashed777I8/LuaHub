@@ -1536,6 +1536,30 @@ function doAuth(){
 }
 function logout(){curUser=null;localStorage.removeItem('lh_session');document.getElementById('pp').classList.remove('show');renderHdr();renderAll();}
 
+// Expose everything to window so onclick= attributes work with type="module"
+window.dbgLog=dbgLog;window.toast=toast;window.openM=openM;window.closeM=closeM;
+window.tglCsel=tglCsel;window.setFilter=setFilter;window.setCat=setCat;
+window.tglPP=tglPP;window.updPP=updPP;window.getBeloved=getBeloved;
+window.renderHdr=renderHdr;window.renderAll=renderAll;window.chkUnban=chkUnban;
+window.buildFC=buildFC;window.tglF=tglF;window.buildSC=buildSC;window.tglM=tglM;
+window.rxnF=rxnF;window.tglFav=tglFav;
+window.openInstr=openInstr;window.saveInstr=saveInstr;window.tglInstr=tglInstr;
+window.openDash=openDash;window.dTab=dTab;window.showDash=showDash;
+window.openNewFolder=openNewFolder;window.doCreateFolder=doCreateFolder;
+window.openEditFolder=openEditFolder;window.doEditFolder=doEditFolder;
+window.openSM=openSM;window.smChoose=smChoose;window.smGoBack=smGoBack;
+window.openEditSM=openEditSM;window.closeScriptModal=closeScriptModal;window.doSaveScript=doSaveScript;
+window.openDel=openDel;
+window.copyCode=copyCode;window.openShr=openShr;window.openShrFolder=openShrFolder;window.copyShrLink=copyShrLink;window.chkShare=chkShare;
+window.openRep=openRep;
+window.openBan=openBan;window.unban=unban;
+window.openAdmin=openAdmin;window.adminTab=adminTab;window.adminRender=adminRender;window.resolveRep=resolveRep;
+window.openUserProfile=openUserProfile;
+window.openBioModal=openBioModal;window.saveBio=saveBio;
+window.openChgName=openChgName;window.doChgName=doChgName;
+window.openAuthM=openAuthM;window.tglAuth=tglAuth;window.updAuth=updAuth;window.selPfp=selPfp;window.doAuth=doAuth;
+window.logout=logout;
+
 </script>
 </body>
 </html>
