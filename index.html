@@ -315,14 +315,6 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 </head>
 <body>
 
-<!-- DEBUG CONSOLE -->
-<div id="dbg" style="display:none;position:fixed;bottom:0;left:0;right:0;max-height:45vh;overflow-y:auto;background:#0a0010;border-top:2px solid #f00;z-index:99999;font-family:'Fira Code',monospace;font-size:11px;padding:8px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-    <span style="color:#f00;font-weight:700">🐛 ERROR LOG</span>
-    <button onclick="document.getElementById('dbg').style.display='none'" style="background:#f00;color:white;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px">Close</button>
-  </div>
-  <div id="dbgLog"></div>
-</div>
 <!-- LOADING SCREEN -->
 <div id="loading">
   <div class="spin-ring"></div>
@@ -628,21 +620,6 @@ code[class*="language-"]{font-family:'Fira Code',monospace;font-size:12px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 <!-- FIREBASE SDK -->
 <script type="module">
-// === DEBUG LOGGER ===
-function dbgLog(msg,isErr=false){
-  const box=document.getElementById('dbg');
-  const log=document.getElementById('dbgLog');
-  if(!box||!log)return;
-  box.style.display='block';
-  const line=document.createElement('div');
-  line.style.cssText=`color:${isErr?'#ff6b6b':'#6bff9e'};margin-bottom:4px;word-break:break-all;border-bottom:1px solid #222;padding-bottom:3px`;
-  line.textContent=(isErr?'❌ ':'✅ ')+new Date().toLocaleTimeString()+' — '+msg;
-  log.appendChild(line);
-  box.scrollTop=box.scrollHeight;
-}
-window.onerror=function(msg,src,line,col,err){dbgLog(`JS Error: ${msg} (line ${line})`,true);return false;};
-window.addEventListener('unhandledrejection',e=>{dbgLog('Promise rejected: '+(e.reason?.message||e.reason||'unknown'),true);});
-
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getDatabase,ref,set,get,update,remove,onValue,push,child}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
@@ -707,8 +684,6 @@ if(!IS_CONFIGURED){
 
 const app=initializeApp(FB_CFG);
 const db=getDatabase(app);
-dbgLog('Firebase app initialized');
-dbgLog('DB URL: '+FB_CFG.databaseURL);
 
 // ══════════════════════════════════════════════════
 //  STATE
@@ -744,11 +719,10 @@ function showSync(msg,type=''){
 //  FIREBASE WRITE HELPERS
 // ══════════════════════════════════════════════════
 function fbSet(path,data){
-  dbgLog('fbSet: '+path);
   showSync('Saving...');
   return set(ref(db,path),data)
-    .then(()=>{dbgLog('fbSet OK: '+path);showSync('Saved!','ok');})
-    .catch(e=>{dbgLog('fbSet FAIL: '+path+' — '+e.message,true);showSync('Save failed','err');console.error(e);});
+    .then(()=>{showSync('Saved!','ok');})
+    .catch(e=>{showSync('Save failed','err');console.error(e);});
 }
 function fbUpdate(path,data){
   showSync('Saving...');
@@ -767,10 +741,8 @@ function fbRemove(path){
 //  FIREBASE REALTIME LISTENERS (live sync)
 // ══════════════════════════════════════════════════
 function initFirebase(){
-  dbgLog('initFirebase() called');
   // Folders — live
   onValue(ref(db,'folders'),snap=>{
-    dbgLog('folders snapshot received, keys: '+(snap.val()?Object.keys(snap.val()).length:0));
     const data=snap.val()||{};
     D.folders=Object.values(data).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
     D.folders.forEach(f=>{
@@ -831,7 +803,6 @@ function seedAdmin(){
 initFirebase();
 // Give Firebase 2.5s to load data, then show app regardless
 setTimeout(()=>{
-  dbgLog('App ready — showing UI');
   _fbReady=true;
   const loader=document.getElementById('loading');
   loader.classList.add('hide');
@@ -1512,7 +1483,6 @@ function selPfp(el,seed){
   el.classList.add('sel');selPfpSeed=seed;
 }
 function doAuth(){
-  dbgLog('doAuth() called, mode='+authMode);
   const u=document.getElementById('authUser').value.trim();
   const p=document.getElementById('authPass').value;
   if(!u||!p)return toast("All fields required",'err');
@@ -1537,7 +1507,7 @@ function doAuth(){
 function logout(){curUser=null;localStorage.removeItem('lh_session');document.getElementById('pp').classList.remove('show');renderHdr();renderAll();}
 
 // Expose everything to window so onclick= attributes work with type="module"
-window.dbgLog=dbgLog;window.toast=toast;window.openM=openM;window.closeM=closeM;
+window.toast=toast;window.openM=openM;window.closeM=closeM;
 window.tglCsel=tglCsel;window.setFilter=setFilter;window.setCat=setCat;
 window.tglPP=tglPP;window.updPP=updPP;window.getBeloved=getBeloved;
 window.renderHdr=renderHdr;window.renderAll=renderAll;window.chkUnban=chkUnban;
